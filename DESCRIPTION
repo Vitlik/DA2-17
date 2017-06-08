@@ -1,0 +1,13 @@
+Package: da2St2017
+Type: Package
+Title: Image Recognition
+Version: 0.1
+Author: 
+Maintainer: No maintainer<no@mail.com>
+Description: To Fill
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+Imports:
+    
+RoxygenNote: 5.0.1
