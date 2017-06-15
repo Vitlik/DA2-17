@@ -16,3 +16,4 @@ rasterImage(img[185:235,325:425,], 1, 1, 2, 2, interpolate=FALSE)
 # we need to make it an vector
 imgV <- as.vector(img)
 
+clasVit <- read.csv("data-raw/ClassificationList-Vit-Spaces.csv",sep = ";")
