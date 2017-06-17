@@ -7,17 +7,17 @@
 #'
 #' It executes these functions:
 #' \enumerate{
-#'   \item \code{\link{c.b.step1}}
-#'   \item \code{\link{c.c.step2}}
+#'   \item \code{\link{d.b.step1}}
+#'   \item \code{\link{d.c.step2}}
 #' }
 #'
 #' @author Vitali Friesen
-c.a.classifier2.start <- function(){
+d.a.classifier2.start <- function(){
   # Explanation
-  c.b.step1()
+  d.b.step1()
 
   # Explanation
-  c.c.step2()
+  d.c.step2()
 }
 
 #' @title Classifier 2 - Step 1
@@ -27,7 +27,7 @@ c.a.classifier2.start <- function(){
 #' ...
 #'
 #' @author
-c.b.step1 <- function(){
+d.b.step1 <- function(){
 
 }
 
@@ -38,6 +38,6 @@ c.b.step1 <- function(){
 #' ...
 #'
 #' @author
-c.c.step2 <- function(){
+d.c.step2 <- function(){
 
 }

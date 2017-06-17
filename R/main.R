@@ -48,15 +48,19 @@ a.b.main.image.recognition <- function(){
   z.z.util.set.environment()
   cat("\n")
 
-  message("1. Classifier 1")
-  b.a.classifier1.start()
+  message("1. Feature extraction")
+  b.a.feature.start()
   cat("\n")
 
-  message("2. Classifier 2")
-  c.a.classifier2.start()
+  message("2. Classifier 1")
+  c.a.classifier1.start()
   cat("\n")
 
-  message("3. Evaluation / Comparison")
-  d.a.evaluate.start()
+  message("3. Classifier 2")
+  d.a.classifier2.start()
+  cat("\n")
+
+  message("4. Evaluation / Comparison")
+  e.a.evaluate.start()
   cat("\n")
 }

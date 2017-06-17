@@ -7,17 +7,17 @@
 #'
 #' It executes these functions:
 #' \enumerate{
-#'   \item \code{\link{d.b.step1}}
-#'   \item \code{\link{d.c.step2}}
+#'   \item \code{\link{e.b.step1}}
+#'   \item \code{\link{e.c.step2}}
 #' }
 #'
 #' @author Vitali Friesen
-d.a.evaluate.start <- function(){
+e.a.evaluate.start <- function(){
   # Explanation
-  d.b.step1()
+  e.b.step1()
 
   # Explanation
-  d.c.step2()
+  e.c.step2()
 }
 
 #' @title Evaluation / Comparison - Step 1
@@ -27,7 +27,7 @@ d.a.evaluate.start <- function(){
 #' ...
 #'
 #' @author
-d.b.step1 <- function(){
+e.b.step1 <- function(){
 
 }
 
@@ -38,6 +38,6 @@ d.b.step1 <- function(){
 #' ...
 #'
 #' @author
-d.c.step2 <- function(){
+e.c.step2 <- function(){
 
 }
