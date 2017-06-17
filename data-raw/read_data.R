@@ -4,6 +4,8 @@
 
 #' Load all paths to the images in vector
 imgList <- list.files("data-raw/IMG/CS CZ",full.names = T, ignore.case = F, recursive = T)
+# see order of folders
+unique(substr(imgList,20,23))
 
 library(png)
 img = readPNG("data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-05-42-48.png")

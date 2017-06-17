@@ -38,7 +38,7 @@ b.b.colorHist <- function(){
       # apply count for each RGB color dimension
       sapply(1:3, function(rgb){
         # extract subset of the corresponding color (R, G or B) from the image vector
-        tmp = imgV[(if(rgb == 1) 0 else (length(imgV)/3*(rgb-1)+1)) : (length(imgV)/3*rgb)]
+        tmp = curImg[(if(rgb == 1) 0 else (length(curImg)/3*(rgb-1)+1)) : (length(curImg)/3*rgb)]
         # apply count for each bucket in the RGB dimension
         sapply(1:buckets, function(bucket){
           length(tmp[(if (bucket == 1) (0 <= tmp) else ((bucket-1)/buckets < tmp))
