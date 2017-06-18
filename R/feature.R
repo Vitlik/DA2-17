@@ -47,6 +47,7 @@ b.b.colorHist <- function(){
       })
     )
   }))
+  rownames(colHist) <- substr(rownames(colHist),nchar(rownames(colHist))-28,nchar(rownames(colHist)))
 }
 
 #' @title Feature Extraction - Step 2

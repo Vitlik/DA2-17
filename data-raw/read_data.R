@@ -4,6 +4,8 @@
 
 #' Load all paths to the images in vector
 imgList <- list.files("data-raw/IMG/CS CZ",full.names = T, ignore.case = F, recursive = T)
+imgListH <- list.files("data-raw/IMG/CS CZ halved",full.names = T, ignore.case = F, recursive = T)
+imgListQ <- list.files("data-raw/IMG/CS CZ quarter",full.names = T, ignore.case = F, recursive = T)
 # see order of folders
 unique(substr(imgList,20,23))
 
