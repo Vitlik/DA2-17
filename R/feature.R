@@ -26,12 +26,12 @@ b.a.feature.start <- function(){
 #'
 #' ...
 #'
-#' @author
+#' @author Vitali Friesen
 b.b.colorHist <- function(){
   # set number of buckets per color
   buckets = 16
   # calculate for each image
-  colHist <- t(sapply(imgList, function(imgPath){
+  colHist <- t(sapply(imgListQ, function(imgPath){
     # load image information into curImg
     curImg <- as.vector(readPNG(imgPath))
     as.vector(
