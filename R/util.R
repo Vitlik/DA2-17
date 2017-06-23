@@ -213,3 +213,13 @@ z.z.util.set.environment <- function(){
   ercis.red      <<- rgb(133/255,  35/255,  57/255, 1)
   ercis.lightred <<- rgb(200/255, 156/255, 166/255, 1)
 }
+
+# Function that converts RGBA to RGB
+RGBAtoRGB = function(r = 0, g = 0, b = 0, a, r2,g2,b2){
+  r3 <- floor(((1 - a) * r2) + (a * r))
+  g3 <- floor(((1 - a) * g2) + (a * g))
+  b3 <- floor(((1 - a) * b2) + (a * b))
+  rgb <- c(r3,g3,b3)
+  names(rgb) <- c("red","green","blue")
+  return(rgb)
+} 

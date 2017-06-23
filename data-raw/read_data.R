@@ -33,6 +33,22 @@ set.seed(77)
 
 imgSample <- sample(1:length(imgList),length(imgList))
 blocks <- new.env()
+train <- "train"
+test <- "test"
+
+closure <- function(x,y){
+  num <- (round(length(imgSample)/10*x))
+  numBefore <- (round(length(imgSample)/10*(x+1)))
+  trainName <- paste("train",toString(y-x),sep="")
+  testName <- paste("test",toString(y-x),sep="")
+  assign(trainName,c(imgSample[1:num],imgSample[(numBefore+1):length(imgSample)]),envir=blocks)
+  assign(testName,imgSample[num+1:numBefore],envir=blocks)
+}
+
+sapply(10:1,closure, y=11)
+#assign("train2", "test", envir=blocks)
+#mget("train1",envir=blocks)
+
 blocks$train1 <- imgSample[1:(round(length(imgSample)/10*9))]
 blocks$test1 <- imgSample[(round(length(imgSample)/10*9)+1):length(imgSample)]
 
