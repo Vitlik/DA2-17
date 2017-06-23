@@ -31,58 +31,29 @@ devtools::use_data(clasVit, overwrite = T)
 
 set.seed(77)
 
-imgSample <- sample(1:length(imgList),length(imgList))
+imgIndexRand <- sample(1:length(imgList),length(imgList))
 blocks <- new.env()
-train <- "train"
-test <- "test"
 
-closure <- function(x,y){
-  num <- (round(length(imgSample)/10*x))
-  numBefore <- (round(length(imgSample)/10*(x+1)))
-  trainName <- paste("train",toString(y-x),sep="")
-  testName <- paste("test",toString(y-x),sep="")
-  assign(trainName,c(imgSample[1:num],imgSample[(numBefore+1):length(imgSample)]),envir=blocks)
-  assign(testName,imgSample[num+1:numBefore],envir=blocks)
+blockCreator <- function(x, y, bucketNum, randList){
+  lastIndexLeftTrainBlock <- round(length(randList) / bucketNum * (x-1))
+  firstIndexRightTrainBlock <- round(length(randList) / bucketNum * x + 1)
+  trainName <- paste("train", toString(bucketNum+1-x), sep="")
+  assign(trainName,
+         c(ifelse(lastIndexLeftTrainBlock != 0,
+                  randList[1:lastIndexLeftTrainBlock],
+                    numeric(0)),
+           ifelse(firstIndexRightTrainBlock < length(randList),
+                  randList[firstIndexRightTrainBlock:length(randList)],
+                  numeric(0))),
+         envir=blocks)
+
+  firstIndexTestBlock <- round(length(randList) / bucketNum * (x-1) + 1)
+  lastIndexTestBlock <- round(length(randList) / bucketNum * x)
+  testName <- paste("test", toString(bucketNum+1-x), sep="")
+  assign(testName,
+         randList[firstIndexTestBlock:lastIndexTestBlock],
+         envir=blocks)
 }
+blockNum = 10
 
-sapply(10:1,closure, y=11)
-#assign("train2", "test", envir=blocks)
-#mget("train1",envir=blocks)
-
-blocks$train1 <- imgSample[1:(round(length(imgSample)/10*9))]
-blocks$test1 <- imgSample[(round(length(imgSample)/10*9)+1):length(imgSample)]
-
-blocks$train2 <- c(imgSample[1:(round(length(imgSample)/10*8))],
-                   imgSample[(round(length(imgSample)/10*9)+1):length(imgSample)])
-blocks$test2 <- imgSample[(round(length(imgSample)/10*8)+1):(round(length(imgSample)/10*9))]
-
-blocks$train3 <- c(imgSample[1:(round(length(imgSample)/10*7))],
-                   imgSample[(round(length(imgSample)/10*8)+1):length(imgSample)])
-blocks$test3 <- imgSample[(round(length(imgSample)/10*7)+1):(round(length(imgSample)/10*8))]
-
-blocks$train4 <- c(imgSample[1:(round(length(imgSample)/10*6))],
-                   imgSample[(round(length(imgSample)/10*7)+1):length(imgSample)])
-blocks$test4 <- imgSample[(round(length(imgSample)/10*6)+1):(round(length(imgSample)/10*7))]
-
-blocks$train5 <- c(imgSample[1:(round(length(imgSample)/10*5))],
-                   imgSample[(round(length(imgSample)/10*6)+1):length(imgSample)])
-blocks$test5 <- imgSample[(round(length(imgSample)/10*5)+1):(round(length(imgSample)/10*6))]
-
-blocks$train6 <- c(imgSample[1:(round(length(imgSample)/10*4))],
-                   imgSample[(round(length(imgSample)/10*5)+1):length(imgSample)])
-blocks$test6 <- imgSample[(round(length(imgSample)/10*4)+1):(round(length(imgSample)/10*5))]
-
-blocks$train7 <- c(imgSample[1:(round(length(imgSample)/10*3))],
-                   imgSample[(round(length(imgSample)/10*4)+1):length(imgSample)])
-blocks$test7 <- imgSample[(round(length(imgSample)/10*3)+1):(round(length(imgSample)/10*4))]
-
-blocks$train8 <- c(imgSample[1:(round(length(imgSample)/10*2))],
-                   imgSample[(round(length(imgSample)/10*3)+1):length(imgSample)])
-blocks$test8 <- imgSample[(round(length(imgSample)/10*2)+1):(round(length(imgSample)/10*3))]
-
-blocks$train9 <- c(imgSample[1:(round(length(imgSample)/10*1))],
-                   imgSample[(round(length(imgSample)/10*2)+1):length(imgSample)])
-blocks$test9 <- imgSample[(round(length(imgSample)/10*1)+1):(round(length(imgSample)/10*2))]
-
-blocks$train10 <- imgSample[(round(length(imgSample)/10*1)+1):length(imgSample)]
-blocks$test10 <- imgSample[1:(round(length(imgSample)/10*1))]
+bin <- sapply(blockNum:1, closure, bucketNum=blockNum, randList=imgIndexRand)
