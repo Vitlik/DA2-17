@@ -7,17 +7,17 @@
 #'
 #' It executes these functions:
 #' \enumerate{
-#'   \item \code{\link{b.b.colorHist}}
-#'   \item \code{\link{b.c.step2}}
+#'   \item \code{\link{c.b.colorHist}}
+#'   \item \code{\link{c.c.step2}}
 #' }
 #'
 #' @author Vitali Friesen
-b.a.feature.start <- function(){
+c.a.feature.start <- function(){
   # Explanation
-  b.b.colorHist()
+  c.b.colorHist()
 
   # Explanation
-  b.c.step2()
+  c.c.step2()
 }
 
 #' @title Feature Extraction - Step 1
@@ -27,7 +27,8 @@ b.a.feature.start <- function(){
 #' ...
 #'
 #' @author Vitali Friesen
-b.b.colorHist <- function(){
+c.b.colorHist <- function(){
+  library(png)
   # set number of buckets per color
   buckets = 16
   # calculate for each image
@@ -47,7 +48,11 @@ b.b.colorHist <- function(){
       })
     )
   }))
+  # cut the path from the row names
   rownames(colHist) <- substr(rownames(colHist),nchar(rownames(colHist))-28,nchar(rownames(colHist)))
+
+  # sort rows by their row names
+  colHist <- colHist[ order(row.names(colHist)), ]
 }
 
 #' @title Feature Extraction - Step 2
@@ -57,6 +62,6 @@ b.b.colorHist <- function(){
 #' ...
 #'
 #' @author
-b.c.step2 <- function(){
+c.c.step2 <- function(){
 
 }

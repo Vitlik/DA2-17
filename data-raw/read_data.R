@@ -23,37 +23,24 @@ rasterImage(img[185:235,325:425,], 1, 1, 2, 2, interpolate=FALSE)
 # we need to make it an vector
 imgV <- as.vector(img)
 
-clasVit <- read.csv("data-raw/ClassificationList-Vit.csv",sep = ";")
+clasColin <- read.csv("data-raw/classes_full_size/ClassificationList-Colin.csv", sep = ";")
+clasMaren <- read.csv("data-raw/classes_full_size/ClassificationList-Maren.csv", sep = ";")
+clasNils <- read.csv("data-raw/classes_full_size/ClassificationList-Nils.CSV", sep = ";")
+clasNils2 <- read.csv("data-raw/classes_full_size/ClassificationList-Nils2.CSV", sep = ";")
+clasSascha <- read.csv("data-raw/classes_full_size/ClassificationList-Sascha.csv", sep = ";")
+clasTac <- read.csv("data-raw/classes_full_size/ClassificationList-Tac.csv", sep = ";")
+clasVit <- read.csv("data-raw/classes_full_size/ClassificationList-Vit.csv", sep = ";")
+
+clasAll <- rbind(clasColin, rbind(clasMaren, rbind(clasNils, rbind(clasNils2,
+                  rbind(clasSascha,rbind(clasTac, clasVit))))))
+clasAll <- clasAll[order(clasAll[,1]),]
+rownames(clasAll) <- clasAll[,1]
+clasAll <- clasAll[, 2:3]
+
+devtools::use_data(clasAll, overwrite = T)
 
 
-devtools::use_data(imgV, overwrite = T)
-devtools::use_data(clasVit, overwrite = T)
-
-set.seed(77)
-
-imgIndexRand <- sample(1:length(imgList),length(imgList))
-blocks <- new.env()
-
-blockCreator <- function(x, y, bucketNum, randList){
-  lastIndexLeftTrainBlock <- round(length(randList) / bucketNum * (x-1))
-  firstIndexRightTrainBlock <- round(length(randList) / bucketNum * x + 1)
-  trainName <- paste("train", toString(bucketNum+1-x), sep="")
-  assign(trainName,
-         c(ifelse(lastIndexLeftTrainBlock != 0,
-                  randList[1:lastIndexLeftTrainBlock],
-                    numeric(0)),
-           ifelse(firstIndexRightTrainBlock < length(randList),
-                  randList[firstIndexRightTrainBlock:length(randList)],
-                  numeric(0))),
-         envir=blocks)
-
-  firstIndexTestBlock <- round(length(randList) / bucketNum * (x-1) + 1)
-  lastIndexTestBlock <- round(length(randList) / bucketNum * x)
-  testName <- paste("test", toString(bucketNum+1-x), sep="")
-  assign(testName,
-         randList[firstIndexTestBlock:lastIndexTestBlock],
-         envir=blocks)
-}
-blockNum = 10
-
-bin <- sapply(blockNum:1, closure, bucketNum=blockNum, randList=imgIndexRand)
+# Diff in Classes
+test <- list.files("data-raw/IMG/CS CZ/Sascha/",full.names = T, ignore.case = F, recursive = T)
+length(test)
+length(clasSascha[,1])

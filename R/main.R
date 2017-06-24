@@ -48,19 +48,23 @@ a.b.main.image.recognition <- function(){
   z.z.util.set.environment()
   cat("\n")
 
-  message("1. Feature extraction")
-  b.a.feature.start()
+  message("1. Preprocessing")
+  b.a.preprocessing.start()
   cat("\n")
 
-  message("2. Classifier 1")
-  c.a.classifier1.start()
+  message("2. Feature extraction")
+  c.a.feature.start()
   cat("\n")
 
-  message("3. Classifier 2")
-  d.a.classifier2.start()
+  message("3. Random Forest")
+  d.a.randomForest.start()
   cat("\n")
 
-  message("4. Evaluation / Comparison")
-  e.a.evaluate.start()
+  message("4. Artificial Neural Networks")
+  e.a.classifier2.start()
+  cat("\n")
+
+  message("5. Evaluation / Comparison")
+  f.a.evaluate.start()
   cat("\n")
 }

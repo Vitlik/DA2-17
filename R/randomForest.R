@@ -1,5 +1,5 @@
 
-#' @title Classifier 2 -  Wrapper function
+#' @title Classifier 1 -  Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'
@@ -12,7 +12,9 @@
 #' }
 #'
 #' @author Vitali Friesen
-d.a.classifier2.start <- function(){
+d.a.randomForest.start <- function(){
+  library(randomForest)
+
   # Explanation
   d.b.step1()
 
@@ -20,7 +22,7 @@ d.a.classifier2.start <- function(){
   d.c.step2()
 }
 
-#' @title Classifier 2 - Step 1
+#' @title Classifier 1 - Step 1
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'
@@ -28,10 +30,12 @@ d.a.classifier2.start <- function(){
 #'
 #' @author
 d.b.step1 <- function(){
+  set.seed(1337)
 
+  fore <- randomForest()
 }
 
-#' @title Classifier 2 - Step 2
+#' @title Classifier 1 - Step 2
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'
