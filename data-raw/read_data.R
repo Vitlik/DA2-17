@@ -31,16 +31,23 @@ clasSascha <- read.csv("data-raw/classes_full_size/ClassificationList-Sascha.csv
 clasTac <- read.csv("data-raw/classes_full_size/ClassificationList-Tac.csv", sep = ";")
 clasVit <- read.csv("data-raw/classes_full_size/ClassificationList-Vit.csv", sep = ";")
 
+# merge all classifications into one matrix
 clasAll <- rbind(clasColin, rbind(clasMaren, rbind(clasNils, rbind(clasNils2,
                   rbind(clasSascha,rbind(clasTac, clasVit))))))
+# sort matrix by name column
 clasAll <- clasAll[order(clasAll[,1]),]
+# set rownames to name column
 rownames(clasAll) <- clasAll[,1]
+# discard name column
 clasAll <- clasAll[, 2:3]
+# add new column for "person seen"
+clasAll <- cbind(clasAll, P = rowSums(clasAll))
+# overwrite elements where both classes are seen by one
+clasAll$P[clasAll$P == 2] <- 1
+# check if it worked
+clasAll[20:40,]
 
+# write classes to file
 devtools::use_data(clasAll, overwrite = T)
 
 
-# Diff in Classes
-test <- list.files("data-raw/IMG/CS CZ/Sascha/",full.names = T, ignore.case = F, recursive = T)
-length(test)
-length(clasSascha[,1])
