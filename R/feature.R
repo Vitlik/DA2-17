@@ -1,4 +1,3 @@
-
 #' @title Feature Extraction -  Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
@@ -15,9 +14,12 @@
 c.a.feature.start <- function(){
   # Explanation
   c.b.colorHist()
-
+  
   # Explanation
   c.c.step2()
+  
+  # Histogram of Oriented Gradients
+  b.d.hog()
 }
 
 #' @title Feature Extraction - Step 1
@@ -50,7 +52,7 @@ c.b.colorHist <- function(){
   }))
   # cut the path from the row names
   rownames(colHist) <- substr(rownames(colHist),nchar(rownames(colHist))-28,nchar(rownames(colHist)))
-
+  
   # sort rows by their row names
   colHist <- colHist[ order(row.names(colHist)), ]
 }
@@ -63,5 +65,28 @@ c.b.colorHist <- function(){
 #'
 #' @author
 c.c.step2 <- function(){
+  
+}
 
+
+#' @title Feature Extraction - Step 2 (Histogram of Oriented Gradients)
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'
+#' ...
+#'
+#' @author Sascha Di Bernardo
+b.d.hog <- function(){
+  
+  image = readImage("C:/Users/Sascha/Downloads/Sascha/Sascha/hl 2017-06-14 17-57-51-49.png")
+  
+  # filt = gamma_correction("C:/Users/Sascha/Downloads/Sascha/Sascha/", gamma = 0.5)
+  
+  # grey = rgb_2gray(image)
+  
+  # res = HOG(image, cells = 9, orientations = 4)
+  
+  # res = HOG_apply("C:/Users/Sascha/Downloads/Sascha/Sascha/", cells = 9, orientations = 4)
+  
+  # imageShow(grey)
 }
