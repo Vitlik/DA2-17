@@ -35,3 +35,4 @@ vignettes/*.pdf
 # Raw Picture Data
 *.png
 !hl 2017-06-14 18-05-42-48.png
+.Rproj.user

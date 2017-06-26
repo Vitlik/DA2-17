@@ -23,37 +23,31 @@ rasterImage(img[185:235,325:425,], 1, 1, 2, 2, interpolate=FALSE)
 # we need to make it an vector
 imgV <- as.vector(img)
 
-clasVit <- read.csv("data-raw/ClassificationList-Vit.csv",sep = ";")
+clasColin <- read.csv("data-raw/classes_full_size/ClassificationList-Colin.csv", sep = ";")
+clasMaren <- read.csv("data-raw/classes_full_size/ClassificationList-Maren.csv", sep = ";")
+clasNils <- read.csv("data-raw/classes_full_size/ClassificationList-Nils.CSV", sep = ";")
+clasNils2 <- read.csv("data-raw/classes_full_size/ClassificationList-Nils2.CSV", sep = ";")
+clasSascha <- read.csv("data-raw/classes_full_size/ClassificationList-Sascha.csv", sep = ";")
+clasTac <- read.csv("data-raw/classes_full_size/ClassificationList-Tac.csv", sep = ";")
+clasVit <- read.csv("data-raw/classes_full_size/ClassificationList-Vit.csv", sep = ";")
+
+# merge all classifications into one matrix
+clasAll <- rbind(clasColin, rbind(clasMaren, rbind(clasNils, rbind(clasNils2,
+                  rbind(clasSascha,rbind(clasTac, clasVit))))))
+# sort matrix by name column
+clasAll <- clasAll[order(clasAll[,1]),]
+# set rownames to name column
+rownames(clasAll) <- clasAll[,1]
+# discard name column
+clasAll <- clasAll[, 2:3]
+# add new column for "person seen"
+clasAll <- cbind(clasAll, P = rowSums(clasAll))
+# overwrite elements where both classes are seen by one
+clasAll$P[clasAll$P == 2] <- 1
+# check if it worked
+clasAll[20:40,]
+
+# write classes to file
+devtools::use_data(clasAll, overwrite = T)
 
 
-devtools::use_data(imgV, overwrite = T)
-devtools::use_data(clasVit, overwrite = T)
-
-set.seed(77)
-
-imgIndexRand <- sample(1:length(imgList),length(imgList))
-blocks <- new.env()
-
-blockCreator <- function(x, y, bucketNum, randList){
-  lastIndexLeftTrainBlock <- round(length(randList) / bucketNum * (x-1))
-  firstIndexRightTrainBlock <- round(length(randList) / bucketNum * x + 1)
-  trainName <- paste("train", toString(bucketNum+1-x), sep="")
-  assign(trainName,
-         c(ifelse(lastIndexLeftTrainBlock != 0,
-                  randList[1:lastIndexLeftTrainBlock],
-                    numeric(0)),
-           ifelse(firstIndexRightTrainBlock < length(randList),
-                  randList[firstIndexRightTrainBlock:length(randList)],
-                  numeric(0))),
-         envir=blocks)
-
-  firstIndexTestBlock <- round(length(randList) / bucketNum * (x-1) + 1)
-  lastIndexTestBlock <- round(length(randList) / bucketNum * x)
-  testName <- paste("test", toString(bucketNum+1-x), sep="")
-  assign(testName,
-         randList[firstIndexTestBlock:lastIndexTestBlock],
-         envir=blocks)
-}
-blockNum = 10
-
-bin <- sapply(blockNum:1, closure, bucketNum=blockNum, randList=imgIndexRand)

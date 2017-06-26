@@ -1,4 +1,3 @@
-
 #' @title Feature Extraction -  Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
@@ -7,17 +6,20 @@
 #'
 #' It executes these functions:
 #' \enumerate{
-#'   \item \code{\link{b.b.colorHist}}
-#'   \item \code{\link{b.c.step2}}
+#'   \item \code{\link{c.b.colorHist}}
+#'   \item \code{\link{c.c.step2}}
 #' }
 #'
 #' @author Vitali Friesen
-b.a.feature.start <- function(){
+c.a.feature.start <- function(){
   # Explanation
-  b.b.colorHist()
-
+  c.b.colorHist()
+  
   # Explanation
-  b.c.step2()
+  c.c.step2()
+  
+  # Histogram of Oriented Gradients
+  b.d.hog()
 }
 
 #' @title Feature Extraction - Step 1
@@ -27,7 +29,8 @@ b.a.feature.start <- function(){
 #' ...
 #'
 #' @author Vitali Friesen
-b.b.colorHist <- function(){
+c.b.colorHist <- function(){
+  library(png)
   # set number of buckets per color
   buckets = 16
   # calculate for each image
@@ -47,7 +50,11 @@ b.b.colorHist <- function(){
       })
     )
   }))
+  # cut the path from the row names
   rownames(colHist) <- substr(rownames(colHist),nchar(rownames(colHist))-28,nchar(rownames(colHist)))
+  
+  # sort rows by their row names
+  colHist <- colHist[ order(row.names(colHist)), ]
 }
 
 #' @title Feature Extraction - Step 2
@@ -57,6 +64,29 @@ b.b.colorHist <- function(){
 #' ...
 #'
 #' @author
-b.c.step2 <- function(){
+c.c.step2 <- function(){
+  
+}
 
+
+#' @title Feature Extraction - Step 2 (Histogram of Oriented Gradients)
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'
+#' ...
+#'
+#' @author Sascha Di Bernardo
+b.d.hog <- function(){
+  
+  image = readImage("C:/Users/Sascha/Downloads/Sascha/Sascha/hl 2017-06-14 17-57-51-49.png")
+  
+  # filt = gamma_correction("C:/Users/Sascha/Downloads/Sascha/Sascha/", gamma = 0.5)
+  
+  # grey = rgb_2gray(image)
+  
+  # res = HOG(image, cells = 9, orientations = 4)
+  
+  # res = HOG_apply("C:/Users/Sascha/Downloads/Sascha/Sascha/", cells = 9, orientations = 4)
+  
+  # imageShow(grey)
 }
