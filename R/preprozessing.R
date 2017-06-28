@@ -28,38 +28,38 @@ b.a.preprocessing.start <- function(){
 #'
 #' @author Vitali Friesen & Tassilo Tobollik
 b.b.createTrainTestDataIndexes <- function(){
-  set.seed(77)
 
-  imgList <- list.files("data-raw/IMG/CS CZ",full.names = T, ignore.case = F, recursive = T)
-
-  imgIndexRand <- sample(1:length(imgList),length(imgList))
-  blocks <- new.env()
-
-  blockCreator <- function(x, y, bucketNum, randList){
+  blockCreator <- function(x, bucketNum, randList){
     lastIndexLeftTrainBlock <- round(length(randList) / bucketNum * (x-1))
     firstIndexRightTrainBlock <- round(length(randList) / bucketNum * x + 1)
-    trainName <- paste("train", toString(bucketNum+1-x), sep="")
-    assign(trainName,
-           c(ifelse(lastIndexLeftTrainBlock != 0,
-                    randList[1:lastIndexLeftTrainBlock],
-                    numeric(0)),
-             ifelse(firstIndexRightTrainBlock < length(randList),
-                    randList[firstIndexRightTrainBlock:length(randList)],
-                    numeric(0))),
-           envir=blocks)
+    trainName <- paste0("train", toString(bucketNum+1-x))
+    if(lastIndexLeftTrainBlock > 0)
+      trainLeftBlock <- randList[1:lastIndexLeftTrainBlock]
+    else
+      trainLeftBlock <- numeric(0)
+    if(firstIndexRightTrainBlock < length(randList))
+      trainRightBlock <- randList[firstIndexRightTrainBlock:length(randList)]
+    else
+      trainRightBlock <- numeric(0)
+    assign(trainName, c(trainLeftBlock, trainRightBlock), envir=blocks)
 
     firstIndexTestBlock <- round(length(randList) / bucketNum * (x-1) + 1)
     lastIndexTestBlock <- round(length(randList) / bucketNum * x)
-    testName <- paste("test", toString(bucketNum+1-x), sep="")
+    testName <- paste0("test", toString(bucketNum+1-x))
     assign(testName,
            randList[firstIndexTestBlock:lastIndexTestBlock],
            envir=blocks)
   }
 
-  blockNum <- 10
+  imgList <- list.files("data-raw/IMG/CS CZ",full.names = T, ignore.case = F, recursive = T)
+
+  set.seed(77)
+  imgIndexRand <- sample(1:length(imgList),length(imgList))
+  blocks <<- new.env()
+
+  blockNum <<- 10
+
   bin <- sapply(blockNum:1, blockCreator, bucketNum=blockNum, randList=imgIndexRand)
-  # retrieve the variable again
-  #mget("train1",envir=blocks)
 }
 
 #' @title Feature Extraction - Step 2
