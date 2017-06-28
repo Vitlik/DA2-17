@@ -61,7 +61,7 @@ d.b.step1 <- function(trainData){
 
   # TODO exchange bucketData with all other column of trainData
   #Train the randomForest model on the train data
-  parallelRfModel <- train(as.factor(P) ~ bucketData,
+  parallelRfModel <- train(as.factor(P) ~ bucketData, # maybe trainData[,-(ncol(trainData))]
                data=trainData,
                method = "rf",
                importance=TRUE,
