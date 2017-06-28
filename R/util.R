@@ -199,6 +199,57 @@ z.d.loglik = function(lambda, data) {
   return((-n/2) * a + (lambda - 1) * b)
 }
 
+#' @title Util - Function that converts RGBA to RGB
+#' @description To get (back) to the overview of all steps and functions use this link: \code{\link{a.a.main}}
+#'
+#' This function transforms the given RGBA values to RGB values.
+#' Thereby r,g,b are the background RGB colors, r2,g2,b2 are the foreground picture colors of the RGBA image
+#' and a is the alpha value of the RGBA image. 
+#'
+#' @author Tassilo Tobollik
+z.e.RGBAtoRGB <- function(r = 0, g = 0, b = 0, a, r2,g2,b2){
+  r3 <- floor(((1 - a) * r2) + (a * r))
+  g3 <- floor(((1 - a) * g2) + (a * g))
+  b3 <- floor(((1 - a) * b2) + (a * b))
+  rgb <- c(r3,g3,b3)
+  names(rgb) <- c("red","green","blue")
+  return(rgb)
+}
+
+#' @title Util - function that rasters and displays an image
+#' @description To get (back) to the overview of all steps and functions use this link: \code{\link{a.a.main}}
+#'
+#'  
+#'
+#' @author Vitali Friesen, Tassilo Tobollik
+z.f.displayRgbImage <- function(image, x1 = NULL, x2 = NULL, y1 = NULL, y2 = NULL, interpol = F){
+  if(is.null(x1) && is.null(x2) && is.null(y1) && is.null(y2)){
+    #Raster the whole image
+    plot(1:2, type='n')
+    rasterImage(image, 1,1,2,2, interpolate = interpol) 
+  }else{
+    #Raster just a part of the image
+    rasterImage(image[x1:x2,y1:y2,], 1,1,2,2, interpolate = interpol) 
+  }
+}
+
+#' @title Util - function that reads in an image from the given path
+#' @description To get (back) to the overview of all steps and functions use this link: \code{\link{a.a.main}}
+#'
+#'  
+#'
+#' @author Tassilo Tobollik
+z.g.readImage <- (path, asPng = F){
+  library(png)
+  if(asPng){
+    image <- readPNG(path)
+  }else{
+    #Allows better display uses
+    image <- readImage(path)
+  }
+  return(image)
+}
+
 #' @title Util - Environment Setting
 #' @description To get (back) to the overview of all steps and functions use this link: \code{\link{a.a.main}}
 #'
@@ -213,13 +264,3 @@ z.z.util.set.environment <- function(){
   ercis.red      <<- rgb(133/255,  35/255,  57/255, 1)
   ercis.lightred <<- rgb(200/255, 156/255, 166/255, 1)
 }
-
-# Function that converts RGBA to RGB
-RGBAtoRGB = function(r = 0, g = 0, b = 0, a, r2,g2,b2){
-  r3 <- floor(((1 - a) * r2) + (a * r))
-  g3 <- floor(((1 - a) * g2) + (a * g))
-  b3 <- floor(((1 - a) * b2) + (a * b))
-  rgb <- c(r3,g3,b3)
-  names(rgb) <- c("red","green","blue")
-  return(rgb)
-} 
