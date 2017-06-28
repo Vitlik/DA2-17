@@ -24,7 +24,7 @@ d.a.randomForest.start <- function(){
   #Loop through the train/test-data-sets
   sapply(1:blockNum, function(curBlock){
     # retrieve the indexes of the corresponding train block
-    trainBlockIndexes <- mget(paste0("train", curBlock), envir=blocks)
+    trainBlockIndexes <- get(paste0("train", curBlock), envir=blocks)
 
     # for calculating the processing time: save start time
     start.time <- Sys.time()
