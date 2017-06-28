@@ -59,9 +59,9 @@ d.a.randomForest.start <- function(){
 d.b.step1 <- function(trainData){
   set.seed(1337)
 
-
+  # TODO exchange bucketData with all other column of trainData
   #Train the randomForest model on the train data
-  parallelRfModel <- train(as.factor(characterVisible) ~ bucketData,
+  parallelRfModel <- train(as.factor(P) ~ bucketData,
                data=trainData,
                method = "rf",
                importance=TRUE,
@@ -86,6 +86,7 @@ d.c.step2 <- function(testData){
 
   #Predict the test data on the trained model parallalized
   beginCluster()
-  preds_rf <- clusterR(testData, raster::predict, args = list(model = parallelRfModel))
+  preds_rf <- clusterR(testData[,-(ncol(testData))], raster::predict,
+                       args = list(model = parallelRfModel))
   endCluster()
 }
