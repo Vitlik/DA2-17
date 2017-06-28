@@ -147,6 +147,7 @@ b.e.transformGreyscale <- function(image) {
 #' ...
 #'
 #' @author Tassilo Tobollik
+#' Takes aprox. 0.38 sec/image
 b.f.transformHistEqualRgb <- function(image, filename) {
   #Package installation
   #source("https://bioconductor.org/biocLite.R")
@@ -160,6 +161,35 @@ b.f.transformHistEqualRgb <- function(image, filename) {
   
   writePNG(equalImage,paste(filename2,"Equal.png", sep = ""))
 }
+
+source("https://bioconductor.org/biocLite.R")
+biocLite("EBImage")
+
+image1 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-33-48.png")
+image2 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-33-48Norm.png")
+image3 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-47-48.png")
+image4 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-47-48Norm.png")
+image5 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-54-48.png")
+image6 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-54-48Norm.png")
+image7 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-58-48.png")
+image8 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-58-48Norm.png")
+image9 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-03-02-48.png")
+image10 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-03-02-48Norm.png")
+
+start.time <- Sys.time()
+b.f.transformHistEqualRgb(image1,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-33-48.png")
+b.f.transformHistEqualRgb(image2,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-33-48Norm.png")
+b.f.transformHistEqualRgb(image3,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-47-48.png")
+b.f.transformHistEqualRgb(image4,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-47-48Norm.png")
+b.f.transformHistEqualRgb(image5,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-54-48.png")
+b.f.transformHistEqualRgb(image6,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-54-48Norm.png")
+b.f.transformHistEqualRgb(image7,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-58-48.png")
+b.f.transformHistEqualRgb(image8,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-58-48Norm.png")
+b.f.transformHistEqualRgb(image9,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-03-02-48.png")
+b.f.transformHistEqualRgb(image10,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-03-02-48Norm.png")
+end.time <- Sys.time()
+time.taken <- end.time - start.time
+time.taken
 
 #' @title Preprocessing - Transform grayscale images using histogram equalization
 #' @description To get (back) to the overview of all steps and functions use this link:
