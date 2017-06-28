@@ -8,7 +8,7 @@
 #' It executes these functions:
 #' \enumerate{
 #'   \item \code{\link{b.b.createTrainTestDataIndexes}}
-#'   \item \code{\link{b.c.step2}}
+#'   \item \code{\link{b.c.loadClassData}}
 #' }
 #'
 #' @author Vitali Friesen
@@ -17,7 +17,7 @@ b.a.preprocessing.start <- function(){
   b.b.createTrainTestDataIndexes()
 
   # Explanation
-  b.c.step2()
+  b.c.loadClassData()
 }
 
 #' @title Preprocessing - Create Train Test DataSet Indexes
@@ -26,9 +26,11 @@ b.a.preprocessing.start <- function(){
 #'
 #' ...
 #'
-#' @author Vitali Friesen
+#' @author Vitali Friesen & Tassilo Tobollik
 b.b.createTrainTestDataIndexes <- function(){
   set.seed(77)
+
+  imgList <- list.files("data-raw/IMG/CS CZ",full.names = T, ignore.case = F, recursive = T)
 
   imgIndexRand <- sample(1:length(imgList),length(imgList))
   blocks <- new.env()
@@ -53,8 +55,8 @@ b.b.createTrainTestDataIndexes <- function(){
            randList[firstIndexTestBlock:lastIndexTestBlock],
            envir=blocks)
   }
-  blockNum = 10
 
+  blockNum <- 10
   bin <- sapply(blockNum:1, blockCreator, bucketNum=blockNum, randList=imgIndexRand)
   # retrieve the variable again
   #mget("train1",envir=blocks)
@@ -67,6 +69,33 @@ b.b.createTrainTestDataIndexes <- function(){
 #' ...
 #'
 #' @author
-b.c.step2 <- function(){
+b.c.loadClassData <- function(){
+  clasColin <- read.csv("data-raw/classes_full_size/ClassificationList-Colin.csv", sep = ";")
+  clasMaren <- read.csv("data-raw/classes_full_size/ClassificationList-Maren.csv", sep = ";")
+  clasNils <- read.csv("data-raw/classes_full_size/ClassificationList-Nils.CSV", sep = ";")
+  clasNils2 <- read.csv("data-raw/classes_full_size/ClassificationList-Nils2.CSV", sep = ";")
+  clasSascha <- read.csv("data-raw/classes_full_size/ClassificationList-Sascha.csv", sep = ";")
+  clasTac <- read.csv("data-raw/classes_full_size/ClassificationList-Tac.csv", sep = ";")
+  clasVit <- read.csv("data-raw/classes_full_size/ClassificationList-Vit.csv", sep = ";")
 
+  # merge all classifications into one matrix
+  clasAll <- rbind(clasColin, rbind(clasMaren, rbind(clasNils, rbind(clasNils2,
+                   rbind(clasSascha,rbind(clasTac, clasVit))))))
+  # sort matrix by name column
+  clasAll <- clasAll[order(clasAll[,1]),]
+  # set rownames to name column
+  rownames(clasAll) <- clasAll[,1]
+  # discard name column
+  clasAll <- clasAll[, 2:3]
+  # replace NA with zeros because some CSV were empty for a 0
+  clasAll[is.na(clasAll)] <- 0
+  # add new column for "person seen"
+  clasAll <- cbind(clasAll, P = rowSums(clasAll))
+  # overwrite elements where both classes are seen by one
+  clasAll$P[clasAll$P == 2] <- 1
+  # check if it worked
+  clasAll[20:40,]
+
+  # write classes to file
+  devtools::use_data(clasAll, overwrite = T)
 }

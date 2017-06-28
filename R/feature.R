@@ -12,12 +12,13 @@
 #'
 #' @author Vitali Friesen
 c.a.feature.start <- function(){
+  library(devtools)
   # Explanation
   c.b.colorHist()
-  
+
   # Explanation
   c.c.step2()
-  
+
   # Histogram of Oriented Gradients
   b.d.hog()
 }
@@ -31,10 +32,14 @@ c.a.feature.start <- function(){
 #' @author Vitali Friesen
 c.b.colorHist <- function(){
   library(png)
+  # load image list
+  imgList <- list.files("data-raw/IMG/CS CZ",full.names = T, ignore.case = F, recursive = T)
+  #imgList <- list.files("data-raw/IMG/CS CZ halved",full.names = T, ignore.case = F, recursive = T)
+  #imgList <- list.files("data-raw/IMG/CS CZ quarter",full.names = T, ignore.case = F, recursive = T)
   # set number of buckets per color
   buckets = 16
   # calculate for each image
-  colHist <- t(sapply(imgListQ, function(imgPath){
+  colHist <- t(sapply(imgList, function(imgPath){
     # load image information into curImg
     curImg <- as.vector(readPNG(imgPath))
     as.vector(
@@ -52,9 +57,13 @@ c.b.colorHist <- function(){
   }))
   # cut the path from the row names
   rownames(colHist) <- substr(rownames(colHist),nchar(rownames(colHist))-28,nchar(rownames(colHist)))
-  
+
   # sort rows by their row names
   colHist <- colHist[ order(row.names(colHist)), ]
+
+  # store  variable in file
+  colorHistOriginal <- colHist
+  devtools::use_data(colorHistOriginal, overwrite = T)
 }
 
 #' @title Feature Extraction - Step 2
@@ -65,7 +74,7 @@ c.b.colorHist <- function(){
 #'
 #' @author
 c.c.step2 <- function(){
-  
+
 }
 
 
@@ -77,16 +86,16 @@ c.c.step2 <- function(){
 #'
 #' @author Sascha Di Bernardo
 b.d.hog <- function(){
-  
+
   image = readImage("C:/Users/Sascha/Downloads/Sascha/Sascha/hl 2017-06-14 17-57-51-49.png")
-  
+
   # filt = gamma_correction("C:/Users/Sascha/Downloads/Sascha/Sascha/", gamma = 0.5)
-  
+
   # grey = rgb_2gray(image)
-  
+
   # res = HOG(image, cells = 9, orientations = 4)
-  
+
   # res = HOG_apply("C:/Users/Sascha/Downloads/Sascha/Sascha/", cells = 9, orientations = 4)
-  
+
   # imageShow(grey)
 }
