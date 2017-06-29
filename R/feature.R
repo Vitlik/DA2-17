@@ -57,7 +57,8 @@ c.b.colorHist <- function(){
   }))
   # cut the path from the row names
   rownames(colHist) <- substr(rownames(colHist),nchar(rownames(colHist))-28,nchar(rownames(colHist)))
-
+  colnames(trainData) <- c(paste0("r",1:16), paste0("g",1:16), paste0("b",1:16))
+  
   # sort rows by their row names
   colHist <- colHist[ order(row.names(colHist)), ]
 
