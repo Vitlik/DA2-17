@@ -13,11 +13,41 @@
 #'
 #' @author Vitali Friesen
 b.a.preprocessing.start <- function(){
+  source("https://bioconductor.org/biocLite.R")
+  biocLite("EBImage")
+  
   # Explanation
   b.b.createTrainTestDataIndexes()
 
   # Explanation
   b.c.loadClassData()
+  
+  #Create preprocessed images
+  
+  folder <- "data-raw\IMG\CS CZ"
+  
+  #The following works only for folders with images in them not with ones with subfolders.
+  dirList <- list.dirs("data-raw/IMG/CS CZ",full.names = T, recursive = F)
+  
+  sapply(1:length(dirList), function(y){
+    name <- dirList[y]
+    subfolders <- list.dirs(name, full.names = T, recursive = F)
+    
+    #Check if the folder contains no subfolders
+    if(length(subfolders) == 0){
+      imgList <- list.files(name, full.names = T, ignore.case = F, recursive = F)
+      
+      sapply(1:length(imgList), function(x){
+        filename <- imgList[x]
+        image <- readPNG(filename)
+        namePos <- gregexpr(name, filename)
+        fileending <- substr(filename, namePos[[1]]+nchar(name)+1, nchar(filename))
+        filename <- paste(paste(substr(filename, 1, namePos[[1]]-1), paste(paste("HistEqual/", name, sep = ""), "/", sep = ""), sep = ""), fileending, sep = "")
+        b.f.transformHistEqualRgb(image, filename)
+        b.d.rgbNorm(imgList[x])
+      })
+    }
+  })
 }
 
 #' @title Preprocessing - Create Train Test DataSet Indexes
@@ -109,6 +139,7 @@ b.c.loadClassData <- function(){
 #' @author Tassilo Tobollik
 #Takes approx. 1.1294 secs per screenshot
 b.d.rgbNorm <- function(filename, x = 480, y = 640, z = 3){
+  library(png)
   pos <- gregexpr(".png", filename)
   filename2 <- substr(filename, 1, (pos[[1]]-1))
   
@@ -148,48 +179,26 @@ b.e.transformGreyscale <- function(image) {
 #'
 #' @author Tassilo Tobollik
 #' Takes aprox. 0.38 sec/image
-b.f.transformHistEqualRgb <- function(image, filename) {
+b.f.transformHistEqualRgb <- function(image = NULL, filename) {
   #Package installation
   #source("https://bioconductor.org/biocLite.R")
   #biocLite("EBImage")
   library(EBImage)
   
+  if(is.null(image)){
+    image <- readPNG(filename)
+  }
+  
   pos <- gregexpr(".png", filename)
   filename2 <- substr(filename, 1, (pos[[1]]-1))
+  
+  #pos2 <- gregexpr("CZ/", filename)
+  #person <- substr(filename, pos2[[1]]+1, (pos[[1]]-1))
   
   equalImage <- equalize(image)
   
   writePNG(equalImage,paste(filename2,"Equal.png", sep = ""))
 }
-
-source("https://bioconductor.org/biocLite.R")
-biocLite("EBImage")
-
-image1 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-33-48.png")
-image2 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-33-48Norm.png")
-image3 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-47-48.png")
-image4 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-47-48Norm.png")
-image5 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-54-48.png")
-image6 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-54-48Norm.png")
-image7 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-58-48.png")
-image8 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-58-48Norm.png")
-image9 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-03-02-48.png")
-image10 <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-03-02-48Norm.png")
-
-start.time <- Sys.time()
-b.f.transformHistEqualRgb(image1,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-33-48.png")
-b.f.transformHistEqualRgb(image2,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-33-48Norm.png")
-b.f.transformHistEqualRgb(image3,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-47-48.png")
-b.f.transformHistEqualRgb(image4,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-47-48Norm.png")
-b.f.transformHistEqualRgb(image5,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-54-48.png")
-b.f.transformHistEqualRgb(image6,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-54-48Norm.png")
-b.f.transformHistEqualRgb(image7,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-58-48.png")
-b.f.transformHistEqualRgb(image8,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-02-58-48Norm.png")
-b.f.transformHistEqualRgb(image9,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-03-02-48.png")
-b.f.transformHistEqualRgb(image10,"C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/hl 2017-06-14 18-03-02-48Norm.png")
-end.time <- Sys.time()
-time.taken <- end.time - start.time
-time.taken
 
 #' @title Preprocessing - Transform grayscale images using histogram equalization
 #' @description To get (back) to the overview of all steps and functions use this link:
@@ -198,9 +207,15 @@ time.taken
 #' ...
 #'
 #' @author Tassilo Tobollik
-b.g.transformHistEqualGray <- function(images) {
+b.g.transformHistEqualGray <- function(image = NULL, filename) {
   library(imager)
-  sapply(1:length(images),function(image){grayscale(image)})
+  library(png)
+  
+  if(is.null(image)){
+    image <- readImage(filename)
+  }
+  
+  grayscale(image)
 }
 
 #' @title Preprocessing - Display the histogram of an image
