@@ -20,7 +20,7 @@ c.a.feature.start <- function(){
   c.c.step2()
 
   # Histogram of Oriented Gradients
-  b.d.hog()
+  c.d.hog()
 }
 
 #' @title Feature Extraction - Step 1
@@ -86,17 +86,16 @@ c.c.step2 <- function(){
 #' ...
 #'
 #' @author Sascha Di Bernardo
-b.d.hog <- function(){
+c.d.hog <- function(){
+  
+  library(OpenImageR)
+  
+  # applies HOG to all images of the workspace
+  hog1 = HOG_apply("C:/Users/Sascha/Documents/DA2-17-Images/", cells = 16, orientations = 4)
+  save(hog,file="hog_16.Rda")
+  
+  hog2 = HOG_apply("C:/Users/Sascha/Documents/DA2-17-Images/", cells = 9, orientations = 4)
+  save(hog,file="hog_9.Rda")
+  
 
-  image = readImage("C:/Users/Sascha/Downloads/Sascha/Sascha/hl 2017-06-14 17-57-51-49.png")
-
-  # filt = gamma_correction("C:/Users/Sascha/Downloads/Sascha/Sascha/", gamma = 0.5)
-
-  # grey = rgb_2gray(image)
-
-  # res = HOG(image, cells = 9, orientations = 4)
-
-  # res = HOG_apply("C:/Users/Sascha/Downloads/Sascha/Sascha/", cells = 9, orientations = 4)
-
-  # imageShow(grey)
 }
