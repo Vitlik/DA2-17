@@ -43,6 +43,7 @@ a.a.main <- function(){
 #'
 #' @author Vitali Friesen
 a.b.main.image.recognition <- function(){
+  library(ggplot2)
 
   message("0. Loading environment")
   z.z.util.set.environment()

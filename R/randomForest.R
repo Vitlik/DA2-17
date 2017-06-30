@@ -16,6 +16,8 @@ d.a.randomForest.start <- function(){
   library(snow)
   library(caret)
 
+  load("data/blocks.rda")
+  load("data/blockNum.rda")
   load("data/clasAll.rda")
   load("data/colorHistOriginal.rda")
   
@@ -79,7 +81,10 @@ d.b.step1 <- function(trainData){
 
   #Plot the variable importance of the trained model
   variableImportance <- varImp(parallelRfModel)
-  #TODO (Vit): VarImpPlot schöner/farbig machen (ggplot?)
+  #TODO (Vit): VarImpPlot schÃ¶ner/farbig machen (ggplot?)
+  
+  imp <- as.data.frame(importance(rfModel, class = NULL, scale = T, type = 1))
+  
   variableImportance2 <- varImp(rfModel)
   plot(variableImportance)
   plot(variableImportance2)
@@ -103,10 +108,10 @@ d.c.step2 <- function(testData){
                        #args = list(newdata = testData))
   #endCluster()
   #TODO (Tac): Research possible parallelization possibilities
-  #TODO:  Einmal ganze Klasse über alle Bilder laufen lassen und auswerten
+  #TODO:  Einmal ganze Klasse ?ber alle Bilder laufen lassen und auswerten
   pred <- predict(rfModel, testData)
   
-  #TODO (Colin): Evaluation in andere Methode und schön graf. Darstellen mit wichtigen Kennzahlen (Fehler 1., 2. Art und Accuracy)
+  #TODO (Colin): Evaluation in andere Methode und sch?n graf. Darstellen mit wichtigen Kennzahlen (Fehler 1., 2. Art und Accuracy)
   #TODO (Vit): Research how to evaluate the overall accuracy of all test-trees together
   table(pred, testData[,ncol(testData)])
 }
