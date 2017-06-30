@@ -73,6 +73,7 @@ d.b.step1 <- function(trainData){
   #              ntree=2000)
   
   #TODO (all): Run with diff. parameter permutations
+  trainData
   rfModel <- randomForest(as.factor(P) ~ . - P,
                           data=trainData,
                           importance=TRUE,
@@ -80,16 +81,14 @@ d.b.step1 <- function(trainData){
                           ntree=2000)
 
   #Plot the variable importance of the trained model
-  variableImportance <- varImp(parallelRfModel)
-  #TODO (Vit): VarImpPlot schöner/farbig machen (ggplot?)
-  
-  imp <- as.data.frame(importance(rfModel, class = NULL, scale = T, type = 1))
-  
-  variableImportance2 <- varImp(rfModel)
-  plot(variableImportance)
-  plot(variableImportance2)
+  # variableImportance <- varImp(parallelRfModel)
+  #TODO (Vit): VarImpPlot sch?ner/farbig machen (ggplot?)
+  # plot(variableImportance)
   varImpPlot(rfModel)
 }
+
+
+
 
 #' @title Classifier 1 - Step 2
 #' @description To get (back) to the overview of all steps and functions use this link:
@@ -111,9 +110,27 @@ d.c.step2 <- function(testData){
   #TODO:  Einmal ganze Klasse ?ber alle Bilder laufen lassen und auswerten
   pred <- predict(rfModel, testData)
   
-  #TODO (Colin): Evaluation in andere Methode und sch?n graf. Darstellen mit wichtigen Kennzahlen (Fehler 1., 2. Art und Accuracy)
   #TODO (Vit): Research how to evaluate the overall accuracy of all test-trees together
-  table(pred, testData[,ncol(testData)])
 }
 
-d.d.evaluation <- function(){}
+
+
+
+d.d.evaluation <- function(pred){
+  #TODO (Colin): Evaluation in andere Methode und sch?n graf. Darstellen mit wichtigen Kennzahlen (Fehler 1., 2. Art und Accuracy)
+  
+  # Compute results
+  
+  # dummy <- seq(1,1,length.out=268)
+  # result <- table(dummy, testData[,ncol(testData)])
+  result <- table(pred, testData[,ncol(testData)])
+  colnames(result)=c("No person","Person")
+  rownames(result)=c("No person predicted","Person predicted")
+  
+  
+  acc <- (result["0","0"]+result["1","1"])/sum(result)
+  
+  Error1 <- result["Person predicted","No person"]
+  Error2 <- result["No person predicted","Person"]
+  
+}
