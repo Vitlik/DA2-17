@@ -62,13 +62,13 @@ d.b.step1 <- function(trainData){
   set.seed(1337)
 
   #Train the randomForest model on the train data
-  #-P?
-  parallelRfModel <- train(as.factor(P) ~ . - P, # maybe trainData[,-(ncol(trainData))]
-               data=trainData,
-               method = "rf",
-               importance=TRUE,
-               #Parameter-Tuning
-               ntree=2000)
+  # #-P?
+  # parallelRfModel <- train(as.factor(P) ~ . - P, # maybe trainData[,-(ncol(trainData))]
+  #              data=trainData,
+  #              method = "rf",
+  #              importance=TRUE,
+  #              #Parameter-Tuning
+  #              ntree=2000)
   
   #TODO (all): Run with diff. parameter permutations
   rfModel <- randomForest(as.factor(P) ~ . - P,
