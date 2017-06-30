@@ -55,11 +55,14 @@ b.b.createTrainTestDataIndexes <- function(){
 
   set.seed(77)
   imgIndexRand <- sample(1:length(imgList),length(imgList))
-  blocks <<- new.env()
+  blocks <- new.env()
 
-  blockNum <<- 10
+  blockNum <- 10
 
   bin <- sapply(blockNum:1, blockCreator, bucketNum=blockNum, randList=imgIndexRand)
+  
+  devtools::use_data(blocks, overwrite = T)
+  devtools::use_data(blockNum, overwrite = T)
 }
 
 #' @title Feature Extraction - Step 2

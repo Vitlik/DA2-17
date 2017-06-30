@@ -14,7 +14,7 @@
 c.a.feature.start <- function(){
   library(devtools)
   # Explanation
-  c.b.colorHist()
+  c.b.colorHist(16)
 
   # Explanation
   c.c.step2()
@@ -30,14 +30,14 @@ c.a.feature.start <- function(){
 #' ...
 #'
 #' @author Vitali Friesen
-c.b.colorHist <- function(){
+c.b.colorHist <- function(buckets){
   library(png)
   # load image list
   imgList <- list.files("data-raw/IMG/CS CZ",full.names = T, ignore.case = F, recursive = T)
   #imgList <- list.files("data-raw/IMG/CS CZ halved",full.names = T, ignore.case = F, recursive = T)
   #imgList <- list.files("data-raw/IMG/CS CZ quarter",full.names = T, ignore.case = F, recursive = T)
+  #imgList <- list.files("data-raw/IMG/CS CZ eighth",full.names = T, ignore.case = F, recursive = T)
   # set number of buckets per color
-  buckets = 16
   # calculate for each image
   colHist <- t(sapply(imgList, function(imgPath){
     # load image information into curImg
@@ -57,7 +57,7 @@ c.b.colorHist <- function(){
   }))
   # cut the path from the row names
   rownames(colHist) <- substr(rownames(colHist),nchar(rownames(colHist))-28,nchar(rownames(colHist)))
-  colnames(trainData) <- c(paste0("r",1:16), paste0("g",1:16), paste0("b",1:16))
+  colnames(colHist) <- c(paste0("r",1:buckets), paste0("g",1:buckets), paste0("b",1:buckets))
   
   # sort rows by their row names
   colHist <- colHist[ order(row.names(colHist)), ]
