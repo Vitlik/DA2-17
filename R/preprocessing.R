@@ -26,34 +26,7 @@ b.a.preprocessing.start <- function(){
   b.c.loadClassData()
   
   #Create preprocessed images
-  
-  folder <- "data-raw/IMG/CS CZ/rgbNorm"
-  
-  #The following works only for folders with images in them not with ones with subfolders.
-  dirList <- list.dirs(folder,full.names = T, recursive = F)
-  
-  sapply(1:length(dirList), function(y){
-    path <- dirList[y]
-    namePos <- gregexpr(folder,path)
-    name <- substr(path, attr(namePos[[1]], "match.length") + 2, nchar(path))
-    subfolders <- list.dirs(path, full.names = T, recursive = F)
-    
-    #Check if the folder contains no subfolders
-    if(length(subfolders) == 0){
-      imgList <- list.files(path, full.names = T, ignore.case = F, recursive = F)
-      
-      sapply(1:length(imgList), function(x){
-        filename <- imgList[x]
-        image <- readPNG(filename)
-        namePos <- gregexpr(name, filename)
-        fileending <- substr(filename, namePos[[1]]+nchar(name)+1, nchar(filename))
-        #TODO: Fix picture folders and folder creation (normal / rgbNorm / histEqual / rgbNormHistEqual) -> each (Colin / Maren / Nils ...)
-        filename <- paste(paste(substr(filename, 1, namePos[[1]]-1), paste(paste("histEqual/", name, sep = ""), "/", sep = ""), sep = ""), fileending, sep = "")
-        b.f.transformHistEqualRgb(image, filename)
-        #b.d.rgbNorm(imgList[x])
-      })
-    }
-  })
+  b.d.rgbNorm.start()
 }
 
 #' @title Preprocessing - Create Train Test DataSet Indexes
@@ -109,13 +82,21 @@ b.b.createTrainTestDataIndexes <- function(){
 #'
 #' @author Vitali Friesen
 b.c.loadClassData <- function(){
-  clasColin <- read.csv("data-raw/classes_full_size/ClassificationList-Colin.csv", sep = ";")
-  clasMaren <- read.csv("data-raw/classes_full_size/ClassificationList-Maren.csv", sep = ";")
-  clasNils <- read.csv("data-raw/classes_full_size/ClassificationList-Nils.CSV", sep = ";")
-  clasNils2 <- read.csv("data-raw/classes_full_size/ClassificationList-Nils2.CSV", sep = ";")
-  clasSascha <- read.csv("data-raw/classes_full_size/ClassificationList-Sascha.csv", sep = ";")
-  clasTac <- read.csv("data-raw/classes_full_size/ClassificationList-Tac.csv", sep = ";")
-  clasVit <- read.csv("data-raw/classes_full_size/ClassificationList-Vit.csv", sep = ";")
+  # clasColin <- read.csv("data-raw/classes_full_size/ClassificationList-Colin.csv", sep = ";")
+  # clasMaren <- read.csv("data-raw/classes_full_size/ClassificationList-Maren.csv", sep = ";")
+  # clasNils <- read.csv("data-raw/classes_full_size/ClassificationList-Nils.CSV", sep = ";")
+  # clasNils2 <- read.csv("data-raw/classes_full_size/ClassificationList-Nils2.CSV", sep = ";")
+  # clasSascha <- read.csv("data-raw/classes_full_size/ClassificationList-Sascha.csv", sep = ";")
+  # clasTac <- read.csv("data-raw/classes_full_size/ClassificationList-Tac.csv", sep = ";")
+  # clasVit <- read.csv("data-raw/classes_full_size/ClassificationList-Vit.csv", sep = ";")
+  
+  clasColin <- read.csv("data-raw/classes_eighth_size/ClassificationList-Colin.csv", sep = ";")
+  clasMaren <- read.csv("data-raw/classes_eighth_size/ClassificationList-Maren.csv", sep = ";")
+  clasNils <- read.csv("data-raw/classes_eighth_size/ClassificationList-Nils.CSV", sep = ";")
+  clasNils2 <- read.csv("data-raw/classes_eighth_size/ClassificationList-Nils2.CSV", sep = ";")
+  clasSascha <- read.csv("data-raw/classes_eighth_size/ClassificationList-Sascha.csv", sep = ";")
+  clasTac <- read.csv("data-raw/classes_eighth_size/ClassificationList-Tac.csv", sep = ";")
+  clasVit <- read.csv("data-raw/classes_eighth_size/ClassificationList-Vit.csv", sep = ";")
 
   # merge all classifications into one matrix
   clasAll <- rbind(clasColin, rbind(clasMaren, rbind(clasNils, rbind(clasNils2,
@@ -137,6 +118,45 @@ b.c.loadClassData <- function(){
 
   # write classes to file
   devtools::use_data(clasAll, overwrite = T)
+}
+
+#' @title Preprocessing - Normalize rgb images to remove shadow and light effects
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'
+#' ...
+#'
+#' @author Tassilo Tobollik
+b.d.rgbNorm.start <- function(){
+  folder <- "data-raw/IMG/CS CZ/rgbNorm"
+  
+  #The following works only for folders with images in them not with ones with subfolders.
+  dirList <- list.dirs(folder,full.names = T, recursive = F)
+  
+  sapply(1:length(dirList), function(y){
+    path <- dirList[y]
+    namePos <- gregexpr(folder,path)
+    name <- substr(path, attr(namePos[[1]], "match.length") + 2, nchar(path))
+    subfolders <- list.dirs(path, full.names = T, recursive = F)
+    
+    #Check if the folder contains no subfolders
+    if(length(subfolders) == 0){
+      imgList <- list.files(path, full.names = T, ignore.case = F, recursive = F)
+      
+      sapply(1:length(imgList), function(x){
+        filename <- imgList[x]
+        image <- readPNG(filename)
+        namePos <- gregexpr(name, filename)
+        fileending <- substr(filename, namePos[[1]]+nchar(name)+1, nchar(filename))
+        #TODO: Fix picture folders and folder creation (normal / rgbNorm / histEqual / rgbNormHistEqual) -> each (Colin / Maren / Nils ...)
+        filename <- paste(paste(substr(filename, 1, namePos[[1]]-1), 
+                                paste(paste("histEqual/", name, sep = ""), "/", sep = ""), sep = ""), 
+                          fileending, sep = "")
+        b.f.transformHistEqualRgb(image, filename)
+        #b.d.rgbNorm(imgList[x])
+      })
+    }
+  })
 }
 
 #' @title Preprocessing - Normalize rgb images to remove shadow and light effects
