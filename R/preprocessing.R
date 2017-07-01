@@ -11,10 +11,13 @@
 #'   \item \code{\link{b.c.loadClassData}}
 #' }
 #'
-#' @author Vitali Friesen
+#' @author Vitali Friesen, Tassilo Tobollik
 b.a.preprocessing.start <- function(){
-  source("https://bioconductor.org/biocLite.R")
-  biocLite("EBImage")
+  #Install EBImage
+  #source("https://bioconductor.org/biocLite.R")
+  #biocLite("EBImage")
+  library(EBImage)
+  library(png)
   
   # Explanation
   b.b.createTrainTestDataIndexes()
@@ -24,27 +27,30 @@ b.a.preprocessing.start <- function(){
   
   #Create preprocessed images
   
-  folder <- "data-raw\IMG\CS CZ"
+  folder <- "data-raw/IMG/CS CZ/rgbNorm"
   
   #The following works only for folders with images in them not with ones with subfolders.
-  dirList <- list.dirs("data-raw/IMG/CS CZ",full.names = T, recursive = F)
+  dirList <- list.dirs(folder,full.names = T, recursive = F)
   
   sapply(1:length(dirList), function(y){
-    name <- dirList[y]
-    subfolders <- list.dirs(name, full.names = T, recursive = F)
+    path <- dirList[y]
+    namePos <- gregexpr(folder,path)
+    name <- substr(path, attr(namePos[[1]], "match.length") + 2, nchar(path))
+    subfolders <- list.dirs(path, full.names = T, recursive = F)
     
     #Check if the folder contains no subfolders
     if(length(subfolders) == 0){
-      imgList <- list.files(name, full.names = T, ignore.case = F, recursive = F)
+      imgList <- list.files(path, full.names = T, ignore.case = F, recursive = F)
       
       sapply(1:length(imgList), function(x){
         filename <- imgList[x]
         image <- readPNG(filename)
         namePos <- gregexpr(name, filename)
         fileending <- substr(filename, namePos[[1]]+nchar(name)+1, nchar(filename))
+        #TODO: Fix picture folders and folder creation (normal / rgbNorm / histEqual / rgbNormHistEqual) -> each (Colin / Maren / Nils ...)
         filename <- paste(paste(substr(filename, 1, namePos[[1]]-1), paste(paste("histEqual/", name, sep = ""), "/", sep = ""), sep = ""), fileending, sep = "")
         b.f.transformHistEqualRgb(image, filename)
-        b.d.rgbNorm(imgList[x])
+        #b.d.rgbNorm(imgList[x])
       })
     }
   })
@@ -56,7 +62,7 @@ b.a.preprocessing.start <- function(){
 #'
 #' ...
 #'
-#' @author Vitali Friesen & Tassilo Tobollik
+#' @author Vitali Friesen, Tassilo Tobollik
 b.b.createTrainTestDataIndexes <- function(){
 
   blockCreator <- function(x, bucketNum, randList){
@@ -101,7 +107,7 @@ b.b.createTrainTestDataIndexes <- function(){
 #'
 #' ...
 #'
-#' @author
+#' @author Vitali Friesen
 b.c.loadClassData <- function(){
   clasColin <- read.csv("data-raw/classes_full_size/ClassificationList-Colin.csv", sep = ";")
   clasMaren <- read.csv("data-raw/classes_full_size/ClassificationList-Maren.csv", sep = ";")

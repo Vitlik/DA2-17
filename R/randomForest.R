@@ -124,9 +124,13 @@ d.c.step2 <- function(testData, rfModel){
   #TODO (Vit): Research how to evaluate the overall accuracy of all test-trees together
 }
 
-
-
-
+#' @title Classifier 1 - Evaluation
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'
+#' ...
+#'
+#' @author Colin Juers, Tassilo Tobollik
 d.d.evaluation <- function(pred, testData){
   #TODO (Colin): Evaluation in andere Methode und sch?n graf. Darstellen mit wichtigen Kennzahlen (Fehler 1., 2. Art und Accuracy)
   
