@@ -13,8 +13,8 @@
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
 d.a.randomForest.start <- function(){
-  library(snow)
-  library(caret)
+  #library(snow)
+  #library(caret)
 
   load("data/blocks.rda")
   load("data/blockNum.rda")
@@ -26,31 +26,40 @@ d.a.randomForest.start <- function(){
   colnames(data)[dim(data)[2]] <- "P"
 
   #Loop through the train/test-data-sets
-  sapply(1:blockNum, function(curBlock){
+  resultData <- sapply(1:blockNum, function(curBlock){
     # retrieve the indexes of the corresponding train block
     trainBlockIndexes <- get(paste0("train", curBlock), envir=blocks)
 
     # for calculating the processing time: save start time
     start.time <- Sys.time()
     # Explanation
-    d.b.step1(data[trainBlockIndexes,])
+    rfModel <- d.b.step1(data[trainBlockIndexes,])
     # print processing time
     print(paste0("Processing time for training the random forest block ", curBlock, ": ",
                  (Sys.time() - start.time)))
 
 
     # retrieve the indexes of the corresponding test block
-    testBlockIndexes <- mget(paste0("test", curBlock), envir=blocks)
+    testBlockIndexes <- get(paste0("test", curBlock), envir=blocks)
 
     # for calculating the processing time: save start time
     start.time <- Sys.time()
+    testData <- data[testBlockIndexes,]
     # Evaluate the result for the train-test-set
-    d.c.step2(data[testBlockIndexes,])
+    pred <- d.c.step2(testData, rfModel)
     # print processing time
     print(paste0("Processing time for testing the random forest block ", curBlock, ": ",
                  (Sys.time() - start.time)))
+    #As.vector is needed here because factors change their values in a matrix or data.frame (0 to 1, 1 to 2)
+    #And a matrix is needed instead of a data.frame so that sapply dosn't change pred's type back to factor
+    result <- matrix(nrow = length(pred), ncol = 2)
+    result[,1] <- as.vector(pred)
+    result[,2] <- testData[,ncol(testData)]
+    return(result)
   })
-
+  
+  overallResult <- do.call(rbind, resultData)
+  d.d.evaluation(overallResult[,1], overallResult[,2])
 }
 
 #' @title Classifier 1 - Step 1
@@ -61,6 +70,7 @@ d.a.randomForest.start <- function(){
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
 d.b.step1 <- function(trainData){
+  library(randomForest)
   set.seed(1337)
 
   #Train the randomForest model on the train data
@@ -73,7 +83,6 @@ d.b.step1 <- function(trainData){
   #              ntree=2000)
   
   #TODO (all): Run with diff. parameter permutations
-  trainData
   rfModel <- randomForest(as.factor(P) ~ . - P,
                           data=trainData,
                           importance=TRUE,
@@ -85,6 +94,7 @@ d.b.step1 <- function(trainData){
   #TODO (Vit): VarImpPlot sch?ner/farbig machen (ggplot?)
   # plot(variableImportance)
   varImpPlot(rfModel)
+  return(rfModel)
 }
 
 
@@ -97,7 +107,7 @@ d.b.step1 <- function(trainData){
 #' ...
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
-d.c.step2 <- function(testData){
+d.c.step2 <- function(testData, rfModel){
   #Compare prediction of the Test-Data with the real characterVisible column
 
 
@@ -110,27 +120,30 @@ d.c.step2 <- function(testData){
   #TODO:  Einmal ganze Klasse ?ber alle Bilder laufen lassen und auswerten
   pred <- predict(rfModel, testData)
   
+  return(pred)
   #TODO (Vit): Research how to evaluate the overall accuracy of all test-trees together
 }
 
 
 
 
-d.d.evaluation <- function(pred){
+d.d.evaluation <- function(pred, testData){
   #TODO (Colin): Evaluation in andere Methode und sch?n graf. Darstellen mit wichtigen Kennzahlen (Fehler 1., 2. Art und Accuracy)
   
   # Compute results
   
   # dummy <- seq(1,1,length.out=268)
   # result <- table(dummy, testData[,ncol(testData)])
-  result <- table(pred, testData[,ncol(testData)])
+  result <- table(pred, testData)
   colnames(result)=c("No person","Person")
   rownames(result)=c("No person predicted","Person predicted")
   
-  
-  acc <- (result["0","0"]+result["1","1"])/sum(result)
+  acc <- (result["No person predicted","No person"]+result["Person predicted","Person"])/sum(result)
   
   Error1 <- result["Person predicted","No person"]
+  Error1Perc <- Error1/sum(result)
   Error2 <- result["No person predicted","Person"]
+  Error2Perc <- Error2/sum(result)
   
+  #TODO: Create Plot
 }
