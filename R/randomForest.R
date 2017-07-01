@@ -142,7 +142,8 @@ d.d.evaluation <- function(pred, testData){
   colnames(result)=c("No person","Person")
   rownames(result)=c("No person predicted","Person predicted")
   
-  acc <- (result["No person predicted","No person"]+result["Person predicted","Person"])/sum(result)
+  correct <- result["No person predicted","No person"]+result["Person predicted","Person"]
+  acc <- (correct)/sum(result)
   
   Error1 <- result["Person predicted","No person"]
   Error1Perc <- Error1/sum(result)
@@ -150,4 +151,5 @@ d.d.evaluation <- function(pred, testData){
   Error2Perc <- Error2/sum(result)
   
   #TODO: Create Plot
+  return(rbind(result,c(correct,acc)))
 }
