@@ -150,6 +150,18 @@ d.d.evaluation <- function(pred, testData){
   Error2 <- result["No person predicted","Person"]
   Error2Perc <- Error2/sum(result)
   
+  ordered <- imp[order(-imp[,"MeanDecreaseAccuracy"]),]
+  barCol <- sapply(1:nrow(ordered), function(rowNum){
+    tmp <- substr(ordered[rowNum, 1], 1, 1)
+    ifelse(tmp == "b", "blue", 
+           ifelse(tmp == "g", "green", "red"))
+  })
+  
+  ggplot(imp, aes(reorder(col, MeanDecreaseAccuracy), MeanDecreaseAccuracy)) + 
+    geom_bar(stat = "identity", show.legend = F, 
+             fill = barCol) + coord_flip() + 
+    xlab("Importance")
+  
   #TODO: Create Plot
   return(rbind(result,c(correct,acc)))
 }

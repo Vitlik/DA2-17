@@ -33,13 +33,18 @@ c.a.feature.start <- function(){
 c.b.colorHist <- function(buckets){
   library(png)
   # load image list
-  imgList <- list.files("data-raw/IMG/CS CZ",full.names = T, ignore.case = F, recursive = T)
-  #imgList <- list.files("data-raw/IMG/CS CZ halved",full.names = T, ignore.case = F, recursive = T)
-  #imgList <- list.files("data-raw/IMG/CS CZ quarter",full.names = T, ignore.case = F, recursive = T)
-  #imgList <- list.files("data-raw/IMG/CS CZ eighth",full.names = T, ignore.case = F, recursive = T)
-  # set number of buckets per color
+  folder <- (
+    #"data-raw/IMG/CS CZ original/normal/"
+    #"data-raw/IMG/CS CZ original/histEqual/"
+    #"data-raw/IMG/CS CZ original/rgbNorm/"
+    #"data-raw/IMG/CS CZ halved/normal/"
+    #"data-raw/IMG/CS CZ quarter/normal/"
+    "data-raw/IMG/CS CZ eighth/normal/"
+   )
+  
+  imgList <- list.files(folder, full.names = T, ignore.case = F, recursive = T)
   # calculate for each image
-  colHist <- t(sapply(imgList, function(imgPath){
+  colorHist <- t(sapply(imgList, function(imgPath){
     # load image information into curImg
     curImg <- as.vector(readPNG(imgPath))
     as.vector(
@@ -56,15 +61,23 @@ c.b.colorHist <- function(buckets){
     )
   }))
   # cut the path from the row names
-  rownames(colHist) <- substr(rownames(colHist),nchar(rownames(colHist))-28,nchar(rownames(colHist)))
-  colnames(colHist) <- c(paste0("r",1:buckets), paste0("g",1:buckets), paste0("b",1:buckets))
+  rownames(colorHist) <- substr(rownames(colorHist),
+                         nchar(rownames(colorHist))-28,
+                         nchar(rownames(colorHist)))
+  # column names
+  colnames(colorHist) <- c(paste0("r",1:buckets), 
+                           paste0("g",1:buckets), 
+                           paste0("b",1:buckets))
   
   # sort rows by their row names
-  colHist <- colHist[ order(row.names(colHist)), ]
-
+  colorHist <- colorHist[ order(row.names(colorHist)), ]
+  
   # store  variable in file
-  colorHistOriginal <- colHist
-  devtools::use_data(colorHistOriginal, overwrite = T)
+  #save(colorHist, file = "data/colorHistOriginal.rda")
+  #save(colorHist, file = "data/colorHistOriginalEqual.rda")
+  #save(colorHist, file = "data/colorHistHalved.rda")
+  #save(colorHist, file = "data/colorHistQuarter.rda")
+  save(colorHist, file = "data/colorHistEighth.rda")
 }
 
 #' @title Feature Extraction - Step 2
@@ -92,10 +105,10 @@ c.d.hog <- function(){
   
   # applies HOG to all images of the workspace
   hog1 = HOG_apply("C:/Users/Sascha/Documents/DA2-17-Images/", cells = 16, orientations = 4)
-  save(hog,file="hog_16.Rda")
+  save(hog, file="data/hog_16.Rda")
   
   hog2 = HOG_apply("C:/Users/Sascha/Documents/DA2-17-Images/", cells = 9, orientations = 4)
-  save(hog,file="hog_9.Rda")
+  save(hog, file="data/hog_9.Rda")
   
 
 }
