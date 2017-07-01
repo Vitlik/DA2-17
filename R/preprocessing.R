@@ -42,7 +42,7 @@ b.a.preprocessing.start <- function(){
         image <- readPNG(filename)
         namePos <- gregexpr(name, filename)
         fileending <- substr(filename, namePos[[1]]+nchar(name)+1, nchar(filename))
-        filename <- paste(paste(substr(filename, 1, namePos[[1]]-1), paste(paste("HistEqual/", name, sep = ""), "/", sep = ""), sep = ""), fileending, sep = "")
+        filename <- paste(paste(substr(filename, 1, namePos[[1]]-1), paste(paste("histEqual/", name, sep = ""), "/", sep = ""), sep = ""), fileending, sep = "")
         b.f.transformHistEqualRgb(image, filename)
         b.d.rgbNorm(imgList[x])
       })
