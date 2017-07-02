@@ -134,21 +134,45 @@ d.c.step2 <- function(testData, rfModel){
 d.d.evaluation <- function(pred, testData){
   #TODO (Colin): Evaluation in andere Methode und sch?n graf. Darstellen mit wichtigen Kennzahlen (Fehler 1., 2. Art und Accuracy)
   
-  # Compute results
-  
-  # dummy <- seq(1,1,length.out=268)
-  # result <- table(dummy, testData[,ncol(testData)])
-  result <- table(pred, testData)
+  # Compute result table
+  result <- table(pred, testData[,ncol(testData)])
+  # Give columns and rows names
   colnames(result)=c("No person","Person")
   rownames(result)=c("No person predicted","Person predicted")
   
+  # Set theme for grid.plot
+  t1 <- ttheme_minimal(
+    core=list(
+      fg_params=list(col="black",fontface="bold.italic"),
+      bg_params = list(fill=c(c("green3","red"),c("red","green3")))),
+    colhead=list(
+      fg_params=list(col="darkgreen", fontface=4L)),
+    rowhead=list(
+      fg_params=list(col="navyblue",fontface=4L))
+    )
+  
+  # Draw grid for errors and true predictions
+  grid.table(result, theme=t1)
+
+  # Calculate accuracy
   correct <- result["No person predicted","No person"]+result["Person predicted","Person"]
   acc <- (correct)/sum(result)
   
+  # Calculate error 1. and 2. degree (percentage)
   Error1 <- result["Person predicted","No person"]
   Error1Perc <- Error1/sum(result)
   Error2 <- result["No person predicted","Person"]
   Error2Perc <- Error2/sum(result)
+  
+  # barplot for accuracy vs. error percentage
+  # maybe as stacked barplot possible?
+  allResults <- barplot(c(acc, Error1Perc, Error2Perc), 
+                        main="Accuracy vs. Errorpercentages",
+                        col=c("green","red","red"), 
+                        horiz=TRUE,xlim = c(0,1) ,
+                        names.arg = c("Accuracy","Error 1. degree", "Error 2n degree"))
+  
+  #TODO (Colin): arrange grid with plot
   
   ordered <- imp[order(-imp[,"MeanDecreaseAccuracy"]),]
   barCol <- sapply(1:nrow(ordered), function(rowNum){
@@ -165,3 +189,4 @@ d.d.evaluation <- function(pred, testData){
   #TODO: Create Plot
   return(rbind(result,c(correct,acc)))
 }
+
