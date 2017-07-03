@@ -14,7 +14,7 @@
 c.a.feature.start <- function(){
   library(devtools)
   # Explanation
-  c.b.colorHist(16)
+  c.b.colorHist()
 
   # Explanation
   c.c.step2()
@@ -30,8 +30,12 @@ c.a.feature.start <- function(){
 #' ...
 #'
 #' @author Vitali Friesen
-c.b.colorHist <- function(buckets){
+c.b.colorHist <- function(){
   library(png)
+  
+  buckets <- 16
+  save(buckets, file = "data/buckets.rda")
+  
   # load image list
   folder <- (
     #"data-raw/IMG/CS CZ original/normal/"
@@ -97,24 +101,44 @@ c.b.colorHist <- function(buckets){
 #' @author
 c.c.step2 <- function(){
   
-  load("data/blockNum.rda")
-  red <- paste0("r", 1:blockNum)
-  green <- paste0("g", 1:blockNum)
-  blue <- paste0("b", 1:blockNum)
+  load("data/buckets.rda")
+  bucks <- 1:buckets
   
-  # load("data/colorHistOriginal.rda")
-  # data <- colorHistOriginal[1,]
+  load("data/colorHistOriginal.rda")
+  data <- colorHistOriginal[1, 1:buckets]
+  dfRed <- data.frame(red = bucks, data)
+  data <- colorHistOriginal[1, (buckets+1):(buckets*2)]
+  dfGreen <- data.frame(green = bucks, data)
+  data <- colorHistOriginal[1, (buckets*2+1):(buckets*3)]
+  dfBlue <- data.frame(blue = bucks, data)
+  
+  ggplot(dfRed, aes(red, data)) + geom_bar(stat = "identity", fill = "#FF0000") + 
+    scale_y_continuous(limits = c(0,60000)) 
+  ggsave("plots/colorHistOriginalRed.png")
+  ggplot(dfGreen, aes(green, data)) + geom_bar(stat = "identity", fill = "#00FF00") + 
+    scale_y_continuous(limits = c(0,60000)) 
+  ggsave("plots/colorHistOriginalGreen.png")
+  ggplot(dfBlue, aes(blue, data)) + geom_bar(stat = "identity", fill = "#0000FF") + 
+    scale_y_continuous(limits = c(0,60000)) 
+  ggsave("plots/colorHistOriginalBlue.png")
   
   load("data/colorHistOriginalEqual.rda")
-  data <- colorHistOriginal[1,]
+  data <- colorHistOriginalEqual[1, 1:buckets]
+  dfRed <- data.frame(red = bucks, data)
+  data <- colorHistOriginalEqual[1, (buckets+1):(buckets*2)]
+  dfGreen <- data.frame(green = bucks, data)
+  data <- colorHistOriginalEqual[1, (buckets*2+1):(buckets*3)]
+  dfBlue <- data.frame(blue = bucks, data)
   
-  qplot(data[,1:blockNum], red, stat="bin", geom= "bar")
-  qplot(data, y, geom="bar", stat="identity", fill=as.factor(x))
-  
-  ggplot(data, aes(reorder(col, MeanDecreaseAccuracy), MeanDecreaseAccuracy)) +
-    geom_bar(stat = "identity", show.legend = F,
-             fill = )
-  + coord_flip() + xlab("Importance")
+  ggplot(dfRed, aes(red, data)) + geom_bar(stat = "identity", fill = "#FF0000") + 
+    scale_y_continuous(limits = c(0,60000)) 
+  ggsave("plots/colorHistOriginalEqualRed.png")
+  ggplot(dfGreen, aes(green, data)) + geom_bar(stat = "identity", fill = "#00FF00") + 
+    scale_y_continuous(limits = c(0,60000)) 
+  ggsave("plots/colorHistOriginalEqualGreen.png")
+  ggplot(dfBlue, aes(blue, data)) + geom_bar(stat = "identity", fill = "#0000FF") + 
+    scale_y_continuous(limits = c(0,60000)) 
+  ggsave("plots/colorHistOriginalEqualBlue.png")
 }
 
 
