@@ -22,10 +22,11 @@ d.a.randomForest.start <- function(){
   load("data/classesEights.rda")
   load("data/colorHistOriginal.rda")
   
-  data <- cbind(colorHistOriginal, classesOrig[,"P"])
-  
-  colnames(data)[dim(data)[2]] <- "P"
+  data <- cbind(colorHistOriginal, P = classesOrig[,"P"])
 
+  # env var for all different models
+  rfModels <- new.env()
+  
   #Loop through the train/test-data-sets
   resultData <- sapply(1:blockNum, function(curBlock){
     # retrieve the indexes of the corresponding train block
@@ -35,6 +36,7 @@ d.a.randomForest.start <- function(){
     start.time <- Sys.time()
     # Explanation
     rfModel <- d.b.step1(data[trainBlockIndexes,])
+    assign(paste0("rfModel", curBlock), rfModel, envir = rfModels)
     # print processing time
     print(paste0("Processing time for training the random forest block ", curBlock, ": ",
                  (Sys.time() - start.time)))
@@ -60,7 +62,11 @@ d.a.randomForest.start <- function(){
   })
   
   overallResult <- do.call(rbind, resultData)
+  save(rfModels, file = "data/rfModels.rda")
+
   d.d.evaluation(overallResult[,1], overallResult[,2])
+  
+  d.e.plotImportance(rfModels)
 }
 
 #' @title Classifier 1 - Step 1
@@ -94,7 +100,7 @@ d.b.step1 <- function(trainData){
   # variableImportance <- varImp(parallelRfModel)
   #TODO (Vit): VarImpPlot sch?ner/farbig machen (ggplot?)
   # plot(variableImportance)
-  varImpPlot(rfModel)
+  # varImpPlot(rfModel)
   return(rfModel)
 }
 
@@ -177,19 +183,58 @@ d.d.evaluation <- function(pred, testData){
   
   #TODO (Colin): arrange grid with plot
   
-  ordered <- imp[order(-imp[,"MeanDecreaseAccuracy"]),]
-  barCol <- sapply(1:nrow(ordered), function(rowNum){
-    tmp <- substr(ordered[rowNum, 1], 1, 1)
-    ifelse(tmp == "b", "blue", 
-           ifelse(tmp == "g", "green", "red"))
-  })
-  
-  ggplot(imp, aes(reorder(col, MeanDecreaseAccuracy), MeanDecreaseAccuracy)) + 
-    geom_bar(stat = "identity", show.legend = F, 
-             fill = barCol) + coord_flip() + 
-    xlab("Importance")
-  
   #TODO: Create Plot
   return(rbind(result,c(correct,acc)))
 }
 
+#' @title Classifier 1 - Step 1
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'
+#' ...
+#'
+#' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
+d.e.plotImportance <- function(rfModels){
+  
+  load("data/blockNum.rda")
+  
+  # MeanDecreaseAccuracy
+  MeanDecreaseAccuracy <- colMeans(t(sapply(rfModels, function(rfModel){
+    rfModel$importance[,"MeanDecreaseAccuracy"]
+  })))
+  
+  ordered <- MeanDecreaseAccuracy[order(-MeanDecreaseAccuracy)]
+  barCol <- sapply(1:length(ordered), function(pos){
+    tmp <- substr(attributes(ordered)$names[pos], 1, 1)
+    ifelse(tmp == "b", "blue", 
+           ifelse(tmp == "g", "green", "red"))
+  })
+  Names <- attributes(ordered)$names
+  dfImp <- data.frame(Names, ordered)
+  
+  ggplot(dfImp, aes(reorder(Names, ordered), ordered)) + 
+    geom_bar(stat = "identity", show.legend = F, fill = rev(barCol)) + coord_flip() + 
+    xlab("Importance")
+  
+  ggsave("plots/RandomForestAverageMeanDecreaseAccuracyColorHistogram.png")
+  
+  # MeanDecreaseGini
+  MeanDecreaseGini <- colMeans(t(sapply(rfModels, function(rfModel){
+    rfModel$importance[,"MeanDecreaseGini"]
+  })))
+  
+  ordered <- MeanDecreaseGini[order(-MeanDecreaseGini)]
+  barCol <- sapply(1:length(ordered), function(pos){
+    tmp <- substr(attributes(ordered)$names[pos], 1, 1)
+    ifelse(tmp == "b", "blue", 
+           ifelse(tmp == "g", "green", "red"))
+  })
+  Names <- attributes(ordered)$names
+  dfImp <- data.frame(Names, ordered)
+  
+  ggplot(dfImp, aes(reorder(Names, ordered), ordered)) + 
+    geom_bar(stat = "identity", show.legend = F, fill = rev(barCol)) + coord_flip() + 
+    xlab("Importance")
+  
+  ggsave("plots/RandomForestAverageMeanDecreaseGiniColorHistogram.png")
+}
