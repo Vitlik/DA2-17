@@ -72,11 +72,6 @@ c.b.colorHist <- function(buckets){
   # sort rows by their row names
   colorHist <- colorHist[ order(row.names(colorHist)), ]
   
-  ggplot(colorHist, aes(reorder(col, MeanDecreaseAccuracy), MeanDecreaseAccuracy)) +
-    geom_bar(stat = "identity", show.legend = F,
-             fill = )
-  + coord_flip() + xlab("Importance")
-  
   # store  variable in file
   #colorHistOriginal <- colorHist
   #save(colorHistOriginal, file = "data/colorHistOriginal.rda")
@@ -88,6 +83,9 @@ c.b.colorHist <- function(buckets){
   #save(colorHistQuarter, file = "data/colorHistQuarter.rda")
   colorHistEighth <- colorHist
   save(colorHistEighth, file = "data/colorHistEighth.rda")
+  
+  # create plots for the color Histograms
+  # c.c.step2()
 }
 
 #' @title Feature Extraction - Step 2
@@ -98,7 +96,25 @@ c.b.colorHist <- function(buckets){
 #'
 #' @author
 c.c.step2 <- function(){
-
+  
+  load("data/blockNum.rda")
+  red <- paste0("r", 1:blockNum)
+  green <- paste0("g", 1:blockNum)
+  blue <- paste0("b", 1:blockNum)
+  
+  # load("data/colorHistOriginal.rda")
+  # data <- colorHistOriginal[1,]
+  
+  load("data/colorHistOriginalEqual.rda")
+  data <- colorHistOriginal[1,]
+  
+  qplot(data[,1:blockNum], red, stat="bin", geom= "bar")
+  qplot(data, y, geom="bar", stat="identity", fill=as.factor(x))
+  
+  ggplot(data, aes(reorder(col, MeanDecreaseAccuracy), MeanDecreaseAccuracy)) +
+    geom_bar(stat = "identity", show.legend = F,
+             fill = )
+  + coord_flip() + xlab("Importance")
 }
 
 
@@ -119,6 +135,4 @@ c.d.hog <- function(){
   
   hog2 = HOG_apply("C:/Users/Sascha/Documents/DA2-17-Images/", cells = 9, orientations = 4)
   save(hog, file="data/hog_9.Rda")
-  
-
 }

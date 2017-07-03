@@ -33,6 +33,6 @@ vignettes/*.pdf
 *.knit.md
 
 # Raw Picture Data
-*.png
+data-raw/*
 !hl 2017-06-14 18-05-42-48.png
 .Rproj.user
