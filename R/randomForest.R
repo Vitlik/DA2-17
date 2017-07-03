@@ -18,10 +18,11 @@ d.a.randomForest.start <- function(){
 
   load("data/blocks.rda")
   load("data/blockNum.rda")
-  load("data/clasAll.rda")
+  load("data/classesOrig.rda")
+  load("data/classesEights.rda")
   load("data/colorHistOriginal.rda")
   
-  data <- cbind(colorHistOriginal, clasAll[,3])
+  data <- cbind(colorHistOriginal, classesOrig[,"P"])
   
   colnames(data)[dim(data)[2]] <- "P"
 

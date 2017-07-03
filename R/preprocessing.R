@@ -82,42 +82,49 @@ b.b.createTrainTestDataIndexes <- function(){
 #'
 #' @author Vitali Friesen
 b.c.loadClassData <- function(){
-  # clasColin <- read.csv("data-raw/classes_full_size/ClassificationList-Colin.csv", sep = ";")
-  # clasMaren <- read.csv("data-raw/classes_full_size/ClassificationList-Maren.csv", sep = ";")
-  # clasNils <- read.csv("data-raw/classes_full_size/ClassificationList-Nils.CSV", sep = ";")
-  # clasNils2 <- read.csv("data-raw/classes_full_size/ClassificationList-Nils2.CSV", sep = ";")
-  # clasSascha <- read.csv("data-raw/classes_full_size/ClassificationList-Sascha.csv", sep = ";")
-  # clasTac <- read.csv("data-raw/classes_full_size/ClassificationList-Tac.csv", sep = ";")
-  # clasVit <- read.csv("data-raw/classes_full_size/ClassificationList-Vit.csv", sep = ";")
-  
-  clasColin <- read.csv("data-raw/classes_eighth_size/ClassificationList-Colin.csv", sep = ";")
-  clasMaren <- read.csv("data-raw/classes_eighth_size/ClassificationList-Maren.csv", sep = ";")
-  clasNils <- read.csv("data-raw/classes_eighth_size/ClassificationList-Nils.CSV", sep = ";")
-  clasNils2 <- read.csv("data-raw/classes_eighth_size/ClassificationList-Nils2.CSV", sep = ";")
-  clasSascha <- read.csv("data-raw/classes_eighth_size/ClassificationList-Sascha.csv", sep = ";")
-  clasTac <- read.csv("data-raw/classes_eighth_size/ClassificationList-Tac.csv", sep = ";")
-  clasVit <- read.csv("data-raw/classes_eighth_size/ClassificationList-Vit.csv", sep = ";")
+  fold <- (
+    "classes_full_size"
+    #"classes_eighth_size"
+  )
+  clasColin <- read.csv(paste0("data-raw/", fold, "/ClassificationList-Colin.csv"), sep = ";")
+  clasMaren <- read.csv(paste0("data-raw/", fold, "/ClassificationList-Maren.csv"), sep = ";")
+  clasNils <- read.csv(paste0("data-raw/", fold, "/ClassificationList-Nils.CSV"), sep = ";")
+  clasNils2 <- read.csv(paste0("data-raw/", fold, "/ClassificationList-Nils2.CSV"), sep = ";")
+  clasSascha <- read.csv(paste0("data-raw/", fold, "/ClassificationList-Sascha.csv"), sep = ";")
+  clasTac <- read.csv(paste0("data-raw/", fold, "/ClassificationList-Tac.csv"), sep = ";")
+  clasVit <- read.csv(paste0("data-raw/", fold, "/ClassificationList-Vit.csv"), sep = ";")
 
   # merge all classifications into one matrix
-  clasAll <- rbind(clasColin, rbind(clasMaren, rbind(clasNils, rbind(clasNils2,
+  classes <- rbind(clasColin, rbind(clasMaren, rbind(clasNils, rbind(clasNils2,
                    rbind(clasSascha,rbind(clasTac, clasVit))))))
   # sort matrix by name column
-  clasAll <- clasAll[order(clasAll[,1]),]
+  classes <- classes[order(classes[,1]),]
   # set rownames to name column
-  rownames(clasAll) <- clasAll[,1]
+  rownames(classes) <- classes[,1]
+  
+  # from here only for classifications with CT and T classes
   # discard name column
-  clasAll <- clasAll[, 2:3]
+  classes <- classes[, 2:3]
   # replace NA with zeros because some CSV were empty for a 0
-  clasAll[is.na(clasAll)] <- 0
+  classes[is.na(classes)] <- 0
   # add new column for "person seen"
-  clasAll <- cbind(clasAll, P = rowSums(clasAll))
+  classes <- cbind(classes, P = rowSums(classes))
   # overwrite elements where both classes are seen by one
-  clasAll$P[clasAll$P == 2] <- 1
+  classes$P[classes$P == 2] <- 1
   # check if it worked
-  clasAll[20:40,]
+  #classes[20:40,]
+  
+  # execute this part only if 3 classes are available but only the third ("P") is filles
+  # discard name column
+  classes <- classes[, "P", drop=FALSE]
+  # replace NA with zeros because some CSV were empty for a 0
+  classes[is.na(classes)] <- 0
 
   # write classes to file
-  devtools::use_data(clasAll, overwrite = T)
+  classesOrig <- classes
+  save(classesOrig, file = "data/classesOrig.rda")
+  #classesEights <- classes
+  #save(classesEights, file = "data/classesEights.rda")
 }
 
 #' @title Preprocessing - Normalize rgb images to remove shadow and light effects

@@ -1,14 +1,14 @@
 setwd("C:/dev/DA2/DA2-17/")
 load("data/colorHistOriginal.rda")
-load("data/clasAll.rda")
+load("data/classesOrig.rda")
 
 library(keras)
 
 train_x2 <- colorHistOriginal[0:2120, ]
 test_x2 <- colorHistOriginal[2121:2650, ]
 
-train_y2 <- clasAll[0:2120, ]
-test_y2 <- clasAll[2121:2650,]
+train_y2 <- classesOrig[0:2120, ]
+test_y2 <- classesOrig[2121:2650,]
 
 model %>%
   layer_dense(units = 5, activation = 'relu', input_shape= c(48)) %>%

@@ -72,12 +72,22 @@ c.b.colorHist <- function(buckets){
   # sort rows by their row names
   colorHist <- colorHist[ order(row.names(colorHist)), ]
   
+  ggplot(colorHist, aes(reorder(col, MeanDecreaseAccuracy), MeanDecreaseAccuracy)) +
+    geom_bar(stat = "identity", show.legend = F,
+             fill = )
+  + coord_flip() + xlab("Importance")
+  
   # store  variable in file
-  #save(colorHist, file = "data/colorHistOriginal.rda")
-  #save(colorHist, file = "data/colorHistOriginalEqual.rda")
-  #save(colorHist, file = "data/colorHistHalved.rda")
-  #save(colorHist, file = "data/colorHistQuarter.rda")
-  save(colorHist, file = "data/colorHistEighth.rda")
+  #colorHistOriginal <- colorHist
+  #save(colorHistOriginal, file = "data/colorHistOriginal.rda")
+  #colorHistOriginalEqual <- colorHist
+  #save(colorHistOriginalEqual, file = "data/colorHistOriginalEqual.rda")
+  #colorHistHalved <- colorHist
+  #save(colorHistHalved, file = "data/colorHistHalved.rda")
+  #colorHistQuarter <- colorHist
+  #save(colorHistQuarter, file = "data/colorHistQuarter.rda")
+  colorHistEighth <- colorHist
+  save(colorHistEighth, file = "data/colorHistEighth.rda")
 }
 
 #' @title Feature Extraction - Step 2
