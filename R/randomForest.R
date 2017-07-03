@@ -133,9 +133,11 @@ d.c.step2 <- function(testData, rfModel){
 #' @author Colin Juers, Tassilo Tobollik
 d.d.evaluation <- function(pred, testData){
   #TODO (Colin): Evaluation in andere Methode und sch?n graf. Darstellen mit wichtigen Kennzahlen (Fehler 1., 2. Art und Accuracy)
+
+  library(gridExtra)
   
   # Compute result table
-  result <- table(pred, testData[,ncol(testData)])
+  result <- table(pred, testData)
   # Give columns and rows names
   colnames(result)=c("No person","Person")
   rownames(result)=c("No person predicted","Person predicted")
