@@ -152,6 +152,7 @@ c.c.step2 <- function(){
 c.d.hog <- function(){
   
   library(OpenImageR)
+  library(parallel)
   
   # applies HOG to all images of the workspace
   hog1 = HOG_apply("C:/Users/Sascha/Documents/DA2-17-Images/", cells = 16, orientations = 4)
@@ -159,4 +160,40 @@ c.d.hog <- function(){
   
   hog2 = HOG_apply("C:/Users/Sascha/Documents/DA2-17-Images/", cells = 9, orientations = 4)
   save(hog, file="data/hog_9.Rda")
+  
+  numCores <- detectCores()
+
+  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Colin/", cells = 4, orientations = 9)
+  save(hog3, file="data/hog_original_4_9_Colin.Rda")
+  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Maren/", cells = 4, orientations = 9)
+  save(hog3, file="data/hog_original_4_9_Maren.Rda")
+  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Nils/", cells = 4, orientations = 9)
+  save(hog3, file="data/hog_original_4_9_Nils.Rda")
+  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Nils2/", cells = 4, orientations = 9, threads = numCores)
+  save(hog3, file="data/hog_original_4_9_Nils2.Rda")
+  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Sascha/", cells = 4, orientations = 9)
+  save(hog3, file="data/hog_original_4_9_Sascha.Rda")
+  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Tac/", cells = 4, orientations = 9)
+  save(hog3, file="data/hog_original_4_9_Tac.Rda")
+  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/", cells = 4, orientations = 9)
+  save(hog3, file="data/hog_original_4_9_Vit.Rda")
+  
+  load("data/hog_original_4_9_Colin.Rda")
+  colin <- hog3
+  load("data/hog_original_4_9_Maren.Rda")
+  maren <- hog3
+  load("data/hog_original_4_9_Nils.Rda")
+  nils <- hog3
+  load("data/hog_original_4_9_Nils2.Rda")
+  nils2 <- hog3
+  load("data/hog_original_4_9_Sascha.Rda")
+  sascha <- hog3
+  load("data/hog_original_4_9_Tac.Rda")
+  tac <- hog3
+  load("data/hog_original_4_9_Vit.Rda")
+  vit <- hog3
+  hogData <- colin
+  hogData$files <- c(colin$files, maren$files, nils$files, nils2$files, sascha$files, tac$files, vit$files)
+  hogData$hog <- rbind(colin$hog, maren$hog, nils$hog, nils2$hog, sascha$hog, tac$hog, vit$hog)
+  save(hogData, file="data/hogData_original_4_9_complete.Rda")
 }
