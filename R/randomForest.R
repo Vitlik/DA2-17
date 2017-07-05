@@ -142,6 +142,7 @@ d.d.evaluation <- function(pred, testData){
   #TODO (Colin): Evaluation in andere Methode und sch?n graf. Darstellen mit wichtigen Kennzahlen (Fehler 1., 2. Art und Accuracy)
 
   library(gridExtra)
+  library(plotrix)
   
   # Compute result table
   result <- table(pred, testData)
@@ -152,16 +153,18 @@ d.d.evaluation <- function(pred, testData){
   # Set theme for grid.plot
   t1 <- ttheme_minimal(
     core=list(
-      fg_params=list(col="black",fontface="bold.italic"),
+      fg_params=list(col="black", fontface="bold.italic"),
       bg_params = list(fill=c(c("green3","red"),c("red","green3")))),
     colhead=list(
       fg_params=list(col="darkgreen", fontface=4L)),
     rowhead=list(
-      fg_params=list(col="navyblue",fontface=4L))
+      fg_params=list(col="black",fontface=4L))
     )
   
+  resultTable <- tableGrob(result, theme=t1)
+  
   # Draw grid for errors and true predictions
-  grid.table(result, theme=t1)
+  grid.arrange(resultTable)
 
   # Calculate accuracy
   correct <- result["No person predicted","No person"]+result["Person predicted","Person"]
@@ -175,13 +178,31 @@ d.d.evaluation <- function(pred, testData){
   
   # barplot for accuracy vs. error percentage
   # maybe as stacked barplot possible?
-  allResults <- barplot(c(acc, Error1Perc, Error2Perc), 
+  barResults <- barplot(c(acc, Error1Perc, Error2Perc), 
                         main="Accuracy vs. Errorpercentages",
                         col=c("green","red","red"), 
-                        horiz=TRUE,xlim = c(0,1) ,
+                        horiz=TRUE,
+                        xlim = c(0,1),
+                        beside=TRUE,
                         names.arg = c("Accuracy","Error 1. degree", "Error 2n degree"))
   
-  #TODO (Colin): arrange grid with plot
+  
+  # Put values as text into plot
+  text(c(acc-0.1,Error1Perc-0.1,Error2Perc-0.1),c(0.7,1.9,3.1), cex=2,col="black",labels = c(
+    paste(round(acc*100,2),"%"), 
+    paste(round(Error1Perc*100,2),"%"), 
+    paste(round(Error2Perc*100,2),"%")))
+  
+  # Pie chart for results
+  pieResults <- pie3D(c(acc,Error1Perc,Error2Perc),
+    main="Accuracy vs. Errorpercentages",
+    col = c("green","red","red"),
+    radius = 1.5,
+    labels = c("Accuracy","Error 1. degree","Error 2. degree"),
+    shade = 0.7,
+    explode=0.1)
+
+  
   
   #TODO: Create Plot
   return(rbind(result,c(correct,acc)))
