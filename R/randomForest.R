@@ -161,7 +161,7 @@ d.d.evaluation <- function(pred, testData){
     )
   
   # Draw grid for errors and true predictions
-  grid.table(result, theme=t1)
+  grid.arrange(tableGrob(result, theme=t1))
 
   # Calculate accuracy
   correct <- result["No person predicted","No person"]+result["Person predicted","Person"]
@@ -181,9 +181,13 @@ d.d.evaluation <- function(pred, testData){
                         horiz=TRUE,xlim = c(0,1) ,
                         names.arg = c("Accuracy","Error 1. degree", "Error 2n degree"))
   
-  #TODO (Colin): arrange grid with plot
+  text(c(acc-0.1,Error1Perc-0.1,Error2Perc-0.1),c(0.7,1.9,3.1), cex=2,col="black",labels = c(
+    paste(round(acc*100,2),"%"), 
+    paste(round(Error1Perc*100,2),"%"), 
+    paste(round(Error2Perc*100,2),"%")))
+
   
-  #TODO: Create Plot
+    #TODO: Create Plot
   return(rbind(result,c(correct,acc)))
 }
 
