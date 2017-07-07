@@ -145,55 +145,139 @@ c.c.step2 <- function(){
 #' @title Feature Extraction - Step 2 (Histogram of Oriented Gradients)
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
+#' Set working directory to the package before using this function (setwd())
 #' ...
 #'
-#' @author Sascha Di Bernardo
-c.d.hog <- function(){
+#' @author Sascha Di Bernardo, Tassilo Tobollik
+c.d.hog <- function(cells, orientations){
   
   library(OpenImageR)
   library(parallel)
   
-  # applies HOG to all images of the workspace
-  hog1 = HOG_apply("C:/Users/Sascha/Documents/DA2-17-Images/", cells = 16, orientations = 4)
-  save(hog, file="data/hog_16.Rda")
+  folder <- "data-raw/IMG/CS CZ/normal"
   
-  hog2 = HOG_apply("C:/Users/Sascha/Documents/DA2-17-Images/", cells = 9, orientations = 4)
-  save(hog, file="data/hog_9.Rda")
+  #The following works only for folders with images in them not with ones with subfolders.
+  dirList <- list.dirs(folder,full.names = T, recursive = F)
   
-  numCores <- detectCores()
+  fileFolderName <- paste(paste(paste(paste("data/hog_original_", cells, sep = "")
+                                      , "_", sep = "")
+                                , orientations, sep = "")
+                          , "_", sep = "")
+  fileNames <- sapply(1:length(dirList), function(y){
+    path <- dirList[y]
+    namePos <- gregexpr(folder,path)
+    name <- substr(path, attr(namePos[[1]], "match.length") + 2, nchar(path))
+    hog <- HOG_apply(paste(path, "/", sep = ""), cells = cells, orientations = orientations)
+    fileName <- paste(paste(fileFolderName
+                      , name, sep = "")
+                , ".Rda", sep = "")
+    save(hog, file=fileName)
+    return(fileName)
+  })
+  
+  for (fileName in fileNames){
+    currHog <- load(fileName)
+    # namePos <- gregexpr(fileFolderName,fileName)
+    # name <- substr(fileName, attr(namePos[[1]], "match.length") + 1, nchar(fileName) - 4)
+    if(which(fileNames == fileName) == 1){
+      hogData <- hog
+    } else {
+      hogData$files <- c(hogData$files, hog$files)
+      hogData$hog <- c(hogData$hog, hog$hog)
+    }
+  }
+  save(hogData, file = paste(fileFolderName, "complete.Rda", sep = ""))
+}
 
-  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Colin/", cells = 4, orientations = 9)
-  save(hog3, file="data/hog_original_4_9_Colin.Rda")
-  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Maren/", cells = 4, orientations = 9)
-  save(hog3, file="data/hog_original_4_9_Maren.Rda")
-  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Nils/", cells = 4, orientations = 9)
-  save(hog3, file="data/hog_original_4_9_Nils.Rda")
-  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Nils2/", cells = 4, orientations = 9, threads = numCores)
-  save(hog3, file="data/hog_original_4_9_Nils2.Rda")
-  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Sascha/", cells = 4, orientations = 9)
-  save(hog3, file="data/hog_original_4_9_Sascha.Rda")
-  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Tac/", cells = 4, orientations = 9)
-  save(hog3, file="data/hog_original_4_9_Tac.Rda")
-  hog3 = HOG_apply("C:/Users/t_tob_000/Git/DA2-17/data-raw/IMG/CS CZ/Vit/", cells = 4, orientations = 9)
-  save(hog3, file="data/hog_original_4_9_Vit.Rda")
+image <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/normal/Colin/hl 2017-06-14 17-44-58-48.png")
+z.f.displayRgbImage(image=image)
+load("data/hog_original_8_9_complete.Rda")
+hogFeature <- hogData$hog[1:(8*8*9)]
+
+c.e.displayHogFeature(image, hogFeature, 8, 9)
+
+#' @title Feature Extraction - display HOG (Histogram of Oriented Gradients)
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'
+#' ...
+#'
+#' @author Tassilo Tobollik
+c.e.displayHogFeature <- function(image, hogFeature, cells, orientations){
   
-  load("data/hog_original_4_9_Colin.Rda")
-  colin <- hog3
-  load("data/hog_original_4_9_Maren.Rda")
-  maren <- hog3
-  load("data/hog_original_4_9_Nils.Rda")
-  nils <- hog3
-  load("data/hog_original_4_9_Nils2.Rda")
-  nils2 <- hog3
-  load("data/hog_original_4_9_Sascha.Rda")
-  sascha <- hog3
-  load("data/hog_original_4_9_Tac.Rda")
-  tac <- hog3
-  load("data/hog_original_4_9_Vit.Rda")
-  vit <- hog3
-  hogData <- colin
-  hogData$files <- c(colin$files, maren$files, nils$files, nils2$files, sascha$files, tac$files, vit$files)
-  hogData$hog <- rbind(colin$hog, maren$hog, nils$hog, nils2$hog, sascha$hog, tac$hog, vit$hog)
-  save(hogData, file="data/hogData_original_4_9_complete.Rda")
+  z.f.displayRgbImage(image)
+  
+  cellSize = 1/cells
+  halfCellSize = cellSize/2
+  
+  #Draw the cell raster
+  abline(v=seq(1,2,by=cellSize), col = "green")
+  abline(h=seq(1,2,by=cellSize), col = "green")
+  
+  #Calculate the cell centers
+  cellCenters <- sapply(1:cells, function(x){
+    sapply(1:cells, function(y){
+      rowNum = floor(x / (cells + 1))
+      colNum = floor(y / (cells + 1))
+      cellXNum = x - rowNum * cells
+      cellYNum = y - colNum * cells
+      cellX = 1 + cellXNum * cellSize - halfCellSize
+      cellY = 1 + cellYNum * cellSize - halfCellSize
+      # points(x=cellX,y=cellY,col="red")
+      return(c(cellX,cellY))
+    })
+  })
+  
+  #Calculate angles for the vectors
+  degree <- 180/orientations
+  degrees <- seq(0,180-degree,by=degree)
+  degrees <- c(degrees, (180+degrees))
+  
+  library(grid)
+  
+  #aaa
+  
+  #Set a layout for the hog cells
+  layout = grid.layout(cells,cells,widths= seq(0.25,0.25,length.out=cells),
+                    heights=seq(0.25,0.25,length.out=cells),
+                    just='center')
+
+  pushViewport(viewport(layout=layout))#,xscale=2*extendrange(c(min(hogFeature),max(hogFeature)))))#vectorValues[,2])))
+  
+  #Loop through all cells
+  sapply(1:cells, function(cellRow){
+    sapply(1:cells, function(cellCol){
+      cellNum <- (cellRow - 1) * 4 + cellCol
+      #Vector lengths for the current cell
+      lengths <- hogFeature[((cellNum-1)*orientations + 1):(cellNum*orientations)]
+      #Add vector lengths for 181-360° which are the same
+      lengths <- c(lengths,lengths)
+      lengths <- lengths*(10^floor(cells/4) * 5)
+      vectorValues <- cbind(degrees,lengths)
+      c.f.plotHogCellVectors(vectorValues,cellCol,cellRow)
+    })
+  })
+}
+
+#' @title Feature Extraction - plot HOG (Histogram of Oriented Gradients) cell vectors
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'  Function that plots vectors with given angles and length into a specified layout cell
+#' ...
+#'
+#' @author Tassilo Tobollik
+c.f.plotHogCellVectors <- function(vectorValues,cellCol,cellRow){
+  #Add a new viewport for the specified layout cell
+  pushViewport(viewport(layout.pos.col=cellCol,layout.pos.row=cellRow))
+  #For each vector
+  apply(vectorValues,1,function(x){
+    #Add a new viewport with the specified angle
+    pushViewport(viewport(angle=x[1])) 
+    #Draw a vector with the specified length
+    grid.segments(x0=0.5,y0=0.5,x1=0.5+x[2]*0.8,y1=0.5, gp=gpar(col="red"))
+    #Remove viewport
+    popViewport()
+  })
+  #Remove viewport
+  popViewport()
 }

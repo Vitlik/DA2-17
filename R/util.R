@@ -222,11 +222,15 @@ z.e.RGBAtoRGB <- function(r = 0, g = 0, b = 0, a, r2,g2,b2){
 #'  
 #'
 #' @author Vitali Friesen, Tassilo Tobollik
-z.f.displayRgbImage <- function(image, x1 = NULL, x2 = NULL, y1 = NULL, y2 = NULL, interpol = F){
+z.f.displayRgbImage <- function(image, x1 = NULL, x2 = NULL, y1 = NULL, y2 = NULL, interpol = F, noBorder = T){
+  if(noBorder){
+    #Set graphic parameters so that no borders are displayed
+    par(bty = "n", mai=c(0,0,0,0), mar=c(0,0,0,0), usr=c(1,2,1,2), xaxs="i", yaxs="i")
+  }
   if(is.null(x1) && is.null(x2) && is.null(y1) && is.null(y2)){
     #Raster the whole image
     plot(1:2, type='n')
-    rasterImage(image, 1,1,2,2, interpolate = interpol) 
+    rasterImage(image, 1,1,2,2, interpolate = interpol)#mai or mar 
   }else{
     #Raster just a part of the image
     rasterImage(image[x1:x2,y1:y2,], 1,1,2,2, interpolate = interpol) 
