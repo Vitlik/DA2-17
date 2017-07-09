@@ -66,7 +66,7 @@ d.a.randomForest.start <- function(){
 
   d.d.evaluation(overallResult[,1], overallResult[,2])
   
-  d.e.plotImportance(rfModels)
+  d.e.plotImportanceColorHist(rfModels)
 }
 
 #' @title Classifier 1 - Step 1
@@ -215,7 +215,7 @@ d.d.evaluation <- function(pred, testData){
 #' ...
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
-d.e.plotImportance <- function(rfModels){
+d.e.plotImportanceColorHist <- function(rfModels){
   
   load("data/blockNum.rda")
   

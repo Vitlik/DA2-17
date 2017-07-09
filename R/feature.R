@@ -7,7 +7,7 @@
 #' It executes these functions:
 #' \enumerate{
 #'   \item \code{\link{c.b.colorHist}}
-#'   \item \code{\link{c.c.step2}}
+#'   \item \code{\link{c.c.colorHistPlotting}}
 #' }
 #'
 #' @author Vitali Friesen
@@ -17,7 +17,7 @@ c.a.feature.start <- function(){
   c.b.colorHist()
 
   # Explanation
-  c.c.step2()
+  c.c.colorHistPlotting()
 
   # Histogram of Oriented Gradients
   c.d.hog()
@@ -89,7 +89,7 @@ c.b.colorHist <- function(){
   save(colorHistEighth, file = "data/colorHistEighth.rda")
   
   # create plots for the color Histograms
-  # c.c.step2()
+  # c.c.colorHistPlotting()
 }
 
 #' @title Feature Extraction - Step 2
@@ -99,7 +99,7 @@ c.b.colorHist <- function(){
 #' ...
 #'
 #' @author
-c.c.step2 <- function(){
+c.c.colorHistPlotting <- function(){
   
   load("data/buckets.rda")
   bucks <- 1:buckets
@@ -250,7 +250,7 @@ c.e.displayHogFeature <- function(image, hogFeature, cells, orientations){
       cellNum <- (cellRow - 1) * 4 + cellCol
       #Vector lengths for the current cell
       lengths <- hogFeature[((cellNum-1)*orientations + 1):(cellNum*orientations)]
-      #Add vector lengths for 181-360° which are the same
+      #Add vector lengths for 181-360? which are the same
       lengths <- c(lengths,lengths)
       lengths <- lengths*(10^floor(cells/4) * 5)
       vectorValues <- cbind(degrees,lengths)
@@ -280,4 +280,40 @@ c.f.plotHogCellVectors <- function(vectorValues,cellCol,cellRow){
   })
   #Remove viewport
   popViewport()
+}
+
+#' @title Feature Extraction - plot HOG (Histogram of Oriented Gradients) cell vectors
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'  Function that plots vectors with given angles and length into a specified layout cell
+#' ...
+#'
+#' @author Vitali Friesen
+c.g.getPixelInfo <- function(){
+  # load image list
+  folder <- (
+    #"data-raw/IMG/CS CZ original/normal/"
+    #"data-raw/IMG/CS CZ original/histEqual/"
+    #"data-raw/IMG/CS CZ original/rgbNorm/"
+    #"data-raw/IMG/CS CZ halved/normal/"
+    #"data-raw/IMG/CS CZ quarter/normal/"
+    "data-raw/IMG/CS CZ eighth/normal/"
+  )
+  
+  imgList <- list.files(folder, full.names = T, ignore.case = F, recursive = T)
+  # calculate for each image
+  imgPixelInfoEighths <- t(sapply(imgList, function(imgPath){
+    # load image information into curImg
+    as.vector(readPNG(imgPath))
+    
+  }))
+  # cut the path from the row names
+  rownames(imgPixelInfoEighths) <- substr(rownames(imgPixelInfoEighths),
+                                         nchar(rownames(imgPixelInfoEighths))-28,
+                                         nchar(rownames(imgPixelInfoEighths)))
+  
+  # sort rows by their row names
+  imgPixelInfoEighths <- imgPixelInfoEighths[ order(row.names(imgPixelInfoEighths)), ]
+  
+  save(imgPixelInfoEighths, file = "data/imgPixelInfoEighths.rda")
 }
