@@ -302,18 +302,19 @@ c.g.getPixelInfo <- function(){
   
   imgList <- list.files(folder, full.names = T, ignore.case = F, recursive = T)
   # calculate for each image
-  imgPixelInfoEighths <- t(sapply(imgList, function(imgPath){
+  pixelFeatureMatrixEighths <- t(sapply(imgList, function(imgPath){
     # load image information into curImg
     as.vector(readPNG(imgPath))
     
   }))
   # cut the path from the row names
-  rownames(imgPixelInfoEighths) <- substr(rownames(imgPixelInfoEighths),
-                                         nchar(rownames(imgPixelInfoEighths))-28,
-                                         nchar(rownames(imgPixelInfoEighths)))
+  rownames(pixelFeatureMatrixEighths) <- substr(rownames(pixelFeatureMatrixEighths),
+                                         nchar(rownames(pixelFeatureMatrixEighths))-28,
+                                         nchar(rownames(pixelFeatureMatrixEighths)))
   
   # sort rows by their row names
-  imgPixelInfoEighths <- imgPixelInfoEighths[ order(row.names(imgPixelInfoEighths)), ]
+  pixelFeatureMatrixEighths <- 
+    pixelFeatureMatrixEighths[ order(row.names(pixelFeatureMatrixEighths)), ]
   
-  save(imgPixelInfoEighths, file = "data/imgPixelInfoEighths.rda")
+  save(pixelFeatureMatrixEighths, file = "data/pixelFeatureMatrixEighths.rda")
 }
