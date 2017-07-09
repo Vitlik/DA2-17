@@ -43,10 +43,17 @@ e.a.svm.start <- function(){
 #' @author Colin Juers
 e.b.step1 <- function(trainData){
   
-  # Support vector machine function
-  model_svm <- svm(as.factor(P) ~ . -P, trainData)
   
-  # model_svm <- tune(svm,as.factor(P) ~ . -P, data=data.frame(trainData), ranges = list(epsilon = seq(0,1,0.01),cost=2^(2:9)))
+  # svm_train <- as.list(as.data.frame(trainData))
+  
+  # Support vector machine function
+  model_svm <- svm(as.factor(P)~., trainData, cost=100)
+  
+  # tune svm to get the best cost for the svm (once used)
+  # tune_svm <- tune(svm, as.factor(P)~., data=data.frame(trainData), ranges=list(cost=c(0.001,0.01,.1,1,10,100)))
+  
+  summary(tune_svm)
+  # plot(model_svm, trainData)
   
 }
 
@@ -62,7 +69,7 @@ e.b.step1 <- function(trainData){
 e.c.step2 <- function(model_svm, testData){
   
   # predicting the testdata
-  pred_svm <- predict(model_svm, testData)
+  pred_svm <- predict(model_svm, testData, type="class")
   
 }
 
@@ -101,6 +108,15 @@ e.d.evaluation <- function(pred_svm, testData){
   
   resultTable <- tableGrob(result_svm, theme=t1)
   grid.arrange(resultTable)
+  
+  # Pie chart for results with parameters
+  pieResults <- pie3D(c(acc,Error1Perc,Error2Perc),
+                      main="Accuracy vs. Errorpercentages",
+                      col = c("green","red","red"),
+                      radius = 1.5,
+                      labels = c("Accuracy","Error 1. degree","Error 2. degree"),
+                      shade = 0.7,
+                      explode=0.1)
   
   acc_svm
   
