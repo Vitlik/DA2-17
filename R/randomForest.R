@@ -193,7 +193,7 @@ d.d.evaluation <- function(pred, testData){
     paste(round(Error1Perc*100,2),"%"), 
     paste(round(Error2Perc*100,2),"%")))
   
-  # Pie chart for results
+  # Pie chart for results with parameters
   pieResults <- pie3D(c(acc,Error1Perc,Error2Perc),
     main="Accuracy vs. Errorpercentages",
     col = c("green","red","red"),
