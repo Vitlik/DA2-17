@@ -1,23 +1,29 @@
 load("data/pixelFeatureMatrixEighthsSquared.rda")
 load("data/classesEights.rda")
+load("data/blocks.rda")
+load("data/blockNum.rda")
 
 library(mxnet)
 
+## load data matrixes
+train <- pixelFeatureMatrixEighthsSquared[0:2120, ]
+test <- pixelFeatureMatrixEighthsSquared[2121:2650, ]
 
-train_x2 <- pixelFeatureMatrixEighthsSquared[0:2120, ]
-test_x2 <- pixelFeatureMatrixEighthsSquared[2121:2650, ]
+train_classes <- classesEights[0:2120, ]
+test_classes <- classesEights[2121:2650,]
+##test_x2 <- data.matrix(test_x2)
 
-train_y2 <- classesEights[0:2120, ]
-test_y2 <- classesEights[2121:2650,]
-test_x2 <- data.matrix(test_x2)
+##train.y <- train_y2
+train_x <- t(train)
+test_x <- t(test)
 
-train.y <- train_y2
-train.x <- t(train_x2)
-test.x <- t(test_x2)
+## img_size <- 28*28
+train_array <- train_x
+dim(train_array) <- c(28, 28, 1, ncol(train_x))
 
-img_size <- 28*28
-dim(train.x) <- c(28, 28, 1, ncol(train.x))
-dim(test.x) <- c(28,28,1,ncol(test.x))
+##den test datensatz hat er im R-Blogger nicht als matrix, nur die Tabelle verwendet nachher die MAtrix
+test_array <- test_x
+dim(test_array) <- c(28,28,1,ncol(test_x))
 
 # Model
 data <- mx.symbol.Variable('data')
@@ -42,40 +48,69 @@ mx.set.seed(100)
 
 device <- mx.cpu()
 
-model <- mx.model.FeedForward.create(NN_model, X = train.x, y = train.y,
+model <- mx.model.FeedForward.create(NN_model, X = train_array, y = train_classes,
                                      ctx = device,
                                      num.round = 30,
-                                     array.batch.size = 100,
-                                     learning.rate = 0.003,
+                                     array.batch.size = 20,
+                                     learning.rate = 0.00000001,
                                      momentum = 0.9,
                                      wd = 0.00001,
                                      eval.metric = mx.metric.accuracy,
-                                     epoch.end.callback = mx.callback.log.train.metric(100))
+                                     epoch.end.callback = mx.callback.log.train.metric(100)
+                                     )
 
-preds <- predict(model, test.x)
+
+resultdata <- sapply(1:blockNum, function(curBlock){
+  
+  # retrieve the indexes of the corresponding train block
+  trainBlockIndexes <- get(paste0("train", curBlock), envir=blocks)
+  
+  # for calculating the processing time: save start time
+  start.time <- Sys.time()
+  
+  model <- mx.model.FeedForward.create(NN_model, X = data[trainBlockIndexes,], y = train_classes,
+                                       ctx = device,
+                                       num.round = 30,
+                                       array.batch.size = 20,
+                                       learning.rate = 0.00000001,
+                                       momentum = 0.9,
+                                       wd = 0.00001,
+                                       eval.metric = mx.metric.accuracy,
+                                       epoch.end.callback = mx.callback.log.train.metric(100)
+  )
+  
+  
+
+  # print processing time
+  print(paste0("Processing time for training the random forest block ", curBlock, ": ",
+               (Sys.time() - start.time)))
+  
+  
+  
+preds <- predict(model, test_array)
 dim(preds)
 
 pred.label <- max.col(t(preds)) - 1
 table(pred.label)
 
-test.y <- t(test_y2$P)
-View(test.y)
-comparison <- rbind(preds, test.y)
-View(comparison)
-View(preds)
+table(test_classes, pred.label)
+sum(diag(table(test_classes, pred.label)))/530
 
-tPreds <- preds
-rownames(tPreds) <- c(0,1)
-View(tPreds)
+#test.y <- t(test_y2)
+#comparison <- rbind(preds, test.y)
 
-tPreds2 <- t(tPreds)
-View(tPreds2)
+tPreds <- t(preds)
+colnames(tPreds) <- c(0,1)
 
-colnames(tPreds2)
+#tPreds2 <- t(tPreds)
+#View(tPreds2)
 
-predsV2 <- colnames(tPreds2)[max.col(tPreds2, ties.method = 'first')]
-predsV3 <- data.frame(cbind(predsV2, test_y2))
+#colnames(tPreds2)
+
+predsV2 <- colnames(tPreds)[max.col(tPreds, ties.method = 'first')]
+predsV3 <- data.frame(cbind(predsV2, test_classes))
 colnames(predsV3) <- c("Preds", "Real")
+
 
 result <- table(predsV3$Preds, predsV3$Real)
 colnames(result)=c("No person","Person")
