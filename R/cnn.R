@@ -59,33 +59,6 @@ model <- mx.model.FeedForward.create(NN_model, X = train_array, y = train_classe
                                      epoch.end.callback = mx.callback.log.train.metric(100)
                                      )
 
-
-resultdata <- sapply(1:blockNum, function(curBlock){
-  
-  # retrieve the indexes of the corresponding train block
-  trainBlockIndexes <- get(paste0("train", curBlock), envir=blocks)
-  
-  # for calculating the processing time: save start time
-  start.time <- Sys.time()
-  
-  model <- mx.model.FeedForward.create(NN_model, X = data[trainBlockIndexes,], y = train_classes,
-                                       ctx = device,
-                                       num.round = 30,
-                                       array.batch.size = 20,
-                                       learning.rate = 0.00000001,
-                                       momentum = 0.9,
-                                       wd = 0.00001,
-                                       eval.metric = mx.metric.accuracy,
-                                       epoch.end.callback = mx.callback.log.train.metric(100)
-  )
-  
-  
-
-  # print processing time
-  print(paste0("Processing time for training the random forest block ", curBlock, ": ",
-               (Sys.time() - start.time)))
-  
-  
   
 preds <- predict(model, test_array)
 dim(preds)
