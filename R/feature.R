@@ -290,6 +290,9 @@ c.f.plotHogCellVectors <- function(vectorValues,cellCol,cellRow){
 #'
 #' @author Vitali Friesen
 c.g.getPixelInfo <- function(){
+  #source("http://bioconductor.org/biocLite.R")
+  #biocLite("EBImage")
+  library(EBImage)
   # load image list
   folder <- (
     #"data-raw/IMG/CS CZ original/normal/"
@@ -298,12 +301,14 @@ c.g.getPixelInfo <- function(){
     #"data-raw/IMG/CS CZ halved/normal/"
     #"data-raw/IMG/CS CZ quarter/normal/"
     "data-raw/IMG/CS CZ eighth/normal/"
+    #"C:/Users/Nils/sciebo/DA2/Images/CS CZ sqared 28/"
   )
   
   imgList <- list.files(folder, full.names = T, ignore.case = F, recursive = T)
   # calculate for each image
   pixelFeatureMatrixEighths <- t(sapply(imgList, function(imgPath){
     # load image information into curImg
+    #as.vector(channel(readImage(imgPath), "gray"))
     as.vector(readPNG(imgPath))
     
   }))
