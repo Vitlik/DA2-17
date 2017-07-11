@@ -176,14 +176,16 @@ c.d.hog <- function(cells, orientations){
   })
   
   for (fileName in fileNames){
-    currHog <- load(fileName)
+    load(fileName)
     # namePos <- gregexpr(fileFolderName,fileName)
     # name <- substr(fileName, attr(namePos[[1]], "match.length") + 1, nchar(fileName) - 4)
     if(which(fileNames == fileName) == 1){
-      hogData <- hog
+      hogData <- hog$hog
+      rownames(hogData) <- hog$files
     } else {
-      hogData$files <- c(hogData$files, hog$files)
-      hogData$hog <- c(hogData$hog, hog$hog)
+      currHogRowNames <- rownames(hogData)
+      hogData <- rbind(hogData, hog$hog)
+      rownames(hogData) <- c(currHogRowNames, hog$files)
     }
   }
   save(hogData, file = paste(fileFolderName, "complete.Rda", sep = ""))
