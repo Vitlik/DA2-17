@@ -1,7 +1,26 @@
 setwd("C:/dev/DA2/DA2-17/")
+
+
+#' @title Classifier -  Wrapper function
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'
+#' This is a wrapper function for ...
+#'
+#' It executes these functions:
+#' \enumerate{
+#'   \item \code{\link{}}
+#'   \item \code{\link{}}
+#' }
+#'
+#' @author Maren Reuter, Nils Meckmann, Sascha
+
+load("data/blocks.rda")
+load("data/blockNum.rda")
 load("data/colorHistOriginal.rda")
 load("data/classesOrig.rda")
 load("data/hog_16.rda")
+
 neueMatrix <- cbind(colorHistOriginal, hog16, P = classesOrig[, "P"])
 
 library(mxnet)
