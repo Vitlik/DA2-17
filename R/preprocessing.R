@@ -67,11 +67,16 @@ b.b.createTrainTestDataIndexes <- function(){
   blocks <- new.env()
 
   blockNum <- 10
+  
+  # only take subset of the images to test if less train data worsen the accuracy
+  # imgIndexRand <- imgIndexRand[1:1785]
+  # imgIndexRand <- imgIndexRand[1:892]
 
   bin <- sapply(blockNum:1, blockCreator, bucketNum=blockNum, randList=imgIndexRand)
   
-  devtools::use_data(blocks, overwrite = T)
-  devtools::use_data(blockNum, overwrite = T)
+  save(blocks, blockNum, file = "data/blocks2677IMG.rda")
+  # save(blocks, blockNum, file = "data/blocks1785IMG.rda")
+  # save(blocks, blockNum, file = "data/blocks892IMG.rda")
 }
 
 #' @title Feature Extraction - Step 2
