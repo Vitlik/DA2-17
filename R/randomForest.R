@@ -22,9 +22,6 @@ d.a.randomForest.start <- function(){
   load("data/colorHistOriginal16Buckets.rda")
   
   data <- cbind(colorHist, P = classesOrig[,"P"])
-
-  # env var for all different models
-  rfModels <- new.env()
   
   #Loop through the train/test-data-sets
   resultData <- sapply(1:blockNum, function(curBlock){
@@ -35,7 +32,8 @@ d.a.randomForest.start <- function(){
     start.time <- Sys.time()
     # Explanation
     rfModel <- d.b.step1(data[trainBlockIndexes,])
-    assign(paste0("rfModel", curBlock), rfModel, envir = rfModels)
+    # store model for later evaluation
+    assign(paste0("rfModel", curBlock), rfModel, envir = blocks)
     # print processing time
     print(paste0("Processing time for training the random forest block ", curBlock, ": ",
                  (Sys.time() - start.time)))
@@ -49,6 +47,8 @@ d.a.randomForest.start <- function(){
     testData <- data[testBlockIndexes,]
     # Evaluate the result for the train-test-set
     pred <- d.c.step2(testData, rfModel)
+    # store prediction for later evaluation
+    assign(paste0("pred", curBlock), pred, envir = blocks)
     # print processing time
     print(paste0("Processing time for testing the random forest block ", curBlock, ": ",
                  (Sys.time() - start.time)))
@@ -57,15 +57,17 @@ d.a.randomForest.start <- function(){
     result <- matrix(nrow = length(pred), ncol = 2)
     result[,1] <- as.vector(pred)
     result[,2] <- testData[,ncol(testData)]
+    # store prediction & real classes matrix for later evaluation
+    assign(paste0("result", curBlock), result, envir = blocks)
     return(result)
   })
   
   overallResult <- do.call(rbind, resultData)
-  save(rfModels, file = "data/rfModels.rda")
+  save(blocks, file = "data/colorHistOriginal16BucketsRFModelResult.rda")
 
   d.d.evaluation(overallResult[,1], overallResult[,2])
   
-  d.e.plotImportanceColorHist(rfModels)
+  # d.e.plotImportanceColorHist(blocks)
 }
 
 #' @title Classifier 1 - Step 1
