@@ -33,17 +33,17 @@ c.b.colorHist <- function(){
   library(png)
   
   buckets <- 16
-  #buckets <- 255
+  # buckets <- 255
   
   # load image list
   folder <- (
     "data-raw/IMG/CS CZ original/normal/"
-    #"data-raw/IMG/CS CZ original/histEqual/"
-    #"data-raw/IMG/CS CZ original/rgbNorm/"
-    #"data-raw/IMG/CS CZ original/rgbNormHistEqual/"
-    #"data-raw/IMG/CS CZ halved/normal/"
-    #"data-raw/IMG/CS CZ quarter/normal/"
-    #"data-raw/IMG/CS CZ eighth/normal/"
+    # "data-raw/IMG/CS CZ original/histEqual/"
+    # "data-raw/IMG/CS CZ original/rgbNorm/"
+    # "data-raw/IMG/CS CZ original/rgbNormHistEqual/"
+    # "data-raw/IMG/CS CZ halved/normal/"
+    # "data-raw/IMG/CS CZ quarter/normal/"
+    # "data-raw/IMG/CS CZ eighth/normal/"
    )
   
   imgList <- list.files(folder, full.names = T, ignore.case = F, recursive = T)
@@ -79,19 +79,19 @@ c.b.colorHist <- function(){
   
   # store  variables in file
   save(colorHist, buckets, file = "data/colorHistOriginal16Buckets.rda")
-  #save(colorHist, buckets, file = "data/colorHistOriginal255Buckets.rda")
-  #ave(colorHist, buckets, file = "data/colorHistOriginalEqual16Buckets.rda")
-  #save(colorHist, buckets, file = "data/colorHistOriginalEqual255Buckets.rda")
-  #save(colorHist, buckets, file = "data/colorHistOriginalRGBNorm16Buckets.rda")
-  #save(colorHist, buckets, file = "data/colorHistOriginalRGBNorm255Buckets.rda")
-  #save(colorHist, buckets, file = "data/colorHistOriginalEqualRGBNorm16Buckets.rda")
-  #save(colorHist, buckets, file = "data/colorHistOriginalEqualRGBNorm255Buckets.rda")
-  #save(colorHist, buckets, file = "data/colorHistHalved16Buckets.rda")
-  #save(colorHist, buckets, file = "data/colorHistHalved255Buckets.rda")
-  #save(colorHist, buckets, file = "data/colorHistQuarter16Buckets.rda")
-  #save(colorHist, buckets, file = "data/colorHistQuarter255Buckets.rda")
-  #save(colorHist, buckets, file = "data/colorHistEighth16Buckets.rda")
-  #save(colorHist, buckets, file = "data/colorHistEighth255Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistOriginal255Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistOriginalEqual16Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistOriginalEqual255Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistOriginalRGBNorm16Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistOriginalRGBNorm255Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistOriginalEqualRGBNorm16Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistOriginalEqualRGBNorm255Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistHalved16Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistHalved255Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistQuarter16Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistQuarter255Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistEighth16Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistEighth255Buckets.rda")
   
   # create plots for the color Histograms
    #c.c.colorHistPlotting()
@@ -105,44 +105,45 @@ c.b.colorHist <- function(){
 #'
 #' @author
 c.c.colorHistPlotting <- function(){
+  library(ggplot2)
   
-  load("data/colorHistEighth16Buckets.rda")
-  bucks <- 1:buckets
+  doPlot <- c(
+    "data/colorHistOriginal16Buckets.rda"
+    , "data/colorHistOriginal255Buckets.rda"
+    , "data/colorHistOriginalEqual16Buckets.rda"
+    , "data/colorHistOriginalEqual255Buckets.rda"
+    )
   
-  data <- colorHistOriginal[1, 1:buckets]
-  dfRed <- data.frame(red = bucks, data)
-  data <- colorHistOriginal[1, (buckets+1):(buckets*2)]
-  dfGreen <- data.frame(green = bucks, data)
-  data <- colorHistOriginal[1, (buckets*2+1):(buckets*3)]
-  dfBlue <- data.frame(blue = bucks, data)
-  
-  ggplot(dfRed, aes(red, data)) + geom_bar(stat = "identity", fill = "#FF0000") + 
-    scale_y_continuous(limits = c(0,60000)) 
-  ggsave("plots/colorHistOriginalRed.png")
-  ggplot(dfGreen, aes(green, data)) + geom_bar(stat = "identity", fill = "#00FF00") + 
-    scale_y_continuous(limits = c(0,60000)) 
-  ggsave("plots/colorHistOriginalGreen.png")
-  ggplot(dfBlue, aes(blue, data)) + geom_bar(stat = "identity", fill = "#0000FF") + 
-    scale_y_continuous(limits = c(0,60000)) 
-  ggsave("plots/colorHistOriginalBlue.png")
-  
-  load("data/colorHistOriginalEqual.rda")
-  data <- colorHistOriginalEqual[1, 1:buckets]
-  dfRed <- data.frame(red = bucks, data)
-  data <- colorHistOriginalEqual[1, (buckets+1):(buckets*2)]
-  dfGreen <- data.frame(green = bucks, data)
-  data <- colorHistOriginalEqual[1, (buckets*2+1):(buckets*3)]
-  dfBlue <- data.frame(blue = bucks, data)
-  
-  ggplot(dfRed, aes(red, data)) + geom_bar(stat = "identity", fill = "#FF0000") + 
-    scale_y_continuous(limits = c(0,60000)) 
-  ggsave("plots/colorHistOriginalEqualRed.png")
-  ggplot(dfGreen, aes(green, data)) + geom_bar(stat = "identity", fill = "#00FF00") + 
-    scale_y_continuous(limits = c(0,60000)) 
-  ggsave("plots/colorHistOriginalEqualGreen.png")
-  ggplot(dfBlue, aes(blue, data)) + geom_bar(stat = "identity", fill = "#0000FF") + 
-    scale_y_continuous(limits = c(0,60000)) 
-  ggsave("plots/colorHistOriginalEqualBlue.png")
+  bin <- sapply(doPlot, function(rdaData){
+    load(rdaData)
+    bucks <- 1:buckets
+    
+    data <- colorHist[1, 1:buckets]
+    dfRed <- data.frame(red = bucks, data)
+    data <- colorHist[1, (buckets+1):(buckets*2)]
+    dfGreen <- data.frame(green = bucks, data)
+    data <- colorHist[1, (buckets*2+1):(buckets*3)]
+    dfBlue <- data.frame(blue = bucks, data)
+    
+    # hard coded scaling borders to make changes of normalization recognisable
+    highest <- ifelse(gregexpr(pattern ='255', rdaData)[[1]][1] == -1, 60000, 5000)
+    
+    ggplot(dfRed, aes(red, data)) + geom_bar(stat = "identity", fill = "#FF0000") + 
+      scale_y_continuous(limits = c(0, highest)) 
+    ggsave(paste0("plots/", 
+                  substr(rdaData, gregexpr(pattern ='/',rdaData)[[1]][1] +1, nchar(rdaData)-4),
+                  "Red.png"))
+    ggplot(dfGreen, aes(green, data)) + geom_bar(stat = "identity", fill = "#00FF00") + 
+      scale_y_continuous(limits = c(0, highest)) 
+    ggsave(paste0("plots/", 
+                  substr(rdaData, gregexpr(pattern ='/',rdaData)[[1]][1] +1, nchar(rdaData)-4),
+                  "Green.png"))
+    ggplot(dfBlue, aes(blue, data)) + geom_bar(stat = "identity", fill = "#0000FF") + 
+      scale_y_continuous(limits = c(0, highest)) 
+    ggsave(paste0("plots/", 
+                  substr(rdaData, gregexpr(pattern ='/',rdaData)[[1]][1] +1, nchar(rdaData)-4),
+                  "Blue.png"))
+  })
 }
 
 
