@@ -189,10 +189,11 @@ c.d.hog <- function(cells, orientations){
   save(hogData, file = paste(fileFolderName, "complete.Rda", sep = ""))
 }
 
-image <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/normal/Colin/hl 2017-06-14 17-44-58-48.png")
+image <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/normal/Colin/hl 2017-06-14 17-45-26-48.png")
 z.f.displayRgbImage(image=image)
 load("data/hog_original_8_9_complete.Rda")
-hogFeature <- hogData$hog[1:(8*8*9)]
+imgNum <- 25
+hogFeature <- hogData$hog[((8*8*9)*(imgNum-1))+1:((8*8*9)*imgNum)]
 
 c.e.displayHogFeature(image, hogFeature, 8, 9)
 
