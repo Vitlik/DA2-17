@@ -7,17 +7,16 @@
 #' It executes these functions:
 #' \enumerate{
 #'   \item \code{\link{c.b.colorHist}}
-#'   \item \code{\link{c.c.step2}}
+#'   \item \code{\link{c.c.colorHistPlotting}}
 #' }
 #'
 #' @author Vitali Friesen
 c.a.feature.start <- function(){
-  library(devtools)
   # Explanation
   c.b.colorHist()
 
   # Explanation
-  c.c.step2()
+  c.c.colorHistPlotting()
 
   # Histogram of Oriented Gradients
   c.d.hog()
@@ -34,16 +33,17 @@ c.b.colorHist <- function(){
   library(png)
   
   buckets <- 16
-  save(buckets, file = "data/buckets.rda")
+  #buckets <- 255
   
   # load image list
   folder <- (
-    #"data-raw/IMG/CS CZ original/normal/"
+    "data-raw/IMG/CS CZ original/normal/"
     #"data-raw/IMG/CS CZ original/histEqual/"
     #"data-raw/IMG/CS CZ original/rgbNorm/"
+    #"data-raw/IMG/CS CZ original/rgbNormHistEqual/"
     #"data-raw/IMG/CS CZ halved/normal/"
     #"data-raw/IMG/CS CZ quarter/normal/"
-    "data-raw/IMG/CS CZ eighth/normal/"
+    #"data-raw/IMG/CS CZ eighth/normal/"
    )
   
   imgList <- list.files(folder, full.names = T, ignore.case = F, recursive = T)
@@ -63,6 +63,7 @@ c.b.colorHist <- function(){
         })
       })
     )
+    #print(paste0(substr(imgPath,nchar(imgPath)-28,nchar(imgPath)), " fertig"))
   }))
   # cut the path from the row names
   rownames(colorHist) <- substr(rownames(colorHist),
@@ -76,20 +77,24 @@ c.b.colorHist <- function(){
   # sort rows by their row names
   colorHist <- colorHist[ order(row.names(colorHist)), ]
   
-  # store  variable in file
-  #colorHistOriginal <- colorHist
-  #save(colorHistOriginal, file = "data/colorHistOriginal.rda")
-  #colorHistOriginalEqual <- colorHist
-  #save(colorHistOriginalEqual, file = "data/colorHistOriginalEqual.rda")
-  #colorHistHalved <- colorHist
-  #save(colorHistHalved, file = "data/colorHistHalved.rda")
-  #colorHistQuarter <- colorHist
-  #save(colorHistQuarter, file = "data/colorHistQuarter.rda")
-  colorHistEighth <- colorHist
-  save(colorHistEighth, file = "data/colorHistEighth.rda")
+  # store  variables in file
+  save(colorHist, buckets, file = "data/colorHistOriginal16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistOriginal255Buckets.rda")
+  #ave(colorHist, buckets, file = "data/colorHistOriginalEqual16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistOriginalEqual255Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistOriginalRGBNorm16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistOriginalRGBNorm255Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistOriginalEqualRGBNorm16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistOriginalEqualRGBNorm255Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistHalved16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistHalved255Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistQuarter16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistQuarter255Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistEighth16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistEighth255Buckets.rda")
   
   # create plots for the color Histograms
-  # c.c.step2()
+   #c.c.colorHistPlotting()
 }
 
 #' @title Feature Extraction - Step 2
@@ -99,12 +104,11 @@ c.b.colorHist <- function(){
 #' ...
 #'
 #' @author
-c.c.step2 <- function(){
+c.c.colorHistPlotting <- function(){
   
-  load("data/buckets.rda")
+  load("data/colorHistEighth16Buckets.rda")
   bucks <- 1:buckets
   
-  load("data/colorHistOriginal.rda")
   data <- colorHistOriginal[1, 1:buckets]
   dfRed <- data.frame(red = bucks, data)
   data <- colorHistOriginal[1, (buckets+1):(buckets*2)]
@@ -176,14 +180,16 @@ c.d.hog <- function(cells, orientations){
   })
   
   for (fileName in fileNames){
-    currHog <- load(fileName)
+    load(fileName)
     # namePos <- gregexpr(fileFolderName,fileName)
     # name <- substr(fileName, attr(namePos[[1]], "match.length") + 1, nchar(fileName) - 4)
     if(which(fileNames == fileName) == 1){
-      hogData <- hog
+      hogData <- hog$hog
+      rownames(hogData) <- hog$files
     } else {
-      hogData$files <- c(hogData$files, hog$files)
-      hogData$hog <- c(hogData$hog, hog$hog)
+      currHogRowNames <- rownames(hogData)
+      hogData <- rbind(hogData, hog$hog)
+      rownames(hogData) <- c(currHogRowNames, hog$files)
     }
   }
   save(hogData, file = paste(fileFolderName, "complete.Rda", sep = ""))
@@ -251,7 +257,7 @@ c.e.displayHogFeature <- function(image, hogFeature, cells, orientations){
       cellNum <- (cellRow - 1) * 4 + cellCol
       #Vector lengths for the current cell
       lengths <- hogFeature[((cellNum-1)*orientations + 1):(cellNum*orientations)]
-      #Add vector lengths for 181-360° which are the same
+      #Add vector lengths for 181-360? which are the same
       lengths <- c(lengths,lengths)
       lengths <- lengths*(10^floor(cells/4) * 5)
       vectorValues <- cbind(degrees,lengths)
@@ -281,4 +287,46 @@ c.f.plotHogCellVectors <- function(vectorValues,cellCol,cellRow){
   })
   #Remove viewport
   popViewport()
+}
+
+#' @title Feature Extraction - 
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'  
+#' ...
+#'
+#' @author Vitali Friesen
+c.g.getPixelInfo <- function(){
+  #source("http://bioconductor.org/biocLite.R")
+  #biocLite("EBImage")
+  library(EBImage)
+  # load image list
+  folder <- (
+    #"data-raw/IMG/CS CZ original/normal/"
+    #"data-raw/IMG/CS CZ original/histEqual/"
+    #"data-raw/IMG/CS CZ original/rgbNorm/"
+    #"data-raw/IMG/CS CZ halved/normal/"
+    #"data-raw/IMG/CS CZ quarter/normal/"
+    "data-raw/IMG/CS CZ eighth/normal/"
+    #"C:/Users/Nils/sciebo/DA2/Images/CS CZ sqared 28/"
+  )
+  
+  imgList <- list.files(folder, full.names = T, ignore.case = F, recursive = T)
+  # calculate for each image
+  pixelFeatureMatrixEighths <- t(sapply(imgList, function(imgPath){
+    # load image information into curImg
+    #as.vector(channel(readImage(imgPath), "gray"))
+    as.vector(readPNG(imgPath))
+    
+  }))
+  # cut the path from the row names
+  rownames(pixelFeatureMatrixEighths) <- substr(rownames(pixelFeatureMatrixEighths),
+                                         nchar(rownames(pixelFeatureMatrixEighths))-28,
+                                         nchar(rownames(pixelFeatureMatrixEighths)))
+  
+  # sort rows by their row names
+  pixelFeatureMatrixEighths <- 
+    pixelFeatureMatrixEighths[ order(row.names(pixelFeatureMatrixEighths)), ]
+  
+  save(pixelFeatureMatrixEighths, file = "data/pixelFeatureMatrixEighths.rda")
 }

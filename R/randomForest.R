@@ -16,13 +16,12 @@ d.a.randomForest.start <- function(){
   #library(snow)
   #library(caret)
 
-  load("data/blocks.rda")
-  load("data/blockNum.rda")
+  load("data/blocks2677IMG.rda")
   load("data/classesOrig.rda")
   load("data/classesEights.rda")
   load("data/colorHistOriginal.rda")
   
-  data <- cbind(colorHistOriginal, P = classesOrig[,"P"])
+  data <- cbind(colorHist, P = classesOrig[,"P"])
 
   # env var for all different models
   rfModels <- new.env()
@@ -66,7 +65,7 @@ d.a.randomForest.start <- function(){
 
   d.d.evaluation(overallResult[,1], overallResult[,2])
   
-  d.e.plotImportance(rfModels)
+  d.e.plotImportanceColorHist(rfModels)
 }
 
 #' @title Classifier 1 - Step 1
@@ -193,7 +192,7 @@ d.d.evaluation <- function(pred, testData){
     paste(round(Error1Perc*100,2),"%"), 
     paste(round(Error2Perc*100,2),"%")))
   
-  # Pie chart for results
+  # Pie chart for results with parameters
   pieResults <- pie3D(c(acc,Error1Perc,Error2Perc),
     main="Accuracy vs. Errorpercentages",
     col = c("green","red","red"),
@@ -215,7 +214,7 @@ d.d.evaluation <- function(pred, testData){
 #' ...
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
-d.e.plotImportance <- function(rfModels){
+d.e.plotImportanceColorHist <- function(rfModels){
   
   load("data/blockNum.rda")
   
