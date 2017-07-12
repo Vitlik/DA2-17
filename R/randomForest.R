@@ -19,7 +19,7 @@ d.a.randomForest.start <- function(){
   load("data/blocks2677IMG.rda")
   load("data/classesOrig.rda")
   load("data/classesEights.rda")
-  load("data/colorHistOriginal.rda")
+  load("data/colorHistOriginal16Buckets.rda")
   
   data <- cbind(colorHist, P = classesOrig[,"P"])
 
