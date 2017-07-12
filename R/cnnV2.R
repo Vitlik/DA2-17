@@ -5,21 +5,30 @@ load("data/blockNum.rda")
 
 
 data1 <- cbind(pixelFeatureMatrixEighthsSquared, classesEights)
-data1 <- t(data1)
+
 
 ##CNNModels <- new.env()
-resultData <- sapply(1:blockNum, function(curBlock){
+resultData1 <- sapply(1:blockNum, function(curBlock){
+  
   # retrieve the indexes of the corresponding train block
   trainBlockIndexes <- get(paste0("train", curBlock), envir=blocks)
   
   # for calculating the processing time: save start time
   start.time <- Sys.time()
+  
   # Explanation
   trainData <- data1[trainBlockIndexes,]
-  CNNModel <- cnn.b.step1(trainData)
+ # trainData <- data1
+  train_x <- trainData[,-ncol(trainData)]
+  train_y <- trainData[,ncol(trainData)]
+  train.x <- t(train_x)
+  train_array <- train.x
+  dim(train_array) <- c(28, 28, 1, ncol(train.x))
+  
+  CNNmodel <- cnn.b.step1(train_array, train_y)
   ##assign(paste0("CNNModel", curBlock), CNNModel, envir = CNNModels)
   # print processing time
-  print(paste0("Processing time for training the random forest block ", curBlock, ": ",
+  print(paste0("Processing time for training the CNN block ", curBlock, ": ",
                (Sys.time() - start.time)))
   
   # retrieve the indexes of the corresponding test block
@@ -28,17 +37,25 @@ resultData <- sapply(1:blockNum, function(curBlock){
   # for calculating the processing time: save start time
   start.time <- Sys.time()
   testData <- data1[testBlockIndexes,]
+  test_x <- testData[,-nrow(testData)]
+  test_y <- testData[,nrow(testData)]
+
+  test.x <- t(test_x)
+  test_array <- test.x
+  dim(test_array) <- c(28, 28, 1, ncol(test.x))
+  
   # Evaluate the result for the train-test-set
-  preds <- cnn.c.step2(testData, CNNModel)
+  preds <- cnn.c.step2(test_array, CNNmodel)
   # print processing time
-  print(paste0("Processing time for testing the random forest block ", curBlock, ": ",
+  print(paste0("Processing time for testing the CNN block ", curBlock, ": ",
                (Sys.time() - start.time)))
 
-  # pred.label <- max.col(t(preds)) - 1
-  # table(pred.label)
+  # print(pred.label <- max.col(t(preds)) - 1)
+  # print(table(pred.label))
   # 
-  # table(test_classes, pred.label)
-  # sum(diag(table(test_classes, pred.label)))/530
+  # print(table(test_y, pred.label))
+  # print(sum(diag(table(test_y, pred.label)))/530)
+  
   result <- matrix(nrow = length(preds), ncol = 2)
   result[,1] <- as.vector(preds)
   result[,2] <- testData[,ncol(testData)]
@@ -47,8 +64,9 @@ resultData <- sapply(1:blockNum, function(curBlock){
 
 
 
-cnn.b.step1 <- function(trainData){
+cnn.b.step1 <- function(train_array, train_y){
   library(mxnet)
+  
   # Model
   data <- mx.symbol.Variable('data')
   # 1st convolutional layer 5x5 kernel and 20 filters.
@@ -71,13 +89,9 @@ cnn.b.step1 <- function(trainData){
   mx.set.seed(100)
   
   device <- mx.cpu()
-  
-  train_x <- data1[,-nrow(data1)]
-  train_y <- data1[,nrow(data1)]
-  
-  CNNmodel <- mx.model.FeedForward.create(NN_model, X = train_x, y = train_y,
+  CNNmodel <- mx.model.FeedForward.create(NN_model, X = train_array, y = train_y,
                                        ctx = device,
-                                       num.round = 30,
+                                       num.round = 20,
                                        array.batch.size = 20,
                                        learning.rate = 0.00000001,
                                        momentum = 0.9,
@@ -88,13 +102,12 @@ cnn.b.step1 <- function(trainData){
   return(CNNmodel)
 }
 
-d.c.step2 <- function(testData, CNNModel){
+cnn.c.step2 <- function(test_array, CNNmodel){
   
-  test_x <- testData[,-nrow(testData)]
-  test_y <- testData[,nrow(testData)]
-  
-  preds <- predict(CNNmodel, test_y)
+  preds <- predict(CNNmodel, test_array)
   
   return(preds)
 }
+
+
   

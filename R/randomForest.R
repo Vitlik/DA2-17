@@ -16,13 +16,12 @@ d.a.randomForest.start <- function(){
   #library(snow)
   #library(caret)
 
-  load("data/blocks.rda")
-  load("data/blockNum.rda")
+  load("data/blocks2677IMG.rda")
   load("data/classesOrig.rda")
   load("data/classesEights.rda")
   load("data/colorHistOriginal.rda")
   
-  data <- cbind(colorHistOriginal, P = classesOrig[,"P"])
+  data <- cbind(colorHist, P = classesOrig[,"P"])
 
   # env var for all different models
   rfModels <- new.env()

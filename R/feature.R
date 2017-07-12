@@ -12,7 +12,6 @@
 #'
 #' @author Vitali Friesen
 c.a.feature.start <- function(){
-  library(devtools)
   # Explanation
   c.b.colorHist()
 
@@ -34,16 +33,17 @@ c.b.colorHist <- function(){
   library(png)
   
   buckets <- 16
-  save(buckets, file = "data/buckets.rda")
+  #buckets <- 255
   
   # load image list
   folder <- (
-    #"data-raw/IMG/CS CZ original/normal/"
+    "data-raw/IMG/CS CZ original/normal/"
     #"data-raw/IMG/CS CZ original/histEqual/"
     #"data-raw/IMG/CS CZ original/rgbNorm/"
+    #"data-raw/IMG/CS CZ original/rgbNormHistEqual/"
     #"data-raw/IMG/CS CZ halved/normal/"
     #"data-raw/IMG/CS CZ quarter/normal/"
-    "data-raw/IMG/CS CZ eighth/normal/"
+    #"data-raw/IMG/CS CZ eighth/normal/"
    )
   
   imgList <- list.files(folder, full.names = T, ignore.case = F, recursive = T)
@@ -63,6 +63,7 @@ c.b.colorHist <- function(){
         })
       })
     )
+    #print(paste0(substr(imgPath,nchar(imgPath)-28,nchar(imgPath)), " fertig"))
   }))
   # cut the path from the row names
   rownames(colorHist) <- substr(rownames(colorHist),
@@ -76,20 +77,24 @@ c.b.colorHist <- function(){
   # sort rows by their row names
   colorHist <- colorHist[ order(row.names(colorHist)), ]
   
-  # store  variable in file
-  #colorHistOriginal <- colorHist
-  #save(colorHistOriginal, file = "data/colorHistOriginal.rda")
-  #colorHistOriginalEqual <- colorHist
-  #save(colorHistOriginalEqual, file = "data/colorHistOriginalEqual.rda")
-  #colorHistHalved <- colorHist
-  #save(colorHistHalved, file = "data/colorHistHalved.rda")
-  #colorHistQuarter <- colorHist
-  #save(colorHistQuarter, file = "data/colorHistQuarter.rda")
-  colorHistEighth <- colorHist
-  save(colorHistEighth, file = "data/colorHistEighth.rda")
+  # store  variables in file
+  save(colorHist, buckets, file = "data/colorHistOriginal16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistOriginal255Buckets.rda")
+  #ave(colorHist, buckets, file = "data/colorHistOriginalEqual16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistOriginalEqual255Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistOriginalRGBNorm16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistOriginalRGBNorm255Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistOriginalEqualRGBNorm16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistOriginalEqualRGBNorm255Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistHalved16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistHalved255Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistQuarter16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistQuarter255Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistEighth16Buckets.rda")
+  #save(colorHist, buckets, file = "data/colorHistEighth255Buckets.rda")
   
   # create plots for the color Histograms
-  # c.c.colorHistPlotting()
+   #c.c.colorHistPlotting()
 }
 
 #' @title Feature Extraction - Step 2
@@ -101,10 +106,9 @@ c.b.colorHist <- function(){
 #' @author
 c.c.colorHistPlotting <- function(){
   
-  load("data/buckets.rda")
+  load("data/colorHistEighth16Buckets.rda")
   bucks <- 1:buckets
   
-  load("data/colorHistOriginal.rda")
   data <- colorHistOriginal[1, 1:buckets]
   dfRed <- data.frame(red = bucks, data)
   data <- colorHistOriginal[1, (buckets+1):(buckets*2)]
@@ -176,23 +180,26 @@ c.d.hog <- function(cells, orientations){
   })
   
   for (fileName in fileNames){
-    currHog <- load(fileName)
+    load(fileName)
     # namePos <- gregexpr(fileFolderName,fileName)
     # name <- substr(fileName, attr(namePos[[1]], "match.length") + 1, nchar(fileName) - 4)
     if(which(fileNames == fileName) == 1){
-      hogData <- hog
+      hogData <- hog$hog
+      rownames(hogData) <- hog$files
     } else {
-      hogData$files <- c(hogData$files, hog$files)
-      hogData$hog <- c(hogData$hog, hog$hog)
+      currHogRowNames <- rownames(hogData)
+      hogData <- rbind(hogData, hog$hog)
+      rownames(hogData) <- c(currHogRowNames, hog$files)
     }
   }
   save(hogData, file = paste(fileFolderName, "complete.Rda", sep = ""))
 }
 
-image <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/normal/Colin/hl 2017-06-14 17-44-58-48.png")
+image <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/normal/Colin/hl 2017-06-14 17-45-26-48.png")
 z.f.displayRgbImage(image=image)
 load("data/hog_original_8_9_complete.Rda")
-hogFeature <- hogData$hog[1:(8*8*9)]
+imgNum <- 25
+hogFeature <- hogData$hog[((8*8*9)*(imgNum-1))+1:((8*8*9)*imgNum)]
 
 c.e.displayHogFeature(image, hogFeature, 8, 9)
 
@@ -282,10 +289,10 @@ c.f.plotHogCellVectors <- function(vectorValues,cellCol,cellRow){
   popViewport()
 }
 
-#' @title Feature Extraction - plot HOG (Histogram of Oriented Gradients) cell vectors
+#' @title Feature Extraction - 
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'  Function that plots vectors with given angles and length into a specified layout cell
+#'  
 #' ...
 #'
 #' @author Vitali Friesen
