@@ -60,7 +60,7 @@ b.b.createTrainTestDataIndexes <- function(){
            envir=blocks)
   }
 
-  imgList <- list.files("data-raw/IMG/CS CZ",full.names = T, ignore.case = F, recursive = T)
+  imgList <- list.files("data-raw/IMG/CS CZ original/normal/",full.names = T, ignore.case = F, recursive = T)
 
   set.seed(77)
   imgIndexRand <- sample(1:length(imgList),length(imgList))
