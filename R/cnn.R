@@ -1,13 +1,12 @@
-load("data/pixelFeatureMatrixEighthsSquared.rda")
+load("data/pixelFeatureMatrix28Squared.rda")
 load("data/classesEights.rda")
-load("data/blocks.rda")
-load("data/blockNum.rda")
+load("data/blocks2677IMG.rda")
 
 library(mxnet)
 
 ## load data matrixes
-train <- pixelFeatureMatrixEighthsSquared[0:2120, ]
-test <- pixelFeatureMatrixEighthsSquared[2121:2650, ]
+train <- pixelFeatureMatrix28Squared[0:2120, ]
+test <- pixelFeatureMatrix28Squared[2121:2650, ]
 
 train_classes <- classesEights[0:2120, ]
 test_classes <- classesEights[2121:2650,]

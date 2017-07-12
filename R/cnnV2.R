@@ -1,10 +1,9 @@
-load("data/pixelFeatureMatrixEighthsSquared.rda")
+load("data/pixelFeatureMatrix28Squared.rda")
 load("data/classesEights.rda")
-load("data/blocks.rda")
-load("data/blockNum.rda")
+load("data/blocks2677IMG.rda")
 
 
-data1 <- cbind(pixelFeatureMatrixEighthsSquared, classesEights)
+data1 <- cbind(pixelFeatureMatrix28Squared, classesEights)
 
 
 ##CNNModels <- new.env()
