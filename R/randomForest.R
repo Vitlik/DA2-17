@@ -65,9 +65,11 @@ d.a.randomForest.start <- function(){
   overallResult <- do.call(rbind, resultData)
   save(blocks, file = "data/colorHistOriginal16BucketsRFModelResult.rda")
 
-  d.d.evaluation(overallResult[,1], overallResult[,2])
+  result <- d.d.evaluation(overallResult[,1], overallResult[,2])
   
   # d.e.plotImportanceColorHist(blocks)
+  
+  return(result)
 }
 
 #' @title Classifier 1 - Step 1
@@ -217,6 +219,8 @@ d.d.evaluation <- function(pred, testData){
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
 d.e.plotImportanceColorHist <- function(rfModels){
+  
+  library(ggplot2)
   
   load("data/blockNum.rda")
   
