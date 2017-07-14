@@ -113,7 +113,6 @@ d.a.randomForest.start <- function(a, b, c, d, numTrees){
   save(blocks, file = c)
 
   result <- d.d.evaluation(overallResult[,1], overallResult[,2])
-  print(result)
   
   # d.e.plotImportanceColorHist(blocks)
   
