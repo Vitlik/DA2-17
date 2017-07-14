@@ -1,6 +1,6 @@
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal16Buckets.rda",
                        "data/colorHistOriginal16BucketsRFModelResult.rda", "data/classesOrig.rda",
-                       500)
+                       250)
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqual16Buckets.rda",
                        "data/colorHistOriginalEqual16BucketsRFModelResult.rda", "data/classesOrig.rda",
                        2000)
@@ -26,9 +26,9 @@ d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets
                        "data/colorHistEighth255BucketsRFModelResult.rda", "data/classesEights.rda",
                        2000)
 
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.Rda",
-                       "data/hog_8_9_orig_rf_result.rda", "data/classesOrig.rda",
-                       2000)
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_4_9_complete.Rda",
+                       "data/hog_4_9_orig_rf250_result.rda", "data/classesOrig.rda",
+                       250)
 
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_5_6_complete.Rda",
                        "data/hog_5_6_eighth_rf_result.rda", "data/classesEights.rda",
@@ -64,9 +64,9 @@ d.a.randomForest.start <- function(a, b, c, d, numTrees){
     else
       data <- pixelFeatureMatrix28Squared
   if(exists("classesEights"))
-    classes <- classesEights[,"P"]
+    classes <- classesEights
   else
-    classes <- classesOrig[,"P"]
+    classes <- classesOrig
   
   data <- cbind(data, P = classes[,"P"])
   
