@@ -1,6 +1,6 @@
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal16Buckets.rda",
                        "data/colorHistOriginal16BucketsRFModelResult.rda", "data/classesOrig.rda",
-                       1000)
+                       500)
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqual16Buckets.rda",
                        "data/colorHistOriginalEqual16BucketsRFModelResult.rda", "data/classesOrig.rda",
                        2000)
@@ -56,10 +56,19 @@ d.a.randomForest.start <- function(a, b, c, d, numTrees){
   # load("data/classesEights.rda")
   load(b)
   
-  # data <- cbind(colorHist, P = classesOrig[,"P"])
-  # data <- cbind(colorHist, P = classesEights[,"P"])
-  # data <- cbind(hogData, P = classesOrig[,"P"])
-  data <- cbind(hogData, P = classesEights[,"P"])
+  if(exists("colorHist"))
+    data <- colorHist
+  else
+    if (exists("hogData"))
+      data <- hogData
+    else
+      data <- pixelFeatureMatrix28Squared
+  if(exists("classesEights"))
+    classes <- classesEights[,"P"]
+  else
+    classes <- classesOrig[,"P"]
+  
+  data <- cbind(data, P = classes[,"P"])
   
   #Loop through the train/test-data-sets
   resultData <- sapply(1:blockNum, function(curBlock){
