@@ -1,3 +1,38 @@
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal16Buckets.rda",
+                       "data/colorHistOriginal16BucketsRFModelResult.rda", "data/classesOrig.rda",
+                       1000)
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqual16Buckets.rda",
+                       "data/colorHistOriginalEqual16BucketsRFModelResult.rda", "data/classesOrig.rda",
+                       2000)
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalRGBNorm16Buckets.rda",
+                       "data/colorHistOriginalRGBNorm16BucketsRFModelResult.rda", "data/classesOrig.rda",
+                       2000)
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqualRGBNorm16Buckets.rda",
+                       "data/colorHistOriginalEqualRGBNorm16BucketsRFModelResult.rda", "data/classesOrig.rda",
+                       2000)
+
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth16Buckets.rda",
+                       "data/colorHistEighth16BucketsRFModelResult.rda", "data/classesEights.rda",
+                       2000)
+
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal255Buckets.rda",
+                       "data/colorHistOriginal255BucketsRFModelResult.rda", "data/classesOrig.rda",
+                       2000)
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqual255Buckets.rda",
+                       "data/colorHistOriginalEqual255BucketsRFModelResult.rda", "data/classesOrig.rda",
+                       2000)
+
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets.rda",
+                       "data/colorHistEighth255BucketsRFModelResult.rda", "data/classesEights.rda",
+                       2000)
+
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.Rda",
+                       "data/hog_8_9_orig_rf_result.rda", "data/classesOrig.rda",
+                       2000)
+
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_5_6_complete.Rda",
+                       "data/hog_5_6_eighth_rf_result.rda", "data/classesEights.rda",
+                       2000)
 
 #' @title Classifier 1 -  Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
@@ -12,16 +47,19 @@
 #' }
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
-d.a.randomForest.start <- function(){
+d.a.randomForest.start <- function(a, b, c, d, numTrees){
   #library(snow)
   #library(caret)
 
-  load("data/blocks2677IMG.rda")
-  load("data/classesOrig.rda")
-  load("data/classesEights.rda")
-  load("data/colorHistOriginal16Buckets.rda")
+  load(a)
+  load(d)
+  # load("data/classesEights.rda")
+  load(b)
   
-  data <- cbind(colorHist, P = classesOrig[,"P"])
+  # data <- cbind(colorHist, P = classesOrig[,"P"])
+  # data <- cbind(colorHist, P = classesEights[,"P"])
+  # data <- cbind(hogData, P = classesOrig[,"P"])
+  data <- cbind(hogData, P = classesEights[,"P"])
   
   #Loop through the train/test-data-sets
   resultData <- sapply(1:blockNum, function(curBlock){
@@ -31,12 +69,12 @@ d.a.randomForest.start <- function(){
     # for calculating the processing time: save start time
     start.time <- Sys.time()
     # Explanation
-    rfModel <- d.b.step1(data[trainBlockIndexes,])
+    rfModel <- d.b.step1(data[trainBlockIndexes,], numTrees)
     # store model for later evaluation
     assign(paste0("rfModel", curBlock), rfModel, envir = blocks)
     # print processing time
-    print(paste0("Processing time for training the random forest block ", curBlock, ": ",
-                 (Sys.time() - start.time)))
+    print(paste0("Train proctime rf block ", curBlock, ": ",
+                 round(difftime(Sys.time(), start.time, tz, units = "secs")), " sec"))
 
 
     # retrieve the indexes of the corresponding test block
@@ -50,8 +88,8 @@ d.a.randomForest.start <- function(){
     # store prediction for later evaluation
     assign(paste0("pred", curBlock), pred, envir = blocks)
     # print processing time
-    print(paste0("Processing time for testing the random forest block ", curBlock, ": ",
-                 (Sys.time() - start.time)))
+    print(paste0("Test  proctime rf block ", curBlock, ": ",
+                 round(difftime(Sys.time(), start.time, tz, units = "secs")), " sec"))
     #As.vector is needed here because factors change their values in a matrix or data.frame (0 to 1, 1 to 2)
     #And a matrix is needed instead of a data.frame so that sapply dosn't change pred's type back to factor
     result <- matrix(nrow = length(pred), ncol = 2)
@@ -63,7 +101,7 @@ d.a.randomForest.start <- function(){
   })
   
   overallResult <- do.call(rbind, resultData)
-  save(blocks, file = "data/colorHistOriginal16BucketsRFModelResult.rda")
+  save(blocks, file = c)
 
   result <- d.d.evaluation(overallResult[,1], overallResult[,2])
   
@@ -79,7 +117,7 @@ d.a.randomForest.start <- function(){
 #' ...
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
-d.b.step1 <- function(trainData){
+d.b.step1 <- function(trainData, numTrees){
   library(randomForest)
   set.seed(1337)
 
@@ -97,7 +135,7 @@ d.b.step1 <- function(trainData){
                           data=trainData,
                           importance=TRUE,
                           #Parameter-Tuning
-                          ntree=2000)
+                          ntree=numTrees)
 
   #Plot the variable importance of the trained model
   # variableImportance <- varImp(parallelRfModel)
@@ -219,8 +257,6 @@ d.d.evaluation <- function(pred, testData){
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
 d.e.plotImportanceColorHist <- function(rfModels){
-  
-  library(ggplot2)
   
   load("data/blockNum.rda")
   
