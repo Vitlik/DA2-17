@@ -1,6 +1,6 @@
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal16Buckets.rda",
-                       "data/colorHistOriginal16BucketsRFModelResult.rda", "data/classesOrig.rda",
-                       250)
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal255Buckets.rda",
+                       "data/hist_255_orig_rf100_result.rda", "data/classesOrig.rda",
+                       100)
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqual16Buckets.rda",
                        "data/colorHistOriginalEqual16BucketsRFModelResult.rda", "data/classesOrig.rda",
                        2000)
@@ -27,11 +27,11 @@ d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets
                        2000)
 
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_4_9_complete.Rda",
-                       "data/hog_4_9_orig_rf250_result.rda", "data/classesOrig.rda",
-                       250)
+                       "data/hog_4_9_orig_rf2000_result.rda", "data/classesOrig.rda",
+                       2000)
 
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_5_6_complete.Rda",
-                       "data/hog_5_6_eighth_rf_result.rda", "data/classesEights.rda",
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_4_9_complete.Rda",
+                       "data/hog_4_9_eighth_rf_result.rda", "data/classesEights.rda",
                        2000)
 
 #' @title Classifier 1 -  Wrapper function
@@ -62,7 +62,10 @@ d.a.randomForest.start <- function(a, b, c, d, numTrees){
     if (exists("hogData"))
       data <- hogData
     else
-      data <- pixelFeatureMatrix28Squared
+      if (exists("pixelFeatureMatrix28Squared"))
+        data <- pixelFeatureMatrix28Squared
+      else
+        data <- pixelFeatureMatrixEighths
   if(exists("classesEights"))
     classes <- classesEights
   else
