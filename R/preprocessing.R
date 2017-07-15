@@ -1,6 +1,7 @@
 
 #' @title Feature Extraction -  Wrapper function
-#' @description To get (back) to the overview of all steps and functions use this link:
+#' @description The needed package /code{EBImage} can be installed by using the source /code{\linkg{"https://bioconductor.org/biocLite.R"}} then it can be loaded
+#' with the command /code{biocLite("EBImage")}. To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'
 #' This is a wrapper function for ...
@@ -13,9 +14,6 @@
 #'
 #' @author Vitali Friesen, Tassilo Tobollik
 b.a.preprocessing.start <- function(){
-  #Install EBImage
-  #source("https://bioconductor.org/biocLite.R")
-  #biocLite("EBImage")
   library(EBImage)
   library(png)
   
@@ -26,7 +24,8 @@ b.a.preprocessing.start <- function(){
   b.c.loadClassData()
   
   #Create preprocessed images
-  b.d.rgbNorm.start()
+  b.d.normalization.start(T)
+  b.d.normalization.start(F)
 }
 
 #' @title Preprocessing - Create Train Test DataSet Indexes
@@ -132,14 +131,12 @@ b.c.loadClassData <- function(){
   #save(classesEights, file = "data/classesEights.rda")
 }
 
-#' @title Preprocessing - Normalize rgb images to remove shadow and light effects
+#' @title Preprocessing - Method that starts either the rgb-normalization or the histogram-equalization of an image in this project
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
-#' ...
-#'
+#' @param rgbNorm A boolean that describes whether RGB-normalization (/code{TRUE}) or histogram-equalization (/code{FALSE}) should be used
 #' @author Tassilo Tobollik
-b.d.rgbNorm.start <- function(){
+b.d.normalization.start <- function(rgbNorm = T){
   folder <- "data-raw/IMG/CS CZ/rgbNorm"
   
   #The following works only for folders with images in them not with ones with subfolders.
@@ -160,23 +157,30 @@ b.d.rgbNorm.start <- function(){
         image <- readPNG(filename)
         namePos <- gregexpr(name, filename)
         fileending <- substr(filename, namePos[[1]]+nchar(name)+1, nchar(filename))
-        #TODO: Fix picture folders and folder creation (normal / rgbNorm / histEqual / rgbNormHistEqual) -> each (Colin / Maren / Nils ...)
         filename <- paste(paste(substr(filename, 1, namePos[[1]]-1), 
                                 paste(paste("histEqual/", name, sep = ""), "/", sep = ""), sep = ""), 
                           fileending, sep = "")
-        b.f.transformHistEqualRgb(image, filename)
-        #b.d.rgbNorm(imgList[x])
+        if(rgbNorm){
+          b.d.rgbNorm(filename)
+        }else{
+          b.f.transformHistEqualRgb(image, filename) 
+        }
       })
     }
   })
 }
 
 #' @title Preprocessing - Normalize rgb images to remove shadow and light effects
-#' @description To get (back) to the overview of all steps and functions use this link:
+#' @description The value of each pixel, of the inserted image, in each colour-dimension will be divided by the sum of the pixels values in all dimensions.
+#' By this shadows and light highlights in the image are removed to some degree.
+#' To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
-#' ...
-#'
+#' @param filename a string that describes the path to an image from the workingdirectory and it's filename
+#' @param x A number that describes the images horizontal number of pixels
+#' @param y A number that describes the images vertical number of pixeks
+#' @param z A number that describes the images number of color dimensions (normally 3 for RGB or 1 for grayscale)
+#' @return \code{normImg} an array of size \code{x * y} and with \code{z} dimensions that holds the normalized RGB-values of the image described by \code{filename}
+#' @examples \code{b.d.rgbNorm(filename = "data/image.png", x = 480, y = 640, z = 3)}
 #' @author Tassilo Tobollik
 #Takes approx. 1.1294 secs per screenshot
 b.d.rgbNorm <- function(filename, x = 480, y = 640, z = 3){
@@ -203,27 +207,26 @@ b.d.rgbNorm <- function(filename, x = 480, y = 640, z = 3){
 #' @title Preprocessing - Transform rgb images to grayscale
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
-#' ...
-#'
+#' @param image An array with three dimensions that holds the values of an RGB-image
+#' @return An array with one dimension that holds the values of a grayscale version of the inserted image
 #' @author Tassilo Tobollik
-b.e.transformGreyscale <- function(image) {
+b.e.transformGrayscale <- function(image) {
   library(imager)
   return(grayscale(image))
 }
 
 #' @title Preprocessing - Transform rgb images using histogram equalization
-#' @description To get (back) to the overview of all steps and functions use this link:
+#' @description The needed package /code{EBImage} can be installed by using the source /code{\linkg{"https://bioconductor.org/biocLite.R"}} then it can be loaded
+#' with the command /code{biocLite("EBImage")}. To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
-#' ...
-#'
+#' @param image An array that can have multiple dimensions and holds the values of image (for example an RGB image). This parameter is optional.
+#' @param filename A string that holds the path to the image from the workingdirectory and it's filename. If the parameter \code{image} isn't given the image will be loaded 
+#' by using this path.
+#' @return An image with histogram equalized RGB-values
+#' @example \code{histEqualImage <- b.f.transformHistEqualRgb(imageArray, "data/image.png")}
 #' @author Tassilo Tobollik
 #' Takes aprox. 0.38 sec/image
 b.f.transformHistEqualRgb <- function(image = NULL, filename) {
-  #Package installation
-  #source("https://bioconductor.org/biocLite.R")
-  #biocLite("EBImage")
   library(EBImage)
   
   if(is.null(image)){
@@ -233,20 +236,20 @@ b.f.transformHistEqualRgb <- function(image = NULL, filename) {
   pos <- gregexpr(".png", filename)
   filename2 <- substr(filename, 1, (pos[[1]]-1))
   
-  #pos2 <- gregexpr("CZ/", filename)
-  #person <- substr(filename, pos2[[1]]+1, (pos[[1]]-1))
-  
   equalImage <- equalize(image)
   
   writePNG(equalImage,paste(filename2,"Equal.png", sep = ""))
+  return(equalImage)
 }
 
 #' @title Preprocessing - Transform grayscale images using histogram equalization
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
-#' ...
-#'
+#' @param image An array with one dimensions that holds the values of a grayscale image. This parameter is optional.
+#' @param filename A string that holds the path to the image from the workingdirectory and it's filename. If the parameter \code{image} isn't given the image will be loaded 
+#' by using this path.
+#' @return An image with histogram equalized grayscale values
+#' @example \code{histEqualImage <- b.f.transformHistEqualGray(imageArray, "data/image.png")}
 #' @author Tassilo Tobollik
 b.g.transformHistEqualGray <- function(image = NULL, filename) {
   library(imager)
@@ -262,12 +265,10 @@ b.g.transformHistEqualGray <- function(image = NULL, filename) {
 #' @title Preprocessing - Display the histogram of an image
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
-#' ...
-#'
+#' @param image An array with three dimensions that holds the values of an RGB-image
+#' @return A chart that displays the histogram of the inserted image
 #' @author Tassilo Tobollik
 b.h.displayImageHist <- function(image){
-  #TODO: Add colors to histogram
   hist(equalImage)
   grid()
 }
