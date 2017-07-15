@@ -27,6 +27,10 @@ d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_4_9_complete.R
                        "data/hog_4_9_eighth_rf_result.rda", "data/classesEights.rda",
                        2000)
 
+result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets.rda",
+                                 "data/colorHistEighth255Buckets_hog_10_6_eighth_rf250_result.rda", "data/classesEights.rda",
+                                 250, "data/hog_eighth_10_6_complete.Rda")
+
 #' @title Classifier 1 -  Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
@@ -40,7 +44,7 @@ d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_4_9_complete.R
 #' }
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
-d.a.randomForest.start <- function(a, b, c, d, numTrees){
+d.a.randomForest.start <- function(a, b1, c, d, numTrees, b2 = NULL){
   #library(snow)
   #library(caret)
   
@@ -58,7 +62,11 @@ d.a.randomForest.start <- function(a, b, c, d, numTrees){
   load(a)
   load(d)
   # load("data/classesEights.rda")
-  load(b)
+  load(b1)
+  if(!is.null(b2)){
+    load(b2)
+    colorHist <- cbind(hogData,colorHist)
+  }
   
   if(exists("colorHist"))
     data <- colorHist
@@ -250,14 +258,32 @@ d.d.evaluation <- function(pred, testData){
     paste(round(Error1Perc*100,2),"%"), 
     paste(round(Error2Perc*100,2),"%")))
   
+  if(Error1Perc != 0 && Error2Perc != 0){
+    pieData <- c(acc,Error1Perc,Error2Perc)
+    pieCol <- c("green","red","red")
+    pieLabels <- c("Accuracy","Error 1. degree","Error 2. degree")
+  }else if(Error1Perc == 0 && Error2Perc == 0){
+    pieData <- c(acc)
+    pieCol <- c("green")
+    pieLabels <- c("Accuracy")
+  }else if(Error1Perc == 0){
+    pieData <- c(acc,Error2Perc)
+    pieCol <- c("green","red")
+    pieLabels <- c("Accuracy","Error 2. degree")
+  }else if(Error2Perc == 0){
+    pieData <- c(acc,Error1Perc)
+    pieCol <- c("green","red")
+    pieLabels <- c("Accuracy","Error 1. degree")
+  }
+  
   # Pie chart for results with parameters
-  pieResults <- pie3D(c(acc,Error1Perc,Error2Perc),
-    main="Accuracy vs. Errorpercentages",
-    col = c("green","red","red"),
-    radius = 1.5,
-    labels = c("Accuracy","Error 1. degree","Error 2. degree"),
-    shade = 0.7,
-    explode=0.1)
+  pieResults <- pie3D(pieData,
+                      main="Accuracy vs. Errorpercentages",
+                      col = pieCol,
+                      radius = 1.5,
+                      labels = pieLabels,
+                      shade = 0.7,
+                      explode=0.1)
 
   
   
