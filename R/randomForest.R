@@ -44,12 +44,16 @@ d.a.randomForest.start <- function(a, b, c, d, numTrees){
   #library(snow)
   #library(caret)
   
+  options(warn=-1)
+  
   remove(colorHist)
   remove(hogData)
   remove(pixelFeatureMatrix28Squared)
   remove(pixelFeatureMatrixEighths)
   remove(classesEights)
   remove(classesOrig)
+  
+  options(warn=0)
 
   load(a)
   load(d)
