@@ -211,6 +211,10 @@ d.d.evaluation <- function(pred, testData){
   
   # Compute result table
   result <- table(pred, testData)
+  if(nrow(result) == 1)
+    result = rbind(result, c(0,0))
+  if (ncol(result) == 1)
+    result = cbind(result, c(0,0))
   # Give columns and rows names
   colnames(result)=c("No person","Person")
   rownames(result)=c("No person predicted","Person predicted")
