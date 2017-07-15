@@ -5,8 +5,8 @@ d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqual16B
                        "data/colorHistOriginalEqual16BucketsRFModelResult.rda", "data/classesOrig.rda",
                        2000)
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalRGBNorm16Buckets.rda",
-                       "data/colorHistOriginalRGBNorm16BucketsRFModelResult.rda", "data/classesOrig.rda",
-                       2000)
+                       "data/hist_16_orig_rgbNorm_rf100_result.rda", "data/classesOrig.rda",
+                       100)
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqualRGBNorm16Buckets.rda",
                        "data/colorHistOriginalEqualRGBNorm16BucketsRFModelResult.rda", "data/classesOrig.rda",
                        2000)
@@ -15,20 +15,13 @@ d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth16Buckets.
                        "data/colorHistEighth16BucketsRFModelResult.rda", "data/classesEights.rda",
                        2000)
 
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal255Buckets.rda",
-                       "data/colorHistOriginal255BucketsRFModelResult.rda", "data/classesOrig.rda",
-                       2000)
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqual255Buckets.rda",
-                       "data/colorHistOriginalEqual255BucketsRFModelResult.rda", "data/classesOrig.rda",
-                       2000)
-
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets.rda",
                        "data/colorHistEighth255BucketsRFModelResult.rda", "data/classesEights.rda",
                        2000)
 
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_4_9_complete.Rda",
-                       "data/hog_4_9_orig_rf2000_result.rda", "data/classesOrig.rda",
-                       2000)
+                       "data/hog_4_9_orig_rf100_result.rda", "data/classesOrig.rda",
+                       100)
 
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_4_9_complete.Rda",
                        "data/hog_4_9_eighth_rf_result.rda", "data/classesEights.rda",
@@ -50,6 +43,13 @@ d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_4_9_complete.R
 d.a.randomForest.start <- function(a, b, c, d, numTrees){
   #library(snow)
   #library(caret)
+  
+  remove(colorHist)
+  remove(hogData)
+  remove(pixelFeatureMatrix28Squared)
+  remove(pixelFeatureMatrixEighths)
+  remove(classesEights)
+  remove(classesOrig)
 
   load(a)
   load(d)
