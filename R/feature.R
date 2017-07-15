@@ -32,18 +32,19 @@ c.a.feature.start <- function(){
 c.b.colorHist <- function(){
   library(png)
   
-  buckets <- 16
-  # buckets <- 255
+  # buckets <- 16
+  buckets <- 255
   
   # load image list
   folder <- (
-    "data-raw/IMG/CS CZ original/normal/"
+    # "data-raw/IMG/CS CZ original/normal/"
     # "data-raw/IMG/CS CZ original/histEqual/"
     # "data-raw/IMG/CS CZ original/rgbNorm/"
     # "data-raw/IMG/CS CZ original/rgbNormHistEqual/"
     # "data-raw/IMG/CS CZ halved/normal/"
     # "data-raw/IMG/CS CZ quarter/normal/"
     # "data-raw/IMG/CS CZ eighth/normal/"
+    "data-raw/IMG/CS CZ eighth/rgbNorm/"
    )
   
   imgList <- list.files(folder, full.names = T, ignore.case = F, recursive = T)
@@ -78,7 +79,7 @@ c.b.colorHist <- function(){
   colorHist <- colorHist[ order(row.names(colorHist)), ]
   
   # store  variables in file
-  save(colorHist, buckets, file = "data/colorHistOriginal16Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistOriginal16Buckets.rda")
   # save(colorHist, buckets, file = "data/colorHistOriginal255Buckets.rda")
   # save(colorHist, buckets, file = "data/colorHistOriginalEqual16Buckets.rda")
   # save(colorHist, buckets, file = "data/colorHistOriginalEqual255Buckets.rda")
@@ -92,6 +93,8 @@ c.b.colorHist <- function(){
   # save(colorHist, buckets, file = "data/colorHistQuarter255Buckets.rda")
   # save(colorHist, buckets, file = "data/colorHistEighth16Buckets.rda")
   # save(colorHist, buckets, file = "data/colorHistEighth255Buckets.rda")
+  # save(colorHist, buckets, file = "data/colorHistEighthRGBNorm16Buckets.rda")
+  save(colorHist, buckets, file = "data/colorHistEighthRGBNorm255Buckets.rda")
   
   # create plots for the color Histograms
    #c.c.colorHistPlotting()
