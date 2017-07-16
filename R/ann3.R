@@ -17,12 +17,12 @@ setwd("C:/dev/DA2/DA2-17/")
 
 load("data/blocks2677IMG.rda")
 load("data/classesOrig.rda")
-load("data/colorHistEighthRGBNorm16Buckets.rda")
+# load("data/colorHistEighthRGBNorm16Buckets.rda")
 load("data/hog_original_15_6_complete.rda")
-load("data/colorHistEighth255Buckets.rda")
-load("data/hog_eighth__complete.rda")
-load("data/classesEights.rda")
-load("data/hog_eighth_8_9_complete.rda")
+# load("data/colorHistEighth255Buckets.rda")
+# load("data/hog_eighth__complete.rda")
+# load("data/classesEights.rda")
+# load("data/hog_eighth_8_9_complete.rda")
 
 data1 <- cbind(hogData, P = classesOrig[, "P"])
 
@@ -120,7 +120,7 @@ ann.step1 <- function(train_array, train_y, rounds = 50, lr = 0.00001, nodes = 1
   return(ANNModel)
 }
 
-ann.execute("hog_8_9", "orig", rounds = "30", lr = "0.00001", nodes = "1500", batch = "20")
+ann.execute("hog_8_9", "orig", rounds = 30, lr = 0.00001, nodes = 1500, batch = 20)
 
 
 data <- mx.symbol.Variable("data")
