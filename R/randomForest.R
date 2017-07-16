@@ -1,6 +1,6 @@
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal255Buckets.rda",
-                       "data/hist_255_orig_rf100_result.rda", "data/classesOrig.rda",
-                       100)
+                       "data/hist_255_orig_rf250_result.rda", "data/classesOrig.rda",
+                       250)
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqual16Buckets.rda",
                        "data/colorHistOriginalEqual16BucketsRFModelResult.rda", "data/classesOrig.rda",
                        2000)
@@ -16,8 +16,11 @@ d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth16Buckets.
                        2000)
 
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets.rda",
-                       "data/colorHistEighth255BucketsRFModelResult.rda", "data/classesEights.rda",
-                       2000)
+                       "data/hist_255_eighth_rf100_result.rda", "data/classesEights.rda",
+                       100)
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighthRGBNorm255Buckets.rda",
+                       "data/hist_255_eighth_rgbNorm_rf100_result.rda", "data/classesEights.rda",
+                       100)
 
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_4_9_complete.Rda",
                        "data/hog_4_9_orig_rf100_result.rda", "data/classesOrig.rda",
@@ -212,9 +215,15 @@ d.d.evaluation <- function(pred, testData){
   # Compute result table
   result <- table(pred, testData)
   if(nrow(result) == 1)
-    result = rbind(result, c(0,0))
+    if (row.names(result) == "0")
+      result = rbind(result, c(0,0))
+    else
+      result = rbind(c(0,0), result)
   if (ncol(result) == 1)
-    result = cbind(result, c(0,0))
+    if (colnames(result) == "0")
+      result = cbind(result, c(0,0))
+    else 
+      result = cbind(c(0,0), result)
   # Give columns and rows names
   colnames(result)=c("No person","Person")
   rownames(result)=c("No person predicted","Person predicted")
