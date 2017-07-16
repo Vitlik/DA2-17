@@ -1,3 +1,38 @@
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal255Buckets.rda",
+                       "data/hist_255_orig_rf250_result.rda", "data/classesOrig.rda",
+                       250)
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqual16Buckets.rda",
+                       "data/colorHistOriginalEqual16BucketsRFModelResult.rda", "data/classesOrig.rda",
+                       2000)
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalRGBNorm16Buckets.rda",
+                       "data/hist_16_orig_rgbNorm_rf100_result.rda", "data/classesOrig.rda",
+                       100)
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqualRGBNorm16Buckets.rda",
+                       "data/colorHistOriginalEqualRGBNorm16BucketsRFModelResult.rda", "data/classesOrig.rda",
+                       2000)
+
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth16Buckets.rda",
+                       "data/colorHistEighth16BucketsRFModelResult.rda", "data/classesEights.rda",
+                       2000)
+
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets.rda",
+                       "data/hist_255_eighth_rf100_result.rda", "data/classesEights.rda",
+                       100)
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighthRGBNorm255Buckets.rda",
+                       "data/hist_255_eighth_rgbNorm_rf100_result.rda", "data/classesEights.rda",
+                       100)
+
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_4_9_complete.Rda",
+                       "data/hog_4_9_orig_rf100_result.rda", "data/classesOrig.rda",
+                       100)
+
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_4_9_complete.Rda",
+                       "data/hog_4_9_eighth_rf_result.rda", "data/classesEights.rda",
+                       2000)
+
+result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets.rda",
+                                 "data/colorHistEighth255Buckets_hog_10_6_eighth_rf250_result.rda", "data/classesEights.rda",
+                                 250, "data/hog_eighth_10_6_complete.Rda")
 
 #' @title Classifier 1 -  Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
@@ -12,19 +47,46 @@
 #' }
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
-d.a.randomForest.start <- function(){
+d.a.randomForest.start <- function(a, b1, c, d, numTrees, b2 = NULL){
   #library(snow)
   #library(caret)
-
-  load("data/blocks2677IMG.rda")
-  load("data/classesOrig.rda")
-  load("data/classesEights.rda")
-  load("data/colorHistOriginal.rda")
   
-  data <- cbind(colorHist, P = classesOrig[,"P"])
+  options(warn=-1)
+  
+  remove(colorHist)
+  remove(hogData)
+  remove(pixelFeatureMatrix28Squared)
+  remove(pixelFeatureMatrixEighths)
+  remove(classesEights)
+  remove(classesOrig)
+  
+  options(warn=0)
 
-  # env var for all different models
-  rfModels <- new.env()
+  load(a)
+  load(d)
+  # load("data/classesEights.rda")
+  load(b1)
+  if(!is.null(b2)){
+    load(b2)
+    colorHist <- cbind(hogData,colorHist)
+  }
+  
+  if(exists("colorHist"))
+    data <- colorHist
+  else
+    if (exists("hogData"))
+      data <- hogData
+    else
+      if (exists("pixelFeatureMatrix28Squared"))
+        data <- pixelFeatureMatrix28Squared
+      else
+        data <- pixelFeatureMatrixEighths
+  if(exists("classesEights"))
+    classes <- classesEights
+  else
+    classes <- classesOrig
+  
+  data <- cbind(data, P = classes[,"P"])
   
   #Loop through the train/test-data-sets
   resultData <- sapply(1:blockNum, function(curBlock){
@@ -34,11 +96,12 @@ d.a.randomForest.start <- function(){
     # for calculating the processing time: save start time
     start.time <- Sys.time()
     # Explanation
-    rfModel <- d.b.step1(data[trainBlockIndexes,])
-    assign(paste0("rfModel", curBlock), rfModel, envir = rfModels)
+    rfModel <- d.b.step1(data[trainBlockIndexes,], numTrees)
+    # store model for later evaluation
+    assign(paste0("rfModel", curBlock), rfModel, envir = blocks)
     # print processing time
-    print(paste0("Processing time for training the random forest block ", curBlock, ": ",
-                 (Sys.time() - start.time)))
+    print(paste0("Train proctime rf block ", curBlock, ": ",
+                 round(difftime(Sys.time(), start.time, tz, units = "secs")), " sec"))
 
 
     # retrieve the indexes of the corresponding test block
@@ -49,23 +112,29 @@ d.a.randomForest.start <- function(){
     testData <- data[testBlockIndexes,]
     # Evaluate the result for the train-test-set
     pred <- d.c.step2(testData, rfModel)
+    # store prediction for later evaluation
+    assign(paste0("pred", curBlock), pred, envir = blocks)
     # print processing time
-    print(paste0("Processing time for testing the random forest block ", curBlock, ": ",
-                 (Sys.time() - start.time)))
+    print(paste0("Test  proctime rf block ", curBlock, ": ",
+                 round(difftime(Sys.time(), start.time, tz, units = "secs")), " sec"))
     #As.vector is needed here because factors change their values in a matrix or data.frame (0 to 1, 1 to 2)
     #And a matrix is needed instead of a data.frame so that sapply dosn't change pred's type back to factor
     result <- matrix(nrow = length(pred), ncol = 2)
     result[,1] <- as.vector(pred)
     result[,2] <- testData[,ncol(testData)]
+    # store prediction & real classes matrix for later evaluation
+    assign(paste0("result", curBlock), result, envir = blocks)
     return(result)
   })
   
   overallResult <- do.call(rbind, resultData)
-  save(rfModels, file = "data/rfModels.rda")
+  save(blocks, file = c)
 
-  d.d.evaluation(overallResult[,1], overallResult[,2])
+  result <- d.d.evaluation(overallResult[,1], overallResult[,2])
   
-  d.e.plotImportanceColorHist(rfModels)
+  # d.e.plotImportanceColorHist(blocks)
+  
+  return(result)
 }
 
 #' @title Classifier 1 - Step 1
@@ -75,7 +144,7 @@ d.a.randomForest.start <- function(){
 #' ...
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
-d.b.step1 <- function(trainData){
+d.b.step1 <- function(trainData, numTrees){
   library(randomForest)
   set.seed(1337)
 
@@ -93,7 +162,7 @@ d.b.step1 <- function(trainData){
                           data=trainData,
                           importance=TRUE,
                           #Parameter-Tuning
-                          ntree=2000)
+                          ntree=numTrees)
 
   #Plot the variable importance of the trained model
   # variableImportance <- varImp(parallelRfModel)
@@ -145,6 +214,16 @@ d.d.evaluation <- function(pred, testData){
   
   # Compute result table
   result <- table(pred, testData)
+  if(nrow(result) == 1)
+    if (row.names(result) == "0")
+      result = rbind(result, c(0,0))
+    else
+      result = rbind(c(0,0), result)
+  if (ncol(result) == 1)
+    if (colnames(result) == "0")
+      result = cbind(result, c(0,0))
+    else 
+      result = cbind(c(0,0), result)
   # Give columns and rows names
   colnames(result)=c("No person","Person")
   rownames(result)=c("No person predicted","Person predicted")
@@ -192,14 +271,32 @@ d.d.evaluation <- function(pred, testData){
     paste(round(Error1Perc*100,2),"%"), 
     paste(round(Error2Perc*100,2),"%")))
   
+  if(Error1Perc != 0 && Error2Perc != 0){
+    pieData <- c(acc,Error1Perc,Error2Perc)
+    pieCol <- c("green","red","red")
+    pieLabels <- c("Accuracy","Error 1. degree","Error 2. degree")
+  }else if(Error1Perc == 0 && Error2Perc == 0){
+    pieData <- c(acc)
+    pieCol <- c("green")
+    pieLabels <- c("Accuracy")
+  }else if(Error1Perc == 0){
+    pieData <- c(acc,Error2Perc)
+    pieCol <- c("green","red")
+    pieLabels <- c("Accuracy","Error 2. degree")
+  }else if(Error2Perc == 0){
+    pieData <- c(acc,Error1Perc)
+    pieCol <- c("green","red")
+    pieLabels <- c("Accuracy","Error 1. degree")
+  }
+  
   # Pie chart for results with parameters
-  pieResults <- pie3D(c(acc,Error1Perc,Error2Perc),
-    main="Accuracy vs. Errorpercentages",
-    col = c("green","red","red"),
-    radius = 1.5,
-    labels = c("Accuracy","Error 1. degree","Error 2. degree"),
-    shade = 0.7,
-    explode=0.1)
+  pieResults <- pie3D(pieData,
+                      main="Accuracy vs. Errorpercentages",
+                      col = pieCol,
+                      radius = 1.5,
+                      labels = pieLabels,
+                      shade = 0.7,
+                      explode=0.1)
 
   
   

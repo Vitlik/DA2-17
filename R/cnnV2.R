@@ -1,4 +1,4 @@
-#' @title Classifier -  Wrapper function
+load("data/pixelFeatureMatrix28Squared.rda")
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'
@@ -12,13 +12,11 @@
 #'
 #' @author Maren Reuter, Nils Meckmann, Sascha
 
-load("data/pixelFeatureMatrixEighthsSquared.rda")
 load("data/classesEights.rda")
-load("data/blocks.rda")
-load("data/blockNum.rda")
+load("data/blocks2677IMG.rda")
 
 
-data1 <- cbind(pixelFeatureMatrixEighthsSquared, classesEights)
+data1 <- cbind(pixelFeatureMatrix28Squared, classesEights)
 
 
 ##CNNModels <- new.env()

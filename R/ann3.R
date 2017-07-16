@@ -15,36 +15,125 @@ setwd("C:/dev/DA2/DA2-17/")
 #'
 #' @author Maren Reuter, Nils Meckmann, Sascha
 
-load("data/blocks.rda")
-load("data/blockNum.rda")
-load("data/colorHistOriginal.rda")
+load("data/blocks2677IMG.rda")
 load("data/classesOrig.rda")
-load("data/hog_16.rda")
+load("data/colorHistEighthRGBNorm16Buckets.rda")
+load("data/hog_original_15_6_complete.rda")
+load("data/colorHistEighth255Buckets.rda")
+load("data/hog_eighth__complete.rda")
+load("data/classesEights.rda")
+load("data/hog_eighth_8_9_complete.rda")
 
-neueMatrix <- cbind(colorHistOriginal, hog16, P = classesOrig[, "P"])
+data1 <- cbind(hogData, P = classesEights[, "P"])
 
-library(mxnet)
+ann.execute <- function(dataType, imageType, rounds, lr, nodes, batch){
+  ##CNNModels <- new.env()
+  resultData1 <- sapply(1:blockNum, function(curBlock){
+    
+    library(mxnet)
+    
+    # retrieve the indexes of the corresponding train block
+    trainBlockIndexes <- get(paste0("train", curBlock), envir=blocks)
+    
+    # for calculating the processing time: save start time
+    start.time <- Sys.time()
+    
+    # Explanation
+    trainData <- data1[trainBlockIndexes,]
+    # trainData <- data1
+    train_x <- data.matrix(trainData[,-ncol(trainData)])
+    train_y <- trainData[,ncol(trainData)]
+    
+    ANNModel <- ann.step1(train_x, train_y)
+    
+    assign(paste0("annModel", curBlock), ANNModel, envir = blocks)
+    
+    ##assign(paste0("CNNModel", curBlock), CNNModel, envir = CNNModels)
+    # print processing time
+    print(paste0("Processing time for training the ANN block ", curBlock, ": ",
+                 (Sys.time() - start.time)))
+    
+    # retrieve the indexes of the corresponding test block
+    testBlockIndexes <- get(paste0("test", curBlock), envir=blocks)
+    
+    # for calculating the processing time: save start time
+    start.time <- Sys.time()
+    testData <- data1[testBlockIndexes,]
+    
+    test_x <- data.matrix(testData[,-ncol(testData)])
+    test_y <- testData[,ncol(testData)]
+    
+    # Evaluate the result for the train-test-set
+    preds <- predict(ANNModel, test_x)
+    
+    colnames(preds) <- rownames(test_x)
+    rownames(preds) <- c(0,1)
+    #View(tPreds)
+    
+    preds <- t(preds)
+    #View(tPreds2)
+    
+    assign(paste0("predsWithProbs", curBlock), preds, envir = blocks)
+    
+    predsValues <- as.numeric(colnames(preds)[max.col(preds, ties.method = 'first')])
+    
+    #preds <- ann.step2(test.x, ANNModel)
+    # print processing time
+    print(paste0("Processing time for testing the ANN block ", curBlock, ": ",
+                 (Sys.time() - start.time)))
+    
+    # print(pred.label <- max.col(t(preds)) - 1)
+    # print(table(pred.label))
+    # 
+    # print(table(test_y, pred.label))
+    # print(sum(diag(table(test_y, pred.label)))/530)
+    
+    #result = data.frame(cbind(predsValues, test_y))
+    
+    result <- matrix(nrow = length(predsValues), ncol = 2)
+    result[,1] <- as.vector(predsValues)
+    result[,2] <- as.vector(test_y)
+    return(result)
+  })
+  
+  overallResult <- do.call(rbind, resultData1)
+  
+  assign(paste0("overallResult"), overallResult, envir = blocks)
+  
+  fileName = paste(dataType, imageType, rounds, lr, nodes, batch, sep="_")
+  filePath = paste("data/", fileName, ".rda")
+  
+  save(blocks, file = filePath)
+  #save(blocks, file = "data/hog_5_6_eighth_rounds30_lr0_0007_nodes1500_batch50.rda")
+  
+  d.d.evaluation(overallResult[,1], overallResult[,2])
+}
 
-train_x2 <- colorHistOriginal[0:2120, ]
-test_x2 <- colorHistOriginal[2121:2650, ]
+ann.execute("hog_8_9", "eighth", "50", "0.00001", "1500", "20")
 
-train_y2 <- classesOrig[0:2120, ]
-test_y2 <- classesOrig[2121:2650,]
-test_x2 <- data.matrix(test_x2)
 
-train.y <- train_y2[,3]
-train.x <- t(train_x2)
-test.x <- t(test_x2)
+ann.step1 <- function(train_array, train_y){
+  library(mxnet)
+  mx.set.seed(1)
+  
+  # Model
+  ANNModel <- mx.mlp(train_array, train_y, hidden_node=1500, out_node=2, out_activation="softmax",
+                 num.round=50, array.batch.size=20, learning.rate=0.00001, momentum=0.9,
+                 eval.metric=mx.metric.accuracy)
+  return(ANNModel)
+}
 
 
 data <- mx.symbol.Variable("data")
-fc1 <- mx.symbol.FullyConnected(data, name="fc1", num_hidden=144)
+fc1 <- mx.symbol.FullyConnected(data, name="fc1", num_hidden=576)
 act1 <- mx.symbol.Activation(fc1, name="relu1", act_type="relu")
-fc2 <- mx.symbol.FullyConnected(act1, name="fc2", num_hidden=72)
+fc2 <- mx.symbol.FullyConnected(act1, name="fc2", num_hidden=288)
 act2 <- mx.symbol.Activation(fc2, name="relu2", act_type="relu")
-fc3 <- mx.symbol.FullyConnected(act2, name="fc3", num_hidden=36)
+fc3 <- mx.symbol.FullyConnected(act2, name="fc3", num_hidden=144)
 act3 <- mx.symbol.Activation(fc3, name="relu3", act_type="relu")
-fc4 <- mx.symbol.FullyConnected(act3, name="fc4", num_hidden=2)
+fc4 <- mx.symbol.FullyConnected(act3, name="fc4", num_hidden=144)
+act4 <- mx.symbol.Activation(fc4, name="relu3", act_type="relu")
+fc5 <- mx.symbol.FullyConnected(act4, name="fc5", num_hidden=2)
 softmax <- mx.symbol.SoftmaxOutput(fc4, name="sm")
 
 devices <- mx.cpu()
@@ -52,110 +141,6 @@ devices <- mx.cpu()
 mx.set.seed(1234)
 model <- mx.model.FeedForward.create(softmax, X = train.x, y = train.y, 
                                      ctx = devices, num.round = 100, 
-                                     array.batch.size = 20, learning.rate = 0.03, 
-                                     momentum = 0.9, eval.metric = mx.metric.rmse
-                                    )
-
-mx.set.seed(1234)
-model <- mx.model.FeedForward.create(softmax, X = train.x, y = train.y, 
-                                     ctx = devices, num.round = 1000, 
-                                     array.batch.size = 20, learning.rate = 0.0001, 
+                                     array.batch.size = 15, learning.rate = 0.007, 
                                      momentum = 0.9, eval.metric = mx.metric.accuracy
 )
-
-preds <- predict(model, test.x)
-dim(preds)
-
-pred.label <- max.col(t(preds)) - 1
-table(pred.label)
-
-test.y <- t(test_y2$P)
-View(test.y)
-comparison <- rbind(preds, test.y)
-View(comparison)
-View(preds)
-
-tPreds <- preds
-rownames(tPreds) <- c(0,1)
-View(tPreds)
-
-tPreds2 <- t(tPreds)
-View(tPreds2)
-
-colnames(tPreds2)
-
-predsV2 <- colnames(tPreds2)[max.col(tPreds2, ties.method = 'first')]
-predsV3 <- data.frame(cbind(predsV2, test_y2$P))
-colnames(predsV3) <- c("Preds", "Real")
-
-result <- table(predsV3$Preds, predsV3$Real)
-colnames(result)=c("No person","Person")
-rownames(result)=c("No person predicted","Person predicted")
-
-# Calculate accuracy
-correct <- result["No person predicted","No person"]+result["Person predicted","Person"]
-acc <- (correct)/sum(result)
-
-  
-
-## eighth 
-
-load("data/colorHistEighth.rda")
-load("data/classesEights.rda")
-
-library(mxnet)
-
-train_eighthX <- colorHistEighth[0:2120, ]
-test_eighthX <- colorHistEighth[2121:2650, ]
-
-train.EighthY <- classesEights[0:2120, ]
-test_classY <- classesEights[2121:2650,]
-test_eighthX2 <- data.matrix(test_eighthX)
-
-train.EighthX <- t(train_eighthX)
-test.EighthX <- t(test_eighthX2)
-
-dataEighth <- mx.symbol.Variable("data")
-fc1 <- mx.symbol.FullyConnected(dataEighth, name="fc1", num_hidden=144)
-act1 <- mx.symbol.Activation(fc1, name="relu1", act_type="relu")
-fc2 <- mx.symbol.FullyConnected(act1, name="fc2", num_hidden=72)
-act2 <- mx.symbol.Activation(fc2, name="relu2", act_type="relu")
-fc3 <- mx.symbol.FullyConnected(act2, name="fc3", num_hidden=36)
-act3 <- mx.symbol.Activation(fc3, name="relu3", act_type="relu")
-fc4 <- mx.symbol.FullyConnected(act3, name="fc4", num_hidden=2)
-softmax <- mx.symbol.SoftmaxOutput(fc4, name="sm")
-
-devices <- mx.cpu()
-
-mx.set.seed(1234)
-modelEighth <- mx.model.FeedForward.create(softmax, X = train.EighthX, y = train.EighthY, 
-                                     ctx = devices, num.round = 100, 
-                                     array.batch.size = 20, learning.rate = 0.00003, 
-                                     momentum = 0.9, eval.metric = mx.metric.accuracy
-)
-
-predsEighth <- predict(model, test.EighthX)
-dim(preds)
-
-predEighth.label <- max.col(t(predsEighth)) - 1
-table(predEighth.label)
-
-test.EighthY <- t(test_classY$P)
-comparison <- rbind(predsEighth, test.EighthY)
-
-rownames(predsEighth) <- c(0,1)
-predsEighth2 <- t(predsEighth)
-
-colnames(predsEighth2)
-
-predsEighthV2 <- colnames(predsEighth2)[max.col(predsEighth2, ties.method = 'first')]
-predsEighthV3 <- data.frame(cbind(predsEighthV2, test_classY$P))
-colnames(predsEighthV3) <- c("Preds", "Real")
-
-resultEighth <- table(predsEighthV3$Preds, predsEighthV3$Real)
-colnames(resultEighth)=c("No person","Person")
-rownames(resultEighth)=c("No person predicted","Person predicted")
-
-# Calculate accuracy
-correcteighth <- resultEighth["No person predicted","No person"]+resultEighth["Person predicted","Person"]
-accEighth <- (correctEighth)/sum(resultEighth)

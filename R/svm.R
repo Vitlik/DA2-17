@@ -15,21 +15,63 @@
 
 e.a.svm.start <- function(){
   
-  load("data/blocks.rda")
-  load("data/blockNum.rda")
+  load("data/blocks2677IMG.rda")
   load("data/classesOrig.rda")
   load("data/classesEights.rda")
-  load("data/colorHistOriginal.rda")
+  load("data/colorHistEighth255Buckets.rda")
+  # load("data/colorHistOriginal.rda")
+  # load("data/hog_eighth_10_6_complete.Rda")
+  # load("data/hog_eighth_5_6_complete.Rda")
+  load("data/hog_original_4_9_complete.rda")
+  # load("data/hog_original_8_9_complete.Rda")
+  # load("data/hog_eighth_15_6_complete.Rda")
+  load("data/pixelFeatureMatrixEighths.rda")
   
   library(e1071)
   set.seed(1337)
   
-  e.b.step1(trainData)
-  
-  e.c.step2(model_svm, testData)
-  
-  e.d.evaluation(pred_svm, testData)
+  # data <- cbind(colorHist, P = classesOrig[,"P"])
+  data <- cbind(hogData, P = classesOrig[,"P"])
 
+  # env var for all different models
+  rfModels <- new.env()
+  
+  #Loop through the train/test-data-sets
+  resultData <- sapply(1:blockNum, function(curBlock){
+    
+    # retrieve the indexes of the corresponding train block
+    trainBlockIndexes <- get(paste0("train", curBlock), envir=blocks)
+    
+    # for calculating the processing time: save start time
+    start.time <- Sys.time()
+  
+    # svm vector creation with train data bucket
+    trainData <- data[testBlockIndexes,]
+    model_svm <- e.b.step1(trainData)
+    
+    # print processing time
+    print(paste0("Processing time for training the support vector machine block ", curBlock, ": ",
+                 (Sys.time() - start.time)))
+    
+    # retrieve the indexes of the corresponding test block
+    testBlockIndexes <- get(paste0("test", curBlock), envir=blocks)
+    testData <- data[testBlockIndexes,]
+    
+    # predict test set with previous trained svm
+    pred_svm <- e.c.step2(model_svm, testData)
+    
+    result <- matrix(nrow = length(pred_svm), ncol = 2)
+    result[,1] <- as.vector(pred_svm)
+    result[,2] <- testData[,ncol(testData)]
+    return(result)
+  })
+  
+  overallResult <- do.call(rbind, resultData)
+
+  # evaluate the result of the prediction
+  result <- e.d.evaluation(overallResult[,1], testData=overallResult[,2])
+
+  return(result)
   
 }
 
@@ -47,13 +89,15 @@ e.b.step1 <- function(trainData){
   # svm_train <- as.list(as.data.frame(trainData))
   
   # Support vector machine function
-  model_svm <- svm(as.factor(P)~., trainData, cost=100)
+  model_svm <- svm(as.factor(P)~.-P, trainData, kernel="polynomial",tolerance=0.1,cost=100, epsilon=0)
   
   # tune svm to get the best cost for the svm (once used)
-  # tune_svm <- tune(svm, as.factor(P)~., data=data.frame(trainData), ranges=list(cost=c(0.001,0.01,.1,1,10,100)))
-  
-  summary(tune_svm)
+  # tune_svm <- tune(svm, as.factor(P)~.-P, data=data.frame(trainData), ranges=list(cost=c(0.001,0.01,0.1,1,10,100,1000)))
+  # 
+  # summary(tune_svm)
   # plot(model_svm, trainData)
+  
+  return(model_svm)
   
 }
 
@@ -71,6 +115,8 @@ e.c.step2 <- function(model_svm, testData){
   # predicting the testdata
   pred_svm <- predict(model_svm, testData, type="class")
   
+  return(pred_svm)
+  
 }
 
 
@@ -86,7 +132,7 @@ e.d.evaluation <- function(pred_svm, testData){
   library(gridExtra)
   library(plotrix)
   
-  result_svm <- table(pred_svm, testData[,ncol(testData)])
+  result_svm <- table(pred_svm, testData)
   
   # Give columns and rows names
   colnames(result_svm)=c("No person","Person")
@@ -120,4 +166,7 @@ e.d.evaluation <- function(pred_svm, testData){
   
   acc_svm
   
+  return(acc_svm)
+  
 }
+
