@@ -1,3 +1,6 @@
+e.a.svm.start("data/blocks2677IMG.rda", "data/colorHistOriginal255Buckets.rda",
+                       "data/hist_255_orig_rf250_result.rda", "data/classesOrig.rda")
+
 
 #' @title Classifier Support Vector Machine -  Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
@@ -13,47 +16,50 @@
 #'
 #' @author  Colin Juers
 
-e.a.svm.start <- function(){
-  
-  # load essential files 
-  load("data/blocks2677IMG.rda")
-  load("data/classesOrig.rda")
-  load("data/classesEights.rda")
-  
-  # Colorhist feature integration
-  # load("data/colorHistEighth16Buckets.rda")
-  # load("data/colorHistEighthRGBNorm16Buckets.rda")
-  # load("data/colorHistEighth255Buckets.rda")
-  load("data/colorHistEighthRGBNorm255Buckets.rda")
-  
-  # load("data/colorHistOriginalRGBNorm255Buckets.rda")
-
-  # Hog _ quadratische anzahl boxen _ orientations
-  
-  # Hog feature integration
-  # load("data/hog_eighth_4_9_complete.Rda")
-  # load("data/hog_eighth_5_6_complete.Rda")
-  # load("data/hog_eighth_8_9_complete.Rda")
-  # load("data/hog_eighth_10_6_complete.Rda")
-  # load("data/hog_eighth_12_9_complete.Rda")
-  # load("data/hog_eighth_15_6_complete.Rda")
-  
-  # load("data/hog_original_4_9_complete.rda")
-  # load("data/hog_original_8_9_complete.Rda")
-  
-  # Pixel data integration
-  load("data/pixelFeatureMatrixEighths.rda")
+e.a.svm.start <- function(a, b1, c, d, b2 = NULL){
   
   library(e1071)
   set.seed(1337)
   
-  # data <- cbind(colorHist, P = classesOrig[,"P"])
-  data <- cbind(colorHist, P = classesEights[,"P"])
-  # data <- cbind(hogData, P = classesOrig[,"P"])
-  # data <- cbind(hogData, P = classesEights[,"P"])
+  options(warn=-1)
+  
+  remove(colorHist)
+  remove(hogData)
+  remove(pixelFeatureMatrix28Squared)
+  remove(pixelFeatureMatrixEighths)
+  remove(classesEights)
+  remove(classesOrig)
+  
+  options(warn=-0)
+  
+  # load essential files 
+  load(a)
+  load(d)
+  
+  load(b1)
+  if(!is.null(b2)){
+    load(b2)
+    colorHist <- cbind(hogData,colorHist)
+  }
+  
+  if(exists("colorHist"))
+    data <- colorHist
+  else
+    if (exists("hogData"))
+      data <- hogData
+    else
+      if (exists("pixelFeatureMatrix28Squared"))
+        data <- pixelFeatureMatrix28Squared
+      else
+        data <- pixelFeatureMatrixEighths
+  
+  if(exists("classesEights"))
+    classes <- classesEights
+  else
+    classes <- classesOrig
+  
 
-  # env var for all different models
-  rfModels <- new.env()
+  data <- cbind(data, P = classes[,"P"])
   
   #Loop through the train/test-data-sets
   resultData <- sapply(1:blockNum, function(curBlock){
@@ -86,6 +92,8 @@ e.a.svm.start <- function(){
   })
   
   overallResult <- do.call(rbind, resultData)
+  
+  save(blocks, file = c)
 
   # evaluate the result of the prediction
   result <- d.d.evaluation(pred=overallResult[,1], testData=overallResult[,2])
