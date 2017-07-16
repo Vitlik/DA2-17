@@ -5,24 +5,47 @@
 #'
 #' It executes these functions:
 #' \enumerate{
-#'   \item \code{\link{}}
-#'   \item \code{\link{}}
+#'   \item \code{\link{cnn.b.step1}}
+#'   \item \code{\link{cnn.c.step2}}
 #' }
 #'
-#' @author Maren Reuter, Nils Meckmann, Sascha
+#' @author Maren Reuter, Nils Meckmann
 
-load("data/pixelFeatureMatrix28Squared.rda")
-load("data/classesEights.rda")
-load("data/blocks2677IMG.rda")
-
-data1 <- cbind(pixelFeatureMatrix28Squared, classesEights)
 
 cnn.execute(rounds = 20, lr = 0.00000001, batch = 50)
+cnn.execute(rounds = 20, lr = 0.00000001, batch = 100)
+cnn.execute(rounds = 30, lr = 0.00000001, batch = 50)
+cnn.execute(rounds = 40, lr = 0.00000001, batch = 50)
+cnn.execute(rounds = 50, lr = 0.00000001, batch = 50)
+cnn.execute(rounds = 50, lr = 0.00000001, batch = 50)
 
 cnn.execute <- function(rounds, lr, batch){
   library(mxnet)
   
-
+  load("data/pixelFeatureMatrix28Squared.rda")
+  load("data/classesEights.rda")
+  load("data/blocks2677IMG.rda")
+  
+  data1 <- cbind(pixelFeatureMatrix28Squared, classesEights)
+  
+  # Initialize Model
+  data <- mx.symbol.Variable('data')
+  # 1st convolutional layer 5x5 kernel and 20 filters.
+  conv_1 <- mx.symbol.Convolution(data= data, kernel = c(5,5), num_filter = 20)
+  tanh_1 <- mx.symbol.Activation(data= conv_1, act_type = "tanh")
+  pool_1 <- mx.symbol.Pooling(data = tanh_1, pool_type = "max", kernel = c(2,2), stride = c(2,2))
+  # 2nd convolutional layer 5x5 kernel and 50 filters.
+  conv_2 <- mx.symbol.Convolution(data = pool_1, kernel = c(5,5), num_filter = 50)
+  tanh_2 <- mx.symbol.Activation(data = conv_2, act_type = "tanh")
+  pool_2 <- mx.symbol.Pooling(data = tanh_2, pool_type = "max", kernel = c(2,2), stride = c(2,2))
+  # 1st fully connected layer
+  flat <- mx.symbol.Flatten(data = pool_2)
+  fcl_1 <- mx.symbol.FullyConnected(data = flat, num_hidden = 500)
+  tanh_3 <- mx.symbol.Activation(data = fcl_1, act_type = "tanh")
+  # 2nd fully connected layer
+  fcl_2 <- mx.symbol.FullyConnected(data = tanh_3, num_hidden = 2)
+  # Outout of initial CNN Model
+  CNN_model <- mx.symbol.SoftmaxOutput(data = fcl_2)
   
   resultData1 <- sapply(1:blockNum, function(curBlock){
   
@@ -40,7 +63,7 @@ cnn.execute <- function(rounds, lr, batch){
     train_array <- train.x
     dim(train_array) <- c(28, 28, 1, ncol(train.x))
   
-    CNNmodel <- cnn.b.step1(train_array, train_y, rounds, lr, batch)
+    CNN_model <- cnn.b.step1(CNN_model, train_array, train_y, rounds, lr, batch)
     ##assign(paste0("CNNModel", curBlock), CNNModel, envir = CNNModels)
     # print processing time
     print(paste0("Processing time for training the CNN block ", curBlock, ": ",
@@ -60,7 +83,7 @@ cnn.execute <- function(rounds, lr, batch){
     dim(test_array) <- c(28, 28, 1, ncol(test.x))
     
     # Evaluate the result for the train-test-set
-    preds <- cnn.c.step2(CNNmodel, test_array)
+    preds <- cnn.c.step2(CNN_model, test_array)
     
     colnames(preds) <- rownames(test_x)
     rownames(preds) <- c(0,1)
@@ -73,12 +96,6 @@ cnn.execute <- function(rounds, lr, batch){
     # print processing time
     print(paste0("Processing time for testing the CNN block ", curBlock, ": ",
                  (Sys.time() - start.time)))
-  
-    # print(pred.label <- max.col(t(preds)) - 1)
-    # print(table(pred.label))
-    # 
-    # print(table(test_y, pred.label))
-    # print(sum(diag(table(test_y, pred.label)))/530)
     
     result <- matrix(nrow = length(predsValues), ncol = 2)
     result[,1] <- as.vector(predsValues)
@@ -87,6 +104,7 @@ cnn.execute <- function(rounds, lr, batch){
   })
 
   overallResult <- do.call(rbind, resultData1)
+  View(overallResult)
 
   assign(paste0("overallResult"), overallResult, envir = blocks)
 
@@ -100,13 +118,19 @@ cnn.execute <- function(rounds, lr, batch){
   d.d.evaluation(overallResult[,1], overallResult[,2])
 }
 
-
-cnn.b.step1 <- function(train_array, train_y, rounds, lr, batch){
+#' @title Classifier 2 - Step 1
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'
+#' ...
+#'
+#' @author Maren Reuter, Nils Meckmann
+cnn.b.step1 <- function(CNN_model, train_array, train_y, rounds, lr, batch){
 
   mx.set.seed(100)
   
   device <- mx.cpu()
-  CNNmodel <- mx.model.FeedForward.create(NN_model, X = train_array, y = train_y,
+  CNN_model <- mx.model.FeedForward.create(CNN_model, X = train_array, y = train_y,
                                        ctx = device,
                                        num.round = rounds,
                                        array.batch.size = batch,
@@ -116,33 +140,24 @@ cnn.b.step1 <- function(train_array, train_y, rounds, lr, batch){
                                        eval.metric = mx.metric.accuracy,
                                        epoch.end.callback = mx.callback.log.train.metric(100)
   )
-  return(CNNmodel)
+  return(CNN_model)
 }
 
-cnn.c.step2 <- function(CNNmodel, test_array){
+#' @title Classifier 2 - Step 2
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'
+#' ...
+#'
+#' @author Maren Reuter, Nils Meckmann
+cnn.c.step2 <- function(CNN_model, test_array){
   
-  preds <- predict(CNNmodel, test_array)
+  # predict the test data on the trained model
+  preds <- predict(CNN_model, test_array)
   
   return(preds)
 }
 
-# Initialize Model
-data <- mx.symbol.Variable('data')
-# 1st convolutional layer 5x5 kernel and 20 filters.
-conv_1 <- mx.symbol.Convolution(data= data, kernel = c(5,5), num_filter = 20)
-tanh_1 <- mx.symbol.Activation(data= conv_1, act_type = "tanh")
-pool_1 <- mx.symbol.Pooling(data = tanh_1, pool_type = "max", kernel = c(2,2), stride = c(2,2))
-# 2nd convolutional layer 5x5 kernel and 50 filters.
-conv_2 <- mx.symbol.Convolution(data = pool_1, kernel = c(5,5), num_filter = 50)
-tanh_2 <- mx.symbol.Activation(data = conv_2, act_type = "tanh")
-pool_2 <- mx.symbol.Pooling(data = tanh_2, pool_type = "max", kernel = c(2,2), stride = c(2,2))
-# 1st fully connected layer
-flat <- mx.symbol.Flatten(data = pool_2)
-fcl_1 <- mx.symbol.FullyConnected(data = flat, num_hidden = 500)
-tanh_3 <- mx.symbol.Activation(data = fcl_1, act_type = "tanh")
-# 2nd fully connected layer
-fcl_2 <- mx.symbol.FullyConnected(data = tanh_3, num_hidden = 2)
-# Outout of initial CNN Model
-NN_model <- mx.symbol.SoftmaxOutput(data = fcl_2)
+
 
   
