@@ -1,3 +1,17 @@
+#' @title Classifier -  Wrapper function
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'
+#' This is a wrapper function for ...
+#'
+#' It executes these functions:
+#' \enumerate{
+#'   \item \code{\link{}}
+#'   \item \code{\link{}}
+#' }
+#'
+#' @author Maren Reuter, Nils Meckmann, Sascha
+
 load("data/pixelFeatureMatrixEighthsSquared.rda")
 load("data/classesEights.rda")
 load("data/blocks.rda")
@@ -92,7 +106,7 @@ cnn.b.step1 <- function(train_array, train_y){
   CNNmodel <- mx.model.FeedForward.create(NN_model, X = train_array, y = train_y,
                                        ctx = device,
                                        num.round = 20,
-                                       array.batch.size = 20,
+                                       array.batch.size = 50,
                                        learning.rate = 0.00000001,
                                        momentum = 0.9,
                                        wd = 0.00001,

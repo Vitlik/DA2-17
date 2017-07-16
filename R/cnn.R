@@ -15,6 +15,7 @@ test_classes <- classesEights[2121:2650,]
 
 ##train.y <- train_y2
 train_x <- t(train)
+
 test_x <- t(test)
 
 ## img_size <- 28*28
@@ -50,7 +51,7 @@ device <- mx.cpu()
 
 model <- mx.model.FeedForward.create(NN_model, X = train_array, y = train_classes,
                                      ctx = device,
-                                     num.round = 30,
+                                     num.round = 20,
                                      array.batch.size = 20,
                                      learning.rate = 0.00000001,
                                      momentum = 0.9,
