@@ -120,7 +120,7 @@ ann.step1 <- function(train_array, train_y, rounds = 50, lr = 0.00001, nodes = 1
   return(ANNModel)
 }
 
-ann.execute("hog_8_9", "orig", rounds = "30", "0.00001", "1500", "20")
+ann.execute("hog_8_9", "orig", rounds = "30", lr = "0.00001", nodes = "1500", batch = "20")
 
 
 data <- mx.symbol.Variable("data")
