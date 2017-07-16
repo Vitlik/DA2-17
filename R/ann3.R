@@ -24,7 +24,7 @@ load("data/hog_eighth__complete.rda")
 load("data/classesEights.rda")
 load("data/hog_eighth_8_9_complete.rda")
 
-data1 <- cbind(hogData, P = classesEights[, "P"])
+data1 <- cbind(hogData, P = classesOrig[, "P"])
 
 ann.execute <- function(dataType, imageType, rounds, lr, nodes, batch){
   ##CNNModels <- new.env()
@@ -44,7 +44,7 @@ ann.execute <- function(dataType, imageType, rounds, lr, nodes, batch){
     train_x <- data.matrix(trainData[,-ncol(trainData)])
     train_y <- trainData[,ncol(trainData)]
     
-    ANNModel <- ann.step1(train_x, train_y)
+    ANNModel <- ann.step1(train_x, train_y, rounds, lr, nodes, batch)
     
     assign(paste0("annModel", curBlock), ANNModel, envir = blocks)
     
@@ -109,19 +109,18 @@ ann.execute <- function(dataType, imageType, rounds, lr, nodes, batch){
   d.d.evaluation(overallResult[,1], overallResult[,2])
 }
 
-ann.execute("hog_8_9", "eighth", "50", "0.00001", "1500", "20")
-
-
-ann.step1 <- function(train_array, train_y){
+ann.step1 <- function(train_array, train_y, rounds = 50, lr = 0.00001, nodes = 1500, batch = 20){
   library(mxnet)
   mx.set.seed(1)
   
   # Model
-  ANNModel <- mx.mlp(train_array, train_y, hidden_node=1500, out_node=2, out_activation="softmax",
-                 num.round=50, array.batch.size=20, learning.rate=0.00001, momentum=0.9,
+  ANNModel <- mx.mlp(train_array, train_y, hidden_node=nodes, out_node=2, out_activation="softmax",
+                 num.round=rounds, array.batch.size=batch, learning.rate=lr, momentum=0.9,
                  eval.metric=mx.metric.accuracy)
   return(ANNModel)
 }
+
+ann.execute("hog_8_9", "orig", rounds = "30", "0.00001", "1500", "20")
 
 
 data <- mx.symbol.Variable("data")
