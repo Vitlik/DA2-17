@@ -15,7 +15,7 @@ e.a.ann.start(inputData, dataType = "hog_15_6", imageType = "orig", rounds = "50
 #'
 #' It executes these functions:
 #' \enumerate{
-#'   \item \code{\link{e.a.step1}}
+#'   \item \code{\link{e.a.ann.step1}}
 #' }
 #'
 #' @author Nils Meckmann, Maren Reuter,
