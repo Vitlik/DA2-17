@@ -61,11 +61,15 @@ a.b.main.image.recognition <- function(){
   d.a.randomForest.start()
   cat("\n")
 
-  message("4. Artificial Neural Networks")
-  e.a.classifier2.start()
+  message("4. Artificial Neural Network")
+  e.a.ann.start()
+  cat("\n")
+  
+  message("5. Convolutional Neural Network")
+  f.a.cnn.start()
   cat("\n")
 
-  message("5. Evaluation / Comparison")
-  f.a.evaluate.start()
+  message("6. Evaluation / Comparison")
+  g.a.evaluate.start()
   cat("\n")
 }
