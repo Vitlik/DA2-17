@@ -53,9 +53,6 @@ e.a.ann.start <- function(blocks, feature1, feature2 = NULL, classification, dat
   
   data <- cbind(data, P = classes[,"P"])
   
-  print(dim(data))
-  View(data)
-  
   load("data/blocks2677IMG.rda")
   ##CNNModels <- new.env()
   resultData1 <- sapply(1:blockNum, function(curBlock){
