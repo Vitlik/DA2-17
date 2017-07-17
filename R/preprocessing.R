@@ -272,3 +272,75 @@ b.h.displayImageHist <- function(image){
   hist(equalImage)
   grid()
 }
+
+#' @title Preprocessing - 
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'
+#' ...
+#'
+#' @author Vitali Friesen
+b.i.randAssignAccuracy <- function(image){
+  load("data/classesOrig.rda")
+  load("data/blocks2677IMG.rda")
+  
+  result <- t(sapply(1:blockNum, function(curBlock){
+    trainBlockIndexes <- get(paste0("train", curBlock), envir=blocks)
+    curClasses <- classesOrig[trainBlockIndexes, "P"]
+    
+    testBlockIndexes <- get(paste0("test", curBlock), envir=blocks)
+    
+    set.seed(1337)
+    randPred <- rbinom(length(testBlockIndexes), 1, sum(curClasses)/length(curClasses))
+    
+    as.matrix(cbind(pred = randPred, P = classesOrig[testBlockIndexes, "P"]))
+  }))
+  overallResult <- do.call(rbind, result)
+  
+  d.d.evaluation(overallResult[, 1], overallResult[, 2])
+  
+  load("data/classesEights.rda")
+  
+  result <- t(sapply(1:blockNum, function(curBlock){
+    trainBlockIndexes <- get(paste0("train", curBlock), envir=blocks)
+    curClasses <- classesEights[trainBlockIndexes, "P"]
+    
+    testBlockIndexes <- get(paste0("test", curBlock), envir=blocks)
+    
+    set.seed(1337)
+    randPred <- rbinom(length(testBlockIndexes), 1, sum(curClasses)/length(curClasses))
+    
+    as.matrix(cbind(pred = randPred, P = classesEights[testBlockIndexes, "P"]))
+  }))
+  overallResult <- do.call(rbind, result)
+  
+  d.d.evaluation(overallResult[, 1], overallResult[, 2])
+}
+
+#' @title Preprocessing - 
+#' @description To get (back) to the overview of all steps and functions use this link:
+#' \code{\link{a.a.main}}
+#'
+#' ...
+#'
+#' @author Vitali Friesen
+b.j.assignSimpelAccuracy <- function(image){
+  load("data/classesOrig.rda")
+  
+  if (sum(classesOrig[,"P"])/length(classesOrig[,"P"]) < 0.5)
+    pred <- rep(0, length(classesOrig[,"P"]))
+  else
+    pred <- rep(1, length(classesOrig[,"P"]))
+  
+  print(d.d.evaluation(pred, classesOrig[, "P"]))
+  
+  load("data/classesEights.rda")
+  
+  if (sum(classesEights[,"P"])/length(classesEights[,"P"]) < 0.5)
+    pred <- rep(0, length(classesEights[,"P"]))
+  else
+    pred <- rep(1, length(classesEights[,"P"]))
+  
+  d.d.evaluation(pred, classesEights[, "P"])
+}
+
