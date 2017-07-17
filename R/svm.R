@@ -1,5 +1,59 @@
 e.a.svm.start("data/blocks2677IMG.rda", "data/colorHistOriginal255Buckets.rda",
-                       "data/hist_255_orig_rf250_result.rda", "data/classesOrig.rda")
+                       "data/colorHistOriginal255Buckets_radial_svm_result.rda", "data/classesOrig.rda")
+
+# Color Hist test
+e.a.svm.start("data/blocks2677IMG.rda", "data/colorHistEighthRGBNorm16Buckets.rda","data/colorHistEightRGBNorm16Buckets_radial_svm_results.rda"
+              ,"data/classesEights.rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/colorHistEighthRGBNorm255Buckets.rda","data/colorHistEightRGBNorm255Buckets_radial_svm_results.rda"
+              ,"data/classesEights.rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets.rda","data/colorHistEight255Buckets_radial_svm_results.rda"
+              ,"data/classesEights.rda")
+
+
+# HOG Orig test
+e.a.svm.start("data/blocks2677IMG.rda", "data/hog_original_4_9_complete.Rda","data/hog_original_4_9_radial_svm_results.rda"
+              ,"data/classesOrig.rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.Rda","data/hog_original_8_9_radial_svm_results.rda"
+              ,"data/classesOrig.rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/hog_original_12_9_complete.Rda","data/hog_original_12_9_radial_svm_results.rda"
+              ,"data/classesOrig.rda")
+
+# HOG Eight test
+e.a.svm.start("data/blocks2677IMG.rda", "data/hog_eighth_4_9_complete.Rda","data/hog_eighth_4_9_radial_svm_results.rda"
+              ,"data/classesEights.rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/hog_eighth_5_6_complete.Rda","data/hog_eighth_5_6_radial_svm_results.rda"
+              ,"data/classesEights.rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/hog_eighth_8_9_complete.Rda","data/hog_eighth_8_9_radial_svm_results.rda"
+              ,"data/classesEights.rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/hog_eighth_10_6_complete.Rda","data/hog_eighth_10_6_radial_svm_results.rda"
+              ,"data/classesEights.rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/hog_eighth_12_9_complete.Rda","data/hog_eighth_12_9_radial_svm_results.rda"
+              ,"data/classesEights.rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/hog_eighth_15_6_complete.Rda","data/hog_eighth_15_6_radial_svm_results.rda"
+              ,"data/classesEights.rda")
+
+# Combine tests
+e.a.svm.start("data/blocks2677IMG.rda", "data/colorHistOriginal255Buckets.rda",
+                       "data/colorHistOriginal255Buckets_hog_oiginal_10_6_radial_svm_result.rda", "data/classesOrig.rda",
+                       "data/hog_original_10_6_complete.Rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/colorHistOriginalRGBNorm255Buckets.rda",
+              "data/colorHistOriginalRGBNorm255Buckets_hog_oiginal_10_6_radial_svm_result.rda", "data/classesOrig.rda",
+              "data/hog_original_10_6_complete.Rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/colorHistOriginalRGBNorm255Buckets.rda",
+              "data/colorHistOriginalRGBNorm255Buckets_hog_oiginal_8_9_radial_svm_result.rda", "data/classesOrig.rda",
+              "data/hog_original_8_9_complete.Rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets.rda",
+              "data/colorHistEight255Buckets_hog_eights_8_9_radial_svm_result.rda", "data/classesEights.rda",
+              "data/hog_eighth_8_9_complete.Rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets.rda",
+              "data/colorHistEight255Buckets_hog_eights_10_6_radial_svm_result.rda", "data/classesEights.rda",
+              "data/hog_eighth_10_6_complete.Rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/colorHistEighthRGBNorm255Buckets.rda",
+              "data/colorHistEightRGBNorm255Buckets_hog_eights_10_6_radial_svm_result.rda", "data/classesEights.rda",
+              "data/hog_eighth_10_6_complete.Rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/colorHistEighthRGBNorm255Buckets.rda",
+              "data/colorHistEightRGBNorm255Buckets_hog_eights_4_9_radial_svm_result.rda", "data/classesEights.rda",
+              "data/hog_eighth_4_9_complete.Rda")
 
 
 #' @title Classifier Support Vector Machine -  Wrapper function
@@ -97,48 +151,42 @@ e.a.svm.start <- function(a, b1, c, d, b2 = NULL){
 
   # evaluate the result of the prediction
   result <- d.d.evaluation(pred=overallResult[,1], testData=overallResult[,2])
-
-  # Save results for the future
-  # save(overallResult, file = "data/SVM_results")
   
   return(result)
   
 }
 
 
-#' @title Classifier 1 - Step 1
-#' @description To get (back) to the overview of all steps and functions use this link:
+#' @title Classifier Support Vector Machine - Step 1
+#' @description The train matrix is used to compute hyperplanes of the feature vector. The parameters of the function have
+#' been tuned with the \code{tune()} function.
+#' To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
-#' ...
-#'
+#' @param trainData A sample matrix of all files to train the svm classifier
+#' @return Support Vector Machine model trained with sampled data
 #' @author Colin Juers
 e.b.step1 <- function(trainData){
   
-  
-  # svm_train <- as.list(as.data.frame(trainData))
-  
   # Support vector machine function
-  model_svm <- svm(as.factor(P)~.-P, trainData, kernel="polynomial",tolerance=0.1,cost=100, epsilon=0)
+  model_svm <- svm(as.factor(P)~.-P, trainData, kernel="radial",tolerance=0.1,cost=100, epsilon=0)
   
   # tune svm to get the best cost for the svm (once used)
   # tune_svm <- tune(svm, as.factor(P)~.-P, data=data.frame(trainData), ranges=list(cost=c(0.001,0.01,0.1,1,10,100,1000)))
   # 
   # summary(tune_svm)
-  # plot(model_svm, trainData)
-  
+
   return(model_svm)
   
 }
 
 
 
-#' @title Classifier 1 - Step 1
+#' @title Classifier Support Vector Machine - Step 2
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
-#' ...
-#'
+#' @param model_svm The trained svm model with all hyperplanes
+#' @param testData A sample matrix of all files to apply the trained svm model on and predict "P"
+#' @return Predictions of the test set
 #' @author Colin Juers
 e.c.step2 <- function(model_svm, testData){
   
@@ -148,55 +196,3 @@ e.c.step2 <- function(model_svm, testData){
   return(pred_svm)
   
 }
-
-
-#' #' @title Classifier 1 - Step 1
-#' #' @description To get (back) to the overview of all steps and functions use this link:
-#' #' \code{\link{a.a.main}}
-#' #'
-#' #' ...
-#' #'
-#' #' @author Colin Juers
-#' e.d.evaluation <- function(pred_svm, testData){
-#'   
-#'   library(gridExtra)
-#'   library(plotrix)
-#'   
-#'   result_svm <- table(pred_svm, testData)
-#'   
-#'   # Give columns and rows names
-#'   colnames(result_svm)=c("No person","Person")
-#'   rownames(result_svm)=c("No person predicted","Person predicted")
-#'   
-#'   correct_svm <- result_svm["No person predicted","No person"]+result_svm["Person predicted","Person"]
-#'   acc_svm <- (correct_svm)/sum(result_svm)
-#'   
-#'   # Set theme for grid.plot
-#'   t1 <- ttheme_minimal(
-#'     core=list(
-#'       fg_params=list(col="black", fontface="bold.italic"),
-#'       bg_params = list(fill=c(c("green3","red"),c("red","green3")))),
-#'     colhead=list(
-#'       fg_params=list(col="darkgreen", fontface=4L)),
-#'     rowhead=list(
-#'       fg_params=list(col="black",fontface=4L))
-#'   )
-#'   
-#'   resultTable <- tableGrob(result_svm, theme=t1)
-#'   grid.arrange(resultTable)
-#'   
-#'   # Pie chart for results with parameters
-#'   pieResults <- pie3D(c(acc,Error1Perc,Error2Perc),
-#'                       main="Accuracy vs. Errorpercentages",
-#'                       col = c("green","red","red"),
-#'                       radius = 1.5,
-#'                       labels = c("Accuracy","Error 1. degree","Error 2. degree"),
-#'                       shade = 0.7,
-#'                       explode=0.1)
-#'   
-#'   acc_svm
-#'   
-#'   return(acc_svm)
-#'   
-#' }
-#' 
