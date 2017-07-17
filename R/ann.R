@@ -1,11 +1,6 @@
-setwd("C:/dev/DA2/DA2-17/")
-
-load("data/classesOrig.rda")
-load("data/hog_original_15_6_complete.rda")
-
-inputData <- cbind(hogData, P = classesOrig[, "P"])
-hiddenNodes <- rep(10,100)
-e.a.ann.start(inputData, dataType = "hog_15_6", imageType = "orig", rounds = "50", lr = "0.00001", nodes = hiddenNodes, nodeString = "10x100", batch = "100")
+e.a.ann.start(blocks = "data/blocks2677IMG.rda", feature1 = "data/hog_original_15_6_complete.rda", classification = "data/classesOrig.rda", 
+              dataType = "hog_15_6", imageType = "orig", rounds = "50", lr = "0.00001",
+              nodes = rep(10,100), nodeString = "10x100", batch = "100")
 
 #' @title Artificial Neural Network -  Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
@@ -18,8 +13,49 @@ e.a.ann.start(inputData, dataType = "hog_15_6", imageType = "orig", rounds = "50
 #'   \item \code{\link{e.a.step1}}
 #' }
 #'
-#' @author Nils Meckmann, Maren Reuter,
-e.a.ann.start <- function(inputData, dataType, imageType, rounds, lr, nodes, nodeString, batch){
+#' @author Nils Meckmann, Maren Reuter, Sascha di Bernardo
+e.a.ann.start <- function(blocks, feature1, feature2 = NULL, classification, dataType, imageType, rounds, lr, nodes, nodeString, batch){
+  
+  options(warn=-1)
+  
+  remove(colorHist)
+  remove(hogData)
+  remove(pixelFeatureMatrix28Squared)
+  remove(pixelFeatureMatrixEighths)
+  remove(classesEights)
+  remove(classesOrig)
+  
+  options(warn=0)
+  
+  load(blocks)
+  load(feature1)
+  # load("data/classesEights.rda")
+  load(classification)
+  if(!is.null(feature2)){
+    load(feature2)
+    colorHist <- cbind(hogData,colorHist)
+  }
+  
+  if(exists("colorHist"))
+    data <- colorHist
+  else
+    if (exists("hogData"))
+      data <- hogData
+  else
+    if (exists("pixelFeatureMatrix28Squared"))
+      data <- pixelFeatureMatrix28Squared
+  else
+    data <- pixelFeatureMatrixEighths
+  if(exists("classesEights"))
+    classes <- classesEights
+  else
+    classes <- classesOrig
+  
+  data <- cbind(data, P = classes[,"P"])
+  
+  print(dim(data))
+  View(data)
+  
   load("data/blocks2677IMG.rda")
   ##CNNModels <- new.env()
   resultData1 <- sapply(1:blockNum, function(curBlock){
@@ -31,9 +67,8 @@ e.a.ann.start <- function(inputData, dataType, imageType, rounds, lr, nodes, nod
     # for calculating the processing time: save start time
     start.time <- Sys.time()
     
-    # Explanation
-    trainData <- inputData[trainBlockIndexes,]
-    # trainData <- data1
+    # Extract training data
+    trainData <- data[trainBlockIndexes,]
     train_x <- data.matrix(trainData[,-ncol(trainData)])
     train_y <- trainData[,ncol(trainData)]
     
@@ -50,18 +85,17 @@ e.a.ann.start <- function(inputData, dataType, imageType, rounds, lr, nodes, nod
     
     # for calculating the processing time: save start time
     start.time <- Sys.time()
-    testData <- inputData[testBlockIndexes,]
     
     # Extract test data
+    testData <- data[testBlockIndexes,]
     test_x <- data.matrix(testData[,-ncol(testData)])
     test_y <- testData[,ncol(testData)]
     
-    # Evaluate the result for the train-test-set
+    # Predictions for the test set
     preds <- predict(ANNModel, test_x)
     
     colnames(preds) <- rownames(test_x)
     rownames(preds) <- c(0,1)
-
     preds <- t(preds)
 
     assign(paste0("predsWithProbs", curBlock), preds, envir = blocks)
@@ -103,7 +137,7 @@ e.a.ann.start <- function(inputData, dataType, imageType, rounds, lr, nodes, nod
 #' @param nodes A vector containing node amounts per layer, e.g. rep(1000, 2) for two layers with 1000 nodes.
 #' @param batch The amount of objects which the model is trained on every round
 #' @return ANN model of the package mxnet
-#' @author Nils Meckmann, Maren Reuter
+#' @author Nils Meckmann, Maren Reuter, Sascha di Bernardo
 e.b.ann.step1 <- function(train_x, train_y, rounds, lr, nodes, batch){
   mx.set.seed(1)
   
