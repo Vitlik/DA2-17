@@ -103,7 +103,7 @@ gc()
 result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.rda",
                                  "data/hog_original_8_9_rf2000_result.rda", "data/classesOrig.rda",
                                  2000, mtry = 29)
-save(result,file="data/result10")
+save(result,file="data/result11")
 
 #' @title Classifier 1 -  Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
@@ -118,7 +118,7 @@ save(result,file="data/result10")
 #' }
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
-d.a.randomForest.start <- function(a, b1, c, d, numTrees, b2 = NULL){
+d.a.randomForest.start <- function(a, b1, c, d, numTrees, b2 = NULL, mtry = NULL, nodesize = NULL){
   #library(snow)
   #library(caret)
   
@@ -167,7 +167,7 @@ d.a.randomForest.start <- function(a, b1, c, d, numTrees, b2 = NULL){
     # for calculating the processing time: save start time
     start.time <- Sys.time()
     # Explanation
-    rfModel <- d.b.step1(data[trainBlockIndexes,], numTrees)
+    rfModel <- d.b.step1(data[trainBlockIndexes,], numTrees, mtry, nodesize)
     # store model for later evaluation
     assign(paste0("rfModel", curBlock), rfModel, envir = blocks)
     # print processing time
@@ -215,7 +215,7 @@ d.a.randomForest.start <- function(a, b1, c, d, numTrees, b2 = NULL){
 #' ...
 #'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
-d.b.step1 <- function(trainData, numTrees){
+d.b.step1 <- function(trainData, numTrees, pMtry = NULL, pNodesize = NULL){
   library(randomForest)
   set.seed(1337)
 
@@ -229,11 +229,35 @@ d.b.step1 <- function(trainData, numTrees){
   #              ntree=2000)
   
   #TODO (all): Run with diff. parameter permutations
-  rfModel <- randomForest(as.factor(P) ~ . - P,
-                          data=trainData,
-                          importance=TRUE,
-                          #Parameter-Tuning
-                          ntree=numTrees)
+  if(is.null(pMtry) && is.null(pNodesize)){
+    rfModel <- randomForest(as.factor(P) ~ . - P,
+                            data=trainData,
+                            importance=TRUE,
+                            #Parameter-Tuning
+                            ntree=numTrees)
+  }else if(!is.null(pMtry) && !is.null(pNodesize)){
+    rfModel <- randomForest(as.factor(P) ~ . - P,
+                            data=trainData,
+                            importance=TRUE,
+                            #Parameter-Tuning
+                            ntree=numTrees,
+                            mtry = pMtry,
+                            nodesize = pNodesize)
+  }else if(is.null(pNodesize)){
+    rfModel <- randomForest(as.factor(P) ~ . - P,
+                            data=trainData,
+                            importance=TRUE,
+                            #Parameter-Tuning
+                            ntree=numTrees,
+                            mtry = pMtry)
+  }else{
+    rfModel <- randomForest(as.factor(P) ~ . - P,
+                            data=trainData,
+                            importance=TRUE,
+                            #Parameter-Tuning
+                            ntree=numTrees,
+                            nodesize = pNodesize)
+  }
 
   #Plot the variable importance of the trained model
   # variableImportance <- varImp(parallelRfModel)
