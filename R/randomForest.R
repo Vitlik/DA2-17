@@ -31,6 +31,38 @@ result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth
                                  "data/colorHistEighth255Buckets_hog_10_6_eighth_rf250_result.rda", "data/classesEights.rda",
                                  250, "data/hog_eighth_10_6_complete.Rda")
 
+result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal255Buckets.rda",
+                                 "data/colorHistoriginal255Buckets_hog_10_6_original_rf100_result.rda", "data/classesOrig.rda",
+                                 100, "data/hog_original_10_6_complete.Rda")
+
+result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal255Buckets.rda",
+                                 "data/colorHistoriginal255Buckets_hog_10_6_original_rf250_result.rda", "data/classesOrig.rda",
+                                 250, "data/hog_original_10_6_complete.Rda")
+
+result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighthRGBNorm255Buckets.rda",
+                                 "data/colorHistEighthRGBNorm255Buckets_hog_10_6_eighth_rf250_result.rda", "data/classesEights.rda",
+                                 250, "data/hog_eighth_10_6_complete.Rda")
+
+result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_5_6_complete.Rda",
+                                 "data/hog_5_6_eighth_rf250_result.rda", "data/classesEights.rda",
+                                 250)
+
+result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_8_9_complete.Rda",
+                                 "data/hog_8_9_eighth_rf250_result.rda", "data/classesEights.rda",
+                                 250)
+
+result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_10_6_complete.Rda",
+                                 "data/hog_10_6_eighth_rf250_result.rda", "data/classesEights.rda",
+                                 250)
+
+result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_12_9_complete.Rda",
+                                 "data/hog_12_9_eighth_rf250_result.rda", "data/classesEights.rda",
+                                 250)
+
+result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_15_6_complete.Rda",
+                                 "data/hog_15_6_eighth_rf100_result.rda", "data/classesEights.rda",
+                                 100)
+
 #' @title Classifier 1 -  Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
