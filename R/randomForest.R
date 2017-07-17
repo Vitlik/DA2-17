@@ -29,31 +29,6 @@ d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_4_9_complete
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_4_9_complete.Rda",
                        "data/hog_4_9_eighth_rf_result.rda", "data/classesEights.rda",
                        2000)
-
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets.rda",
-                                 "data/colorHistEighth255Buckets_hog_10_6_eighth_rf250_result.rda", "data/classesEights.rda",
-                                 250, "data/hog_eighth_10_6_complete.Rda")
-
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.Rda",
-                                 "data/hog_8_9_original_rf2000_result.rda", "data/classesOrig.rda",
-                                 2000)
-
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_10_6_complete.Rda",
-                                 "data/hog_10_6_original_rf2000_result.rda", "data/classesOrig.rda",
-                                 2000)
-
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalRGBNorm255Buckets.rda",
-                                 "data/colorHistOriginalRGBNorm255Buckets_rf2000_result.rda", "data/classesOrig.rda",
-                                 2000)
-
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighthRGBNorm16Buckets.rda",
-                                 "data/colorHistEighthRGBNorm16Buckets_rf2000_result.rda", "data/classesEights.rda",
-                                 2000)
-
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighthRGBNorm255Buckets.rda",
-                                 "data/colorHistEighthRGBNorm255Buckets_rf2000_result.rda", "data/classesEights.rda",
-                                 2000)
-
 #####
 
 gc()
