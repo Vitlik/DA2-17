@@ -107,14 +107,17 @@ c.b.colorHist <- function(){
 #' ...
 #'
 #' @author
-c.c.colorHistPlotting <- function(){
+c.c.colorHistPlotting <- function(picture = "hl 2017-06-14 17-44-58-48.png"){
   library(ggplot2)
   
   doPlot <- c(
-    "data/colorHistOriginal16Buckets.rda"
+      "data/colorHistOriginal16Buckets.rda"
     , "data/colorHistOriginal255Buckets.rda"
     , "data/colorHistOriginalEqual16Buckets.rda"
     , "data/colorHistOriginalEqual255Buckets.rda"
+    , "data/colorHistOriginalEqualRGBNorm16Buckets.rda"
+    # , "data/colorHistOriginalRGBNorm16Buckets.rda"
+    # , "data/colorHistOriginalRGBNorm255Buckets.rda"
     )
   
   bin <- sapply(doPlot, function(rdaData){
@@ -132,20 +135,20 @@ c.c.colorHistPlotting <- function(){
     highest <- ifelse(gregexpr(pattern ='255', rdaData)[[1]][1] == -1, 60000, 5000)
     
     ggplot(dfRed, aes(red, data)) + geom_bar(stat = "identity", fill = "#FF0000") + 
-      scale_y_continuous(limits = c(0, highest)) 
+      scale_y_continuous(limits = c(0, highest))
     ggsave(paste0("plots/", 
                   substr(rdaData, gregexpr(pattern ='/',rdaData)[[1]][1] +1, nchar(rdaData)-4),
-                  "Red.png"))
-    ggplot(dfGreen, aes(green, data)) + geom_bar(stat = "identity", fill = "#00FF00") + 
-      scale_y_continuous(limits = c(0, highest)) 
+                  "_red for ", picture, ".png"))
+    ggplot(dfGreen, aes(green, data)) + geom_bar(stat = "identity", fill = "#00FF00") +
+      scale_y_continuous(limits = c(0, highest))
     ggsave(paste0("plots/", 
                   substr(rdaData, gregexpr(pattern ='/',rdaData)[[1]][1] +1, nchar(rdaData)-4),
-                  "Green.png"))
+                  "_green for ", picture, ".png"))
     ggplot(dfBlue, aes(blue, data)) + geom_bar(stat = "identity", fill = "#0000FF") + 
-      scale_y_continuous(limits = c(0, highest)) 
+      scale_y_continuous(limits = c(0, highest))
     ggsave(paste0("plots/", 
                   substr(rdaData, gregexpr(pattern ='/',rdaData)[[1]][1] +1, nchar(rdaData)-4),
-                  "Blue.png"))
+                  "_blue for ", picture, ".png"))
   })
 }
 

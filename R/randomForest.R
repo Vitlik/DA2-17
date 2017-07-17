@@ -1,6 +1,6 @@
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal255Buckets.rda",
-                       "data/hist_255_orig_rf100_result.rda", "data/classesOrig.rda",
-                       100)
+                       "data/hist_255_orig_rf250_result.rda", "data/classesOrig.rda",
+                       250)
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqual16Buckets.rda",
                        "data/colorHistOriginalEqual16BucketsRFModelResult.rda", "data/classesOrig.rda",
                        2000)
@@ -16,8 +16,11 @@ d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth16Buckets.
                        2000)
 
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets.rda",
-                       "data/colorHistEighth255BucketsRFModelResult.rda", "data/classesEights.rda",
-                       2000)
+                       "data/hist_255_eighth_rf100_result.rda", "data/classesEights.rda",
+                       100)
+d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighthRGBNorm255Buckets.rda",
+                       "data/hist_255_eighth_rgbNorm_rf100_result.rda", "data/classesEights.rda",
+                       100)
 
 d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_4_9_complete.Rda",
                        "data/hog_4_9_orig_rf100_result.rda", "data/classesOrig.rda",
@@ -300,7 +303,6 @@ d.c.step2 <- function(testData, rfModel){
 #'
 #' @author Colin Juers, Tassilo Tobollik
 d.d.evaluation <- function(pred, testData){
-  #TODO (Colin): Evaluation in andere Methode und sch?n graf. Darstellen mit wichtigen Kennzahlen (Fehler 1., 2. Art und Accuracy)
 
   library(gridExtra)
   library(plotrix)
@@ -308,9 +310,15 @@ d.d.evaluation <- function(pred, testData){
   # Compute result table
   result <- table(pred, testData)
   if(nrow(result) == 1)
-    result = rbind(result, c(0,0))
+    if (row.names(result) == "0")
+      result = rbind(result, c(0,0))
+    else
+      result = rbind(c(0,0), result)
   if (ncol(result) == 1)
-    result = cbind(result, c(0,0))
+    if (colnames(result) == "0")
+      result = cbind(result, c(0,0))
+    else 
+      result = cbind(c(0,0), result)
   # Give columns and rows names
   colnames(result)=c("No person","Person")
   rownames(result)=c("No person predicted","Person predicted")
@@ -332,7 +340,9 @@ d.d.evaluation <- function(pred, testData){
   grid.arrange(resultTable)
 
   # Calculate accuracy
-  correct <- result["No person predicted","No person"]+result["Person predicted","Person"]
+  correct_person <- result["Person predicted", "Person"]
+  correct_no_person <- result["No person predicted", "No person"]
+  correct <- correct_person+correct_no_person
   acc <- (correct)/sum(result)
   
   # Calculate error 1. and 2. degree (percentage)
@@ -340,6 +350,8 @@ d.d.evaluation <- function(pred, testData){
   Error1Perc <- Error1/sum(result)
   Error2 <- result["No person predicted","Person"]
   Error2Perc <- Error2/sum(result)
+  correct_person_Perc <- correct_person/sum(result)
+  correct_no_person_Perc <- correct_no_person/sum(result)
   
   # barplot for accuracy vs. error percentage
   # maybe as stacked barplot possible?
@@ -359,21 +371,21 @@ d.d.evaluation <- function(pred, testData){
     paste(round(Error2Perc*100,2),"%")))
   
   if(Error1Perc != 0 && Error2Perc != 0){
-    pieData <- c(acc,Error1Perc,Error2Perc)
-    pieCol <- c("green","red","red")
-    pieLabels <- c("Accuracy","Error 1. degree","Error 2. degree")
+    pieData <- c(correct_person_Perc,correct_no_person_Perc,Error1Perc,Error2Perc)
+    pieCol <- c("green","green3","red3","red")
+    pieLabels <- c("Person correct","No person correct","Error 1. degree","Error 2. degree")
   }else if(Error1Perc == 0 && Error2Perc == 0){
-    pieData <- c(acc)
-    pieCol <- c("green")
-    pieLabels <- c("Accuracy")
+    pieData <- c(correct_person_Perc, correct_no_person_Perc)
+    pieCol <- c("green", "green3")
+    pieLabels <- c("Person correct","No person correct")
   }else if(Error1Perc == 0){
-    pieData <- c(acc,Error2Perc)
-    pieCol <- c("green","red")
-    pieLabels <- c("Accuracy","Error 2. degree")
+    pieData <- c(correct_person_Perc, correct_no_person_Perc, Error2Perc)
+    pieCol <- c("green","green3","red")
+    pieLabels <- c("Person correct","No person correct","Error 2. degree")
   }else if(Error2Perc == 0){
-    pieData <- c(acc,Error1Perc)
-    pieCol <- c("green","red")
-    pieLabels <- c("Accuracy","Error 1. degree")
+    pieData <- c(correct_person_Perc, correct_no_person_Perc, Error1Perc)
+    pieCol <- c("green", "green3","red3")
+    pieLabels <- c("Person correct", "No person correct","Error 1. degree")
   }
   
   # Pie chart for results with parameters
