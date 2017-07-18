@@ -223,7 +223,7 @@ b.e.transformGrayscale <- function(image) {
 #' @param filename A string that holds the path to the image from the workingdirectory and it's filename. If the parameter \code{image} isn't given the image will be loaded 
 #' by using this path.
 #' @return An image with histogram equalized RGB-values
-#' @example \code{histEqualImage <- b.f.transformHistEqualRgb(imageArray, "data/image.png")}
+#' @examples \code{histEqualImage <- b.f.transformHistEqualRgb(imageArray, "data/image.png")}
 #' @author Tassilo Tobollik
 #' Takes aprox. 0.38 sec/image
 b.f.transformHistEqualRgb <- function(image = NULL, filename) {
@@ -249,7 +249,7 @@ b.f.transformHistEqualRgb <- function(image = NULL, filename) {
 #' @param filename A string that holds the path to the image from the workingdirectory and it's filename. If the parameter \code{image} isn't given the image will be loaded 
 #' by using this path.
 #' @return An image with histogram equalized grayscale values
-#' @example \code{histEqualImage <- b.f.transformHistEqualGray(imageArray, "data/image.png")}
+#' @examples \code{histEqualImage <- b.f.transformHistEqualGray(imageArray, "data/image.png")}
 #' @author Tassilo Tobollik
 b.g.transformHistEqualGray <- function(image = NULL, filename) {
   library(imager)

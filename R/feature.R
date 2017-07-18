@@ -100,13 +100,13 @@ c.b.colorHist <- function(){
    #c.c.colorHistPlotting()
 }
 
-#' @title Feature Extraction - Step 2
+#' @title Feature Extraction - Plotting Histograms
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'
 #' ...
 #'
-#' @author
+#' @author Vitali Friesen
 c.c.colorHistPlotting <- function(picture = "hl 2017-06-14 17-44-58-48.png"){
   library(ggplot2)
   
@@ -158,7 +158,7 @@ c.c.colorHistPlotting <- function(picture = "hl 2017-06-14 17-44-58-48.png"){
 #' \code{\link{a.a.main}}
 #' Set working directory to the package before using this function (setwd())
 #' @param cells A number that describes the hog folding and by that into how many \code{cells*cells} the image will be cutted
-#' @param orientations A number that describes how many orientation vectors are stored for each hog cell. This number is for the vectors from 1°-180°
+#' @param orientations A number that describes how many orientation vectors are stored for each hog cell. This number is for the vectors from 1?-180?
 #' @return A dataframe that holds the hog feature data for the images in the folder \code{"data-raw/IMG/CS CZ/normal"} of the package
 #' @author Sascha Di Bernardo, Tassilo Tobollik
 c.d.hog <- function(cells, orientations){
@@ -210,7 +210,7 @@ c.d.hog <- function(cells, orientations){
 #' @param imgName A string that holds the name of the image (the last part of the path)
 #' @param hogPath A string that holds a path to the hog feature data
 #' @param cells A number that describes the hog folding and by that into how many \code{cells*cells} the image will be rastered
-#' @param orientations A number that describes how many orientation vectors are stored for each hog cell. This number is for the vectors from 1°-180°
+#' @param orientations A number that describes how many orientation vectors are stored for each hog cell. This number is for the vectors from 1?-180?
 #' @examples \code{c.e.displayHogFeature("C:/Users/t_tobo01/Git/DA2-17/data-raw/IMG/CS CZ/normal/Vit/hl 2017-06-14 18-06-49-48.png", 
 #' "hl 2017-06-14 18-06-49-48.png", "data/hog_original_12_9_complete.Rda", 12, 9)}
 #' @author Tassilo Tobollik

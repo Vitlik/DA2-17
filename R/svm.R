@@ -15,11 +15,10 @@
 #' @param saveFile A string that holds a path to which the result should be stored as .rda file.
 #' @param classLabel A string that holds a path to a file with classification labels for the feature data
 #' @return A table that holds the pairs of correct and not correct predicted images, the number of correct predicted images and the accuracy percentage
-#' @example \code{result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.rda",
+#' @examples \code{result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.rda",
 #' "data/colorHistRGBNorm_original_255buckets_hog_original_8_9_nodes7_rf100_result.rda", "data/classesOrig.rda",
 #' 100, feature2 = "data/colorHistOriginalRGBNorm255Buckets.rda",nodesize = 7)}
 #' @author  Colin Juers
-
 g.a.svm.start <- function(block, feature1, saveFile, classLabel, feature2 = NULL){
   
   library(e1071)
