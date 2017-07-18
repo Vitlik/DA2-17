@@ -277,18 +277,20 @@ d.d.evaluation <- function(pred, testData){
   
   # barplot for accuracy vs. error percentage
   # maybe as stacked barplot possible?
-  barResults <- barplot(c(acc, Error1Perc, Error2Perc), 
+  barResults <- barplot(c(correct_person_Perc, correct_no_person_Perc, Error1Perc, Error2Perc), 
                         main="Accuracy vs. Errorpercentages",
-                        col=c("green","red","red"), 
+                        col=c("green","green3","red3","red"), 
                         horiz=TRUE,
                         xlim = c(0,1),
                         beside=TRUE,
-                        names.arg = c("Accuracy","Error 1. degree", "Error 2n degree"))
+                        las=1,
+                        names.arg = c("Correct person","Correct no person","Error 1. degree", "Error 2n degree"))
   
   
   # Put values as text into plot
-  text(c(acc-0.1,Error1Perc-0.1,Error2Perc-0.1),c(0.7,1.9,3.1), cex=2,col="black",labels = c(
-    paste(round(acc*100,2),"%"), 
+  text(c(correct_person_Perc+0.2,correct_no_person_Perc+0.2,Error1Perc+0.2,Error2Perc+0.2),c(0.7,1.9,3.1,4.4), cex=1,col="black",labels = c(
+    paste(round(correct_person_Perc*100,2),"%"),
+    paste(round(correct_no_person_Perc*100,2),"%"), 
     paste(round(Error1Perc*100,2),"%"), 
     paste(round(Error2Perc*100,2),"%")))
   
@@ -314,7 +316,7 @@ d.d.evaluation <- function(pred, testData){
   pieResults <- pie3D(pieData,
                       main="Accuracy vs. Errorpercentages",
                       col = pieCol,
-                      radius = 1.5,
+                      radius = 1,
                       labels = pieLabels,
                       shade = 0.7,
                       explode=0.1)
