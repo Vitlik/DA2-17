@@ -205,7 +205,14 @@ z.d.loglik = function(lambda, data) {
 #' This function transforms the given RGBA values to RGB values.
 #' Thereby r,g,b are the background RGB colors, r2,g2,b2 are the foreground picture colors of the RGBA image
 #' and a is the alpha value of the RGBA image. 
-#'
+#' @param r An one dimensional dataframe that holds the red colour values of the background of the image
+#' @param g An one dimensional dataframe that holds the green colour values of the background of the image
+#' @param b An one dimensional dataframe that holds the blue colour values of the background of the image
+#' @param a An one dimensional dataframe that holds the alpha values of the image
+#' @param r2 An one dimensional dataframe that holds the red colour values of the foreground of the image
+#' @param g2 An one dimensional dataframe that holds the green colour values of the foreground of the image
+#' @param b2 An one dimensional dataframe that holds the blue colour values of the foreground of the image
+#' @return A three dimensional dataframe that holds the converted RGB colour values of the image
 #' @author Tassilo Tobollik
 z.e.RGBAtoRGB <- function(r = 0, g = 0, b = 0, a, r2,g2,b2){
   r3 <- floor(((1 - a) * r2) + (a * r))
@@ -218,9 +225,13 @@ z.e.RGBAtoRGB <- function(r = 0, g = 0, b = 0, a, r2,g2,b2){
 
 #' @title Util - function that rasters and displays an image
 #' @description To get (back) to the overview of all steps and functions use this link: \code{\link{a.a.main}}
-#'
-#'  
-#'
+#' @param image A dataframe that holds the pixel values of the image that should be rendered
+#' @param x1 An optional number that describes the first x value of the part of the image that should be rendered
+#' @param x2 An optional number that describes the second x value of the part of the image that should be rendered
+#' @param y1 An optional number that describes the first y value of the part of the image that should be rendered
+#' @param y2 An optional number that describes the second y value of the part of the image that should be rendered
+#' @param interpol A logical vector (or scalar) indicating whether to apply linear interpolation to the image when drawing
+#' @param noBorder A boolean that describes if the image should be rendered without plot-borders
 #' @author Vitali Friesen, Tassilo Tobollik
 z.f.displayRgbImage <- function(image, x1 = NULL, x2 = NULL, y1 = NULL, y2 = NULL, interpol = F, noBorder = T){
   if(noBorder){
@@ -239,9 +250,9 @@ z.f.displayRgbImage <- function(image, x1 = NULL, x2 = NULL, y1 = NULL, y2 = NUL
 
 #' @title Util - function that reads in an image from the given path
 #' @description To get (back) to the overview of all steps and functions use this link: \code{\link{a.a.main}}
-#'
-#'  
-#'
+#' @param path A string that holds a path to an image that should be read
+#' @param asPng A boolean that describes if the image is an .png file or another image data type file
+#' @return A dataframe that holds the pixel values of the image
 #' @author Tassilo Tobollik
 z.g.readImage <- (path, asPng = F){
   library(png)
