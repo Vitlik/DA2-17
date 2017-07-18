@@ -198,9 +198,6 @@ d.b.step1 <- function(trainData, numTrees, pMtry = NULL, pNodesize = NULL, pCuto
   return(rfModel)
 }
 
-
-
-
 #' @title Random Forest - Step 2
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
@@ -216,7 +213,7 @@ d.c.step2 <- function(testData, rfModel){
   return(pred)
 }
 
-#' @title Random Forrest - Evaluation
+#' @title Random Forest - Evaluation
 #' @description Evaluates the predicted values for \code{P} of the testset with the actual values. Therefore, creates
 #' table with right and wrong preditions and calculates the error 1. and 2. degree. Also, gives visual evaluation with bar chart
 #' and pie chart. 
@@ -322,18 +319,19 @@ d.d.evaluation <- function(pred, testData){
                       shade = 0.7,
                       explode=0.1)
 
-  
-  
   #TODO: Create Plot
   return(rbind(result,c(correct,acc)))
 }
 
-#' @title Classifier 1 - Step 1
+#' @title Random Forest - Plot Importance
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
-#' ...
-#'
+#' 
+#' The function plots a visualization of the most important variables for the trees in the random forest.
+#' This is only reasonable if just a view variables do exist because all variables are plotted.
+#' 
+#' @param rfModels One of the random forest models where importance is extracted
+#' 
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
 d.e.plotImportanceColorHist <- function(rfModels){
   

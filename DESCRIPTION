@@ -2,9 +2,13 @@ Package: da2St2017
 Type: Package
 Title: Image Recognition
 Version: 0.1
-Authors@R: as.person(c(
-    "Friesen, Vitali <v_frie03@wwu.de>", 
-    "Toboloik, Vitali <t_tobo01@wwu.de>"
+Authors: as.person(c(
+    "Di Bernado, Sascha",
+    "Friesen, Vitali",
+    "Jürs, Colin",
+    "Meckmann, Nils",
+    "Reuters, Maren",
+    "Tobollik, Tassilo"
   ))
 Maintainer: No maintainer<no@mail.com>
 Description: To Fill

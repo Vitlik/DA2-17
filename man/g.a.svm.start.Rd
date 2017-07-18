@@ -34,8 +34,8 @@ It executes these functions:
 }
 \examples{
 \\code{result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.rda",
-"data/colorHistRGBNorm_original_255buckets_hog_original_8_9_nodes7_rf100_result.rda", "data/classesOrig.rda",
-100, feature2 = "data/colorHistOriginalRGBNorm255Buckets.rda",nodesize = 7)}
+"data/colorHistRGBNorm_original_255buckets_hog_original_8_9_nodes7_svm_result.rda", "data/classesOrig.rda",
+100, feature2 = "data/colorHistOriginalRGBNorm255Buckets.rda")}
 }
 \author{
 Colin Juers
