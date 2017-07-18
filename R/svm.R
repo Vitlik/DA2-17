@@ -1,6 +1,3 @@
-e.a.svm.start("data/blocks2677IMG.rda", "data/hog_eighth_5_6_complete.Rda", "data/hog_eighth_5_6_svm_result.rda","data/classesEights.rda")
-e.a.svm.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.Rda", "data/hog_eighth_8_9_svm_result", "data/classesOrig.rda")
-
 #' @title Classifier Support Vector Machine -  Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
@@ -9,8 +6,8 @@ e.a.svm.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.Rda", "d
 #'
 #' It executes these functions:
 #' \enumerate{
-#'   \item \code{\link{e.b.step1}}
-#'   \item \code{\link{e.c.step2}}
+#'   \item \code{\link{g.b.step1}}
+#'   \item \code{\link{g.c.step2}}
 #' }
 #' @param block A string that holds a path to a cross-validation block file
 #' @param feature1 A string that holds a path to a feature data file (hog or colorHist)
@@ -23,7 +20,7 @@ e.a.svm.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.Rda", "d
 #' 100, feature2 = "data/colorHistOriginalRGBNorm255Buckets.rda",nodesize = 7)}
 #' @author  Colin Juers
 
-e.a.svm.start <- function(block, feature1, saveFile, classLabel, feature2 = NULL){
+g.a.svm.start <- function(block, feature1, saveFile, classLabel, feature2 = NULL){
   
   library(e1071)
   set.seed(1337)
@@ -79,7 +76,7 @@ e.a.svm.start <- function(block, feature1, saveFile, classLabel, feature2 = NULL
   
     # svm vector creation with train data bucket
     trainData <- data[testBlockIndexes,]
-    model_svm <- e.b.step1(trainData)
+    model_svm <- g.b.step1(trainData)
     
     # print processing time
     print(paste0("Train proctime svm block ", curBlock, ": ",
@@ -90,7 +87,7 @@ e.a.svm.start <- function(block, feature1, saveFile, classLabel, feature2 = NULL
     testData <- data[testBlockIndexes,]
     
     # predict test set with previous trained svm
-    pred_svm <- e.c.step2(model_svm, testData)
+    pred_svm <- g.c.step2(model_svm, testData)
     
     result <- matrix(nrow = length(pred_svm), ncol = 2)
     result[,1] <- as.vector(pred_svm)
@@ -118,7 +115,7 @@ e.a.svm.start <- function(block, feature1, saveFile, classLabel, feature2 = NULL
 #' @param trainData A sample matrix of all files to train the svm classifier
 #' @return Support Vector Machine model trained with sampled data
 #' @author Colin Juers
-e.b.step1 <- function(trainData){
+g.b.step1 <- function(trainData){
   
   # Support vector machine function
   model_svm <- svm(as.factor(P)~.-P, trainData, kernel="radial",tolerance=0.1,cost=100, epsilon=0)
@@ -142,7 +139,7 @@ e.b.step1 <- function(trainData){
 #' @param testData A sample matrix of all files to apply the trained svm model on and predict "P"
 #' @return Vector of predicted lables for the test set
 #' @author Colin Juers
-e.c.step2 <- function(model_svm, testData){
+g.c.step2 <- function(model_svm, testData){
   
   # predicting the testdata
   pred_svm <- predict(model_svm, testData, type="class")

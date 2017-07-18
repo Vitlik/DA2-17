@@ -70,7 +70,7 @@ a.b.main.image.recognition <- function(){
   f.a.cnn.start()
   cat("\n")
 
-  message("6. Evaluation / Comparison")
-  g.a.evaluate.start()
+  message("6. Support Vector Machine")
+  g.a.svm.start()
   cat("\n")
 }
