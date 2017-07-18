@@ -16,8 +16,8 @@
 #' @param classLabel A string that holds a path to a file with classification labels for the feature data
 #' @return A table that holds the pairs of correct and not correct predicted images, the number of correct predicted images and the accuracy percentage
 #' @examples \code{result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.rda",
-#' "data/colorHistRGBNorm_original_255buckets_hog_original_8_9_nodes7_rf100_result.rda", "data/classesOrig.rda",
-#' 100, feature2 = "data/colorHistOriginalRGBNorm255Buckets.rda",nodesize = 7)}
+#' "data/colorHistRGBNorm_original_255buckets_hog_original_8_9_nodes7_svm_result.rda", "data/classesOrig.rda",
+#' 100, feature2 = "data/colorHistOriginalRGBNorm255Buckets.rda")}
 #' @author  Colin Juers
 g.a.svm.start <- function(block, feature1, saveFile, classLabel, feature2 = NULL){
   
@@ -96,7 +96,7 @@ g.a.svm.start <- function(block, feature1, saveFile, classLabel, feature2 = NULL
   
   overallResult <- do.call(rbind, resultData)
   
-  # save(blocks, file = saveFile)
+  save(blocks, file = saveFile)
 
   # evaluate the result of the prediction
   result <- d.d.evaluation(pred=overallResult[,1], testData=overallResult[,2])
