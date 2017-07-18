@@ -4,7 +4,7 @@
 #' with the command /code{biocLite("EBImage")}. To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'
-#' This is a wrapper function for ...
+#' This is a wrapper function for the feature extraction.
 #'
 #' It executes these functions:
 #' \enumerate{
@@ -32,7 +32,7 @@ b.a.preprocessing.start <- function(){
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'
-#' ...
+#' Creates the indexes for the training and test data sets.
 #'
 #' @author Vitali Friesen, Tassilo Tobollik
 b.b.createTrainTestDataIndexes <- function(){
@@ -82,7 +82,7 @@ b.b.createTrainTestDataIndexes <- function(){
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'
-#' ...
+#' Extracts classification vector from the initial CSV files and saves them into the file "classesOrig.rda".
 #'
 #' @author Vitali Friesen
 b.c.loadClassData <- function(){
@@ -321,10 +321,10 @@ b.i.randAssignAccuracy <- function(image){
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'
-#' ...
+#' Calculating baseline predictor
 #'
 #' @author Vitali Friesen
-b.j.assignSimpelAccuracy <- function(image){
+b.j.assignSimpelAccuracy <- function(){
   load("data/classesOrig.rda")
   
   if (sum(classesOrig[,"P"])/length(classesOrig[,"P"]) < 0.5)
