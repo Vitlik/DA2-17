@@ -214,12 +214,15 @@ d.c.step2 <- function(testData, rfModel){
   return(pred)
 }
 
-#' @title Classifier 1 - Evaluation
-#' @description To get (back) to the overview of all steps and functions use this link:
+#' @title Classifier Random Forrest - Evaluation
+#' @description Evaluates the predicted values for \code{P} of the testset with the actual values. Therefore, creates
+#' table with right and wrong preditions and calculates the error 1. and 2. degree. Also, gives visual evaluation with bar chart
+#' and pie chart. 
+#' To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
-#' ...
-#'
+#' @param pred A vector with all predictions for \code{P} of all iterations
+#' @param testData A Vector with all actual values for \code{P} of all iterations
+#' @return A matrix with the correct predictions, the error predictions and the accuracy
 #' @author Colin Juers, Tassilo Tobollik
 d.d.evaluation <- function(pred, testData){
 
