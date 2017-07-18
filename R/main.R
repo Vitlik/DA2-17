@@ -7,6 +7,7 @@
 #'     \enumerate{
 #'       \item \code{\link{a.a.main}}
 #'       \item \code{\link{a.b.main.image.recognition}}
+#'       \item \code{\link{a.b.main.image.recognition}}
 #'   }
 #' }
 #' Further more there is the util script for supporting the other scritps:
@@ -20,7 +21,7 @@
 #'
 #' Each of clickable listing elements are functions in the package which have a specific task.
 #'
-#' A separate project documentation was foregone to avoid duplicate documentation. Therefore this documentation is extended to take that into account.
+#' A separate conceptional project documentation was created and can be found in the root folder of the project. Therefore this code documentation is kept brief to take that into account.
 #'
 #' The naming convention with LETTER.LETTER.FUNCTIONNAME has solely the purpose to ensure the correct ordering of the functions in the generated pdf of the documentation which was done by roxygen2.
 #' Otherwise the order of function and project descriptions may not follow the linear process of the steps and makes the understanding more difficult.

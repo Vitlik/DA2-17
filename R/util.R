@@ -254,7 +254,7 @@ z.f.displayRgbImage <- function(image, x1 = NULL, x2 = NULL, y1 = NULL, y2 = NUL
 #' @param asPng A boolean that describes if the image is an .png file or another image data type file
 #' @return A dataframe that holds the pixel values of the image
 #' @author Tassilo Tobollik
-z.g.readImage <- (path, asPng = F){
+z.g.readImage <- function(path, asPng = F){
   library(png)
   if(asPng){
     image <- readPNG(path)
