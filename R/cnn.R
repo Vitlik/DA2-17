@@ -1,24 +1,21 @@
-f.a.cnn.start(rounds = 20, lr = 0.00000001, batch = 50)
-f.a.cnn.start(rounds = 20, lr = 0.00000001, batch = 20)
-f.a.cnn.start(rounds = 20, lr = 0.00000001, batch = 100)
-f.a.cnn.start(rounds = 30, lr = 0.00000001, batch = 50)
-f.a.cnn.start(rounds = 40, lr = 0.00000001, batch = 50)
-f.a.cnn.start(rounds = 50, lr = 0.00000001, batch = 50)
-f.a.cnn.start(rounds = 50, lr = 0.00000001, batch = 50)
-f.a.cnn.start(rounds = 30, lr = 0.000000001, batch = 50)
-f.a.cnn.start(rounds = 80, lr = 0.00000001, batch = 50)
-
-
+#' @title Convolutional Neural Network - Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'
-#' This is a wrapper function for ...
+#' This is a wrapper function for a convolutional neural network classifier.
 #'
 #' It executes these functions:
 #' \enumerate{
 #'   \item \code{\link{f.b.cnn.step1}}
 #'   \item \code{\link{f.b.cnn.step2}}
 #' }
+#' 
+#' @param rounds A numeric value that is the amount of rounds the model is trained
+#' @param lr The learning rate
+#' @param batch The amount of objects which the model is trained on every round
+#' 
+#' @examples 
+#' \code{result -> f.a.cnn.start(rounds = 80, lr = 0.00000001, batch = 50)}
 #'
 #' @author Maren Reuter, Nils Meckmann
 
@@ -127,7 +124,7 @@ f.a.cnn.start <- function(rounds, lr, batch){
 }
 
 
-#' @title Classifier 2 - Step 1
+#' @title Convolutional Neural Network - Step 1
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #' @param CNN_model The initial model that gets trained in this function
@@ -157,7 +154,7 @@ f.b.cnn.step1 <- function(CNN_model, train_array, train_y, rounds, lr, batch){
 }
 
 
-#' @title Classifier 2 - Step 2
+#' @title Convolutional Neural Network - Step 2
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #' @param CNN_Model the trained CNN_Model

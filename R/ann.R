@@ -1,18 +1,30 @@
-e.a.ann.start(blocks = "data/blocks2677IMG.rda", feature1 = "data/hog_original_15_6_complete.rda", classification = "data/classesOrig.rda", 
-              dataType = "hog_15_6", imageType = "orig", rounds = "50", lr = "0.00001",
-              nodes = rep(10,100), nodeString = "10x100", batch = "100")
-
-#' @title Artificial Neural Network -  Wrapper function
+#' @title Artifical Neural Network - Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'
-#' This is a wrapper function for ...
+#' This is a wrapper function for an artifical neural network
 #'
 #' It executes these functions:
 #' \enumerate{
-#'   \item \code{\link{e.a.ann.step1}}
+#'   \item \code{\link{e.b.ann.step1}}
 #' }
 #'
+#' @param blocks A string that holds a path to a cross-validation block file
+#' @param feature1 A string that holds a path to a feature data file (hog, colorHist or pixelFeature28)
+#' @param feature2 A string that holds a path to a second feature data file (the type that was not used in \code{feature1}).This parameter is optional
+#' @param classification A string that holds a path to which the result should be stored as .rda file.
+#' @param dataType er that defines the number of trees randomForest should use (see package randomForest)
+#' @param imageType A number that defines the number of variables randomly sampled as candidates at each split of randomForest (see package randomForest). This parameter is optional
+#' @param rounds A number that defines the minimum size of terminal nodes for randomForest (see package randomForest). This parameter is optional
+#' @param lr A vector of length equal to number of classes that defines the ratio of proportion of votes to cutoff (see package randomForest). This parameter is optional
+#' @param nodes A vector containing node amounts per layer, e.g. rep(1000, 2) for two layers with 1000 nodes.
+#' @param nodeString String representation of nodes that are used
+#' @param batch The amount of objects which the model is trained on every round
+#' @return A table that holds the pairs of correct and not correct predicted images, the number of correct predicted images and the accuracy percentage
+#' @examples 
+#' \code{result <- e.a.ann.start(blocks = "data/blocks2677IMG.rda", feature1 = "data/hog_original_15_6_complete.rda", classification = "data/classesOrig.rda", 
+#'   dataType = "hog_15_6", imageType = "orig", rounds = "50", lr = "0.00001",
+#'   nodes = rep(10,100), nodeString = "10x100", batch = "100")}
 #' @author Nils Meckmann, Maren Reuter, Sascha di Bernardo
 e.a.ann.start <- function(blocks, feature1, feature2 = NULL, classification, dataType, imageType, rounds, lr, nodes, nodeString, batch){
   

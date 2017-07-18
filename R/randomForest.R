@@ -1,13 +1,15 @@
-#' @title Classifier 1 -  Wrapper function
+#' @title Random Forest - Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'
-#' This is a wrapper function for ...
+#' This is a wrapper function for a random forest classifier.
 #'
 #' It executes these functions:
 #' \enumerate{
 #'   \item \code{\link{d.b.step1}}
 #'   \item \code{\link{d.c.step2}}
+#'   \item \code{\link{d.d.evaluation}}
+#'   \item \code{\link{d.e.plotImportanceColorHist}}
 #' }
 #'
 #' @param block A string that holds a path to a cross-validation block file
@@ -199,7 +201,7 @@ d.b.step1 <- function(trainData, numTrees, pMtry = NULL, pNodesize = NULL, pCuto
 
 
 
-#' @title Classifier 1 - Step 2
+#' @title Random Forest - Step 2
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
@@ -214,7 +216,7 @@ d.c.step2 <- function(testData, rfModel){
   return(pred)
 }
 
-#' @title Classifier Random Forrest - Evaluation
+#' @title Random Forrest - Evaluation
 #' @description Evaluates the predicted values for \code{P} of the testset with the actual values. Therefore, creates
 #' table with right and wrong preditions and calculates the error 1. and 2. degree. Also, gives visual evaluation with bar chart
 #' and pie chart. 
