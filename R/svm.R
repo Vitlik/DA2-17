@@ -1,3 +1,6 @@
+e.a.svm.start("data/blocks2677IMG.rda", "data/hog_eighth_5_6_complete.Rda", "data/hog_eighth_5_6_svm_result.rda","data/classesEights.rda")
+e.a.svm.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.Rda", "data/hog_eighth_8_9_svm_result", "data/classesOrig.rda")
+
 #' @title Classifier Support Vector Machine -  Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
@@ -9,10 +12,18 @@
 #'   \item \code{\link{e.b.step1}}
 #'   \item \code{\link{e.c.step2}}
 #' }
-#' @return The evaluated results comparing predicted calssifications with actual lables
+#' @param block A string that holds a path to a cross-validation block file
+#' @param feature1 A string that holds a path to a feature data file (hog or colorHist)
+#' @param feature2 A string that holds a path to a second feature data file (the type that was not used in \code{feature1}).This parameter is optional
+#' @param saveFile A string that holds a path to which the result should be stored as .rda file.
+#' @param classLabel A string that holds a path to a file with classification labels for the feature data
+#' @return A table that holds the pairs of correct and not correct predicted images, the number of correct predicted images and the accuracy percentage
+#' @example \code{result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.rda",
+#' "data/colorHistRGBNorm_original_255buckets_hog_original_8_9_nodes7_rf100_result.rda", "data/classesOrig.rda",
+#' 100, feature2 = "data/colorHistOriginalRGBNorm255Buckets.rda",nodesize = 7)}
 #' @author  Colin Juers
 
-e.a.svm.start <- function(a, b1, c, d, b2 = NULL){
+e.a.svm.start <- function(block, feature1, saveFile, classLabel, feature2 = NULL){
   
   library(e1071)
   set.seed(1337)
@@ -29,12 +40,12 @@ e.a.svm.start <- function(a, b1, c, d, b2 = NULL){
   options(warn=-0)
   
   # load essential files 
-  load(a)
-  load(d)
+  load(block)
+  load(classLabel)
   
-  load(b1)
-  if(!is.null(b2)){
-    load(b2)
+  load(feature1)
+  if(!is.null(feature2)){
+    load(feature2)
     colorHist <- cbind(hogData,colorHist)
   }
   
@@ -89,7 +100,7 @@ e.a.svm.start <- function(a, b1, c, d, b2 = NULL){
   
   overallResult <- do.call(rbind, resultData)
   
-  # save(blocks, file = c)
+  # save(blocks, file = saveFile)
 
   # evaluate the result of the prediction
   result <- d.d.evaluation(pred=overallResult[,1], testData=overallResult[,2])
@@ -110,11 +121,12 @@ e.a.svm.start <- function(a, b1, c, d, b2 = NULL){
 e.b.step1 <- function(trainData){
   
   # Support vector machine function
-  # model_svm <- svm(as.factor(P)~.-P, trainData, kernel="radial",tolerance=0.1,cost=100, epsilon=0)
-  model_svm <- svm(as.factor(P)~.-P, trainData)
+  model_svm <- svm(as.factor(P)~.-P, trainData, kernel="radial",tolerance=0.1,cost=100, epsilon=0)
+  # Default
+  # model_svm <- svm(as.factor(P)~.-P, trainData)
   
   # tune svm to get the best cost for the svm (once used)
-  # tune_svm <- tune(svm, as.factor(P)~.-P, data=data.frame(trainData), cost=100, tolerance=0.1, ranges=list(epsilon=c(0, 0.1, 0.2, 0.5, 0.7, 1)))
+  # tune_svm <- tune(svm, as.factor(P)~.-P, data=data.frame(trainData), epsilon=0, tolerance=0.1, ranges=list(cost=c(0.001, 0.01, 0.1, 1, 10, 100)))
   # summary(tune_svm)
 
   return(model_svm)

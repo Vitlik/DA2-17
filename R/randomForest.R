@@ -285,7 +285,6 @@ d.d.evaluation <- function(pred, testData){
                         horiz=TRUE,
                         xlim = c(0,1),
                         beside=TRUE,
-                        las=1,
                         names.arg = c("Correct person","Correct no person","Error 1. degree", "Error 2n degree"))
   
   
