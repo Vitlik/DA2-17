@@ -157,8 +157,9 @@ c.c.colorHistPlotting <- function(picture = "hl 2017-06-14 17-44-58-48.png"){
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #' Set working directory to the package before using this function (setwd())
-#' ...
-#'
+#' @param cells A number that describes the hog folding and by that into how many \code{cells*cells} the image will be cutted
+#' @param orientations A number that describes how many orientation vectors are stored for each hog cell. This number is for the vectors from 1°-180°
+#' @return A dataframe that holds the hog feature data for the images in the folder \code{"data-raw/IMG/CS CZ/normal"} of the package
 #' @author Sascha Di Bernardo, Tassilo Tobollik
 c.d.hog <- function(cells, orientations){
   
@@ -202,22 +203,24 @@ c.d.hog <- function(cells, orientations){
   save(hogData, file = paste(fileFolderName, "complete.Rda", sep = ""))
 }
 
-image <- readPNG("C:/Users/TTobo_000/Git/DA2-17/data-raw/IMG/CS CZ/normal/Colin/hl 2017-06-14 17-45-26-48.png")
-z.f.displayRgbImage(image=image)
-load("data/hog_original_8_9_complete.Rda")
-imgNum <- 25
-hogFeature <- hogData$hog[((8*8*9)*(imgNum-1))+1:((8*8*9)*imgNum)]
-
-c.e.displayHogFeature(image, hogFeature, 8, 9)
-
 #' @title Feature Extraction - display HOG (Histogram of Oriented Gradients)
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
-#' ...
-#'
+#' @param imgPath A string that holds a path to the image that should be visualized
+#' @param imgName A string that holds the name of the image (the last part of the path)
+#' @param hogPath A string that holds a path to the hog feature data
+#' @param cells A number that describes the hog folding and by that into how many \code{cells*cells} the image will be rastered
+#' @param orientations A number that describes how many orientation vectors are stored for each hog cell. This number is for the vectors from 1°-180°
+#' @examples \code{c.e.displayHogFeature("C:/Users/t_tobo01/Git/DA2-17/data-raw/IMG/CS CZ/normal/Vit/hl 2017-06-14 18-06-49-48.png", 
+#' "hl 2017-06-14 18-06-49-48.png", "data/hog_original_12_9_complete.Rda", 12, 9)}
 #' @author Tassilo Tobollik
-c.e.displayHogFeature <- function(image, hogFeature, cells, orientations){
+c.e.displayHogFeature <- function(imgPath, imgName, hogPath, cells, orientations){
+  
+  image <- readPNG(imgPath)
+  z.f.displayRgbImage(image=image)
+  load(hogPath)
+  imgNum <- which(rownames(hogData) == imgName)
+  hogFeature <- hogData[imgNum,]
   
   z.f.displayRgbImage(image)
   
@@ -249,8 +252,6 @@ c.e.displayHogFeature <- function(image, hogFeature, cells, orientations){
   
   library(grid)
   
-  #aaa
-  
   #Set a layout for the hog cells
   layout = grid.layout(cells,cells,widths= seq(0.25,0.25,length.out=cells),
                     heights=seq(0.25,0.25,length.out=cells),
@@ -266,19 +267,21 @@ c.e.displayHogFeature <- function(image, hogFeature, cells, orientations){
       lengths <- hogFeature[((cellNum-1)*orientations + 1):(cellNum*orientations)]
       #Add vector lengths for 181-360? which are the same
       lengths <- c(lengths,lengths)
-      lengths <- lengths*(10^floor(cells/4) * 5)
+      lengths <- lengths*(10^2 * 5)#lengths*(10^floor(cells/4) * 5)
       vectorValues <- cbind(degrees,lengths)
       c.f.plotHogCellVectors(vectorValues,cellCol,cellRow)
     })
   })
+  return(TRUE)
 }
 
 #' @title Feature Extraction - plot HOG (Histogram of Oriented Gradients) cell vectors
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
 #'  Function that plots vectors with given angles and length into a specified layout cell
-#' ...
-#'
+#' @param vectorValues A vector which describes the lengths of the vectors in the cell
+#' @param cellCol A number that describes the column of the rastered image in which the cell lies
+#' @param cellRow A number that describes the row of the rastered image in which the cell lies
 #' @author Tassilo Tobollik
 c.f.plotHogCellVectors <- function(vectorValues,cellCol,cellRow){
   #Add a new viewport for the specified layout cell
