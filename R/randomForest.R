@@ -1,110 +1,3 @@
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal255Buckets.rda",
-                       "data/hist_255_orig_rf250_result.rda", "data/classesOrig.rda",
-                       250)
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqual16Buckets.rda",
-                       "data/colorHistOriginalEqual16BucketsRFModelResult.rda", "data/classesOrig.rda",
-                       2000)
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalRGBNorm16Buckets.rda",
-                       "data/hist_16_orig_rgbNorm_rf100_result.rda", "data/classesOrig.rda",
-                       100)
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalEqualRGBNorm16Buckets.rda",
-                       "data/colorHistOriginalEqualRGBNorm16BucketsRFModelResult.rda", "data/classesOrig.rda",
-                       2000)
-
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth16Buckets.rda",
-                       "data/colorHistEighth16BucketsRFModelResult.rda", "data/classesEights.rda",
-                       2000)
-
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighth255Buckets.rda",
-                       "data/hist_255_eighth_rf100_result.rda", "data/classesEights.rda",
-                       100)
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistEighthRGBNorm255Buckets.rda",
-                       "data/hist_255_eighth_rgbNorm_rf100_result.rda", "data/classesEights.rda",
-                       100)
-
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_4_9_complete.Rda",
-                       "data/hog_4_9_orig_rf100_result.rda", "data/classesOrig.rda",
-                       100)
-
-d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_4_9_complete.Rda",
-                       "data/hog_4_9_eighth_rf_result.rda", "data/classesEights.rda",
-                       2000)
-#####
-
-gc()
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_8_9_complete.rda",
-                                 "data/hog_eighth_8_9_rf2000_result.rda", "data/classesEights.rda",
-                                 2000)
-save(result,file="data/result1")
-gc()
-
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_10_6_complete.rda",
-                                 "data/hog_eighth_10_6_rf2000_result.rda", "data/classesEights.rda",
-                                 2000)
-save(result,file="data/result2")
-gc()
-
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_8_9_complete.rda",
-                                 "data/hog_eighth_8_9_rf1000_result.rda", "data/classesEights.rda",
-                                 1000)
-save(result,file="data/result3")
-gc()
-
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_10_6_complete.rda",
-                                 "data/hog_eighth_10_6_rf1000_result.rda", "data/classesEights.rda",
-                                 1000)
-save(result,file="data/result4")
-gc()
-
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_eighth_5_6_complete.rda",
-                                 "data/hog_eighth_5_6_rf1000_result.rda", "data/classesEights.rda",
-                                 1000)
-save(result,file="data/result5")
-gc()
-
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_10_6_complete.rda",
-                                 "data/hog_original_10_6_rf1000_result.rda", "data/classesOrig.rda",
-                                 1000)
-save(result,file="data/result6")
-
-gc()
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.rda",
-                                 "data/hog_original_8_9_rf1000_result.rda", "data/classesOrig.rda",
-                                 1000)
-save(result,file="data/result7")
-
-gc()
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_5_6_complete.rda",
-                                 "data/hog_original_5_6_rf1000_result.rda", "data/classesOrig.rda",
-                                 1000)
-save(result,file="data/result8")
-
-gc()
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginal255Buckets.rda",
-                                 "data/colorHist_original_255buckets_hog_original_10_6_rf500_result.rda", "data/classesOrig.rda",
-                                 500, "data/hog_original_10_6_complete.rda")
-save(result,file="data/result9")
-
-gc()
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/colorHistOriginalRGBNorm255Buckets.rda",
-                                 "data/colorHistRGBNorm_original_255buckets_hog_original_10_6_rf500_result.rda", "data/classesOrig.rda",
-                                 500, "data/hog_original_10_6_complete.rda")
-save(result,file="data/result10")
-
-gc()
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_12_9_complete.rda",
-                                 "data/hog_original_12_9_rf500_result.rda", "data/classesOrig.rda",
-                                 500)
-save(result,file="data/result10")
-
-#####
-
-gc()
-result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.rda",
-                                 "data/hog_original_8_9_rf2000_result.rda", "data/classesOrig.rda",
-                                 2000, mtry = 29)
-save(result,file="data/result11")
-
 #' @title Classifier 1 -  Wrapper function
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
@@ -117,11 +10,22 @@ save(result,file="data/result11")
 #'   \item \code{\link{d.c.step2}}
 #' }
 #'
+#' @param block A string that holds a path to a cross-validation block file
+#' @param feature1 A string that holds a path to a feature data file (hog or colorHist)
+#' @param feature2 A string that holds a path to a second feature data file (the type that was not used in \code{feature1}).This parameter is optional
+#' @param saveFile A string that holds a path to which the result should be stored as .rda file.
+#' @param classLabel A string that holds a path to a file with classification labels for the feature data
+#' @param numTrees A number that defines the number of trees randomForest should use (see package randomForest)
+#' @param mtry A number that defines the number of variables randomly sampled as candidates at each split of randomForest (see package randomForest). This parameter is optional
+#' @param nodesize A number that defines the minimum size of terminal nodes for randomForest (see package randomForest). This parameter is optional
+#' @param cutoff A vector of length equal to number of classes that defines the ratio of proportion of votes to cutoff (see package randomForest). This parameter is optional
+#' @return A table that holds the pairs of correct and not correct predicted images, the number of correct predicted images and the accuracy percentage
+#' @examples \code{result <- d.a.randomForest.start("data/blocks2677IMG.rda", "data/hog_original_8_9_complete.rda",
+#' "data/colorHistRGBNorm_original_255buckets_hog_original_8_9_nodes7_rf100_result.rda", "data/classesOrig.rda",
+#' 100, feature2 = "data/colorHistOriginalRGBNorm255Buckets.rda",nodesize = 7)}
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
-d.a.randomForest.start <- function(a, b1, c, d, numTrees, b2 = NULL, mtry = NULL, nodesize = NULL){
-  #library(snow)
-  #library(caret)
-  
+d.a.randomForest.start <- function(block, feature1, saveFile, classLabel, numTrees, feature2 = NULL, mtry = NULL, nodesize = NULL, cutoff = NULL){
+
   options(warn=-1)
   
   remove(colorHist)
@@ -133,12 +37,12 @@ d.a.randomForest.start <- function(a, b1, c, d, numTrees, b2 = NULL, mtry = NULL
   
   options(warn=0)
 
-  load(a)
-  load(d)
+  load(block)
+  load(classLabel)
   # load("data/classesEights.rda")
-  load(b1)
-  if(!is.null(b2)){
-    load(b2)
+  load(feature1)
+  if(!is.null(feature2)){
+    load(feature2)
     colorHist <- cbind(hogData,colorHist)
   }
   
@@ -167,7 +71,7 @@ d.a.randomForest.start <- function(a, b1, c, d, numTrees, b2 = NULL, mtry = NULL
     # for calculating the processing time: save start time
     start.time <- Sys.time()
     # Explanation
-    rfModel <- d.b.step1(data[trainBlockIndexes,], numTrees, mtry, nodesize)
+    rfModel <- d.b.step1(data[trainBlockIndexes,], numTrees, mtry, nodesize, cutoff)
     # store model for later evaluation
     assign(paste0("rfModel", curBlock), rfModel, envir = blocks)
     # print processing time
@@ -199,7 +103,7 @@ d.a.randomForest.start <- function(a, b1, c, d, numTrees, b2 = NULL, mtry = NULL
   })
   
   overallResult <- do.call(rbind, resultData)
-  save(blocks, file = c)
+  save(blocks, file = saveFile)
 
   result <- d.d.evaluation(overallResult[,1], overallResult[,2])
   
@@ -211,59 +115,84 @@ d.a.randomForest.start <- function(a, b1, c, d, numTrees, b2 = NULL, mtry = NULL
 #' @title Classifier 1 - Step 1
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
-#' ...
-#'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
-d.b.step1 <- function(trainData, numTrees, pMtry = NULL, pNodesize = NULL){
+#' @param trainData A data frame with number of images as rowsize and number of features as columnsize that holds the feature data
+#' @param numTrees A number that defines the number of trees randomForest should use (see package randomForest)
+#' @param pMtry A number that defines the number of variables randomly sampled as candidates at each split of randomForest (see package randomForest). This parameter is optional
+#' @param pNodesize A number that defines the minimum size of terminal nodes for randomForest (see package randomForest). This parameter is optional
+#' @param pCutoff A vector of length equal to number of classes that defines the ratio of proportion of votes to cutoff (see package randomForest). This parameter is optional
+#' @return A randomForest model that has been trained on the feature data
+#' @examples \code{rfModel <- d.b.step1(featureData, numTrees, mtry, nodesize, cutoff)}
+d.b.step1 <- function(trainData, numTrees, pMtry = NULL, pNodesize = NULL, pCutoff = NULL){
   library(randomForest)
   set.seed(1337)
 
-  #Train the randomForest model on the train data
-  # #-P?
-  # parallelRfModel <- train(as.factor(P) ~ . - P, # maybe trainData[,-(ncol(trainData))]
-  #              data=trainData,
-  #              method = "rf",
-  #              importance=TRUE,
-  #              #Parameter-Tuning
-  #              ntree=2000)
-  
-  #TODO (all): Run with diff. parameter permutations
-  if(is.null(pMtry) && is.null(pNodesize)){
-    rfModel <- randomForest(as.factor(P) ~ . - P,
-                            data=trainData,
-                            importance=TRUE,
-                            #Parameter-Tuning
-                            ntree=numTrees)
-  }else if(!is.null(pMtry) && !is.null(pNodesize)){
-    rfModel <- randomForest(as.factor(P) ~ . - P,
-                            data=trainData,
-                            importance=TRUE,
-                            #Parameter-Tuning
-                            ntree=numTrees,
-                            mtry = pMtry,
-                            nodesize = pNodesize)
-  }else if(is.null(pNodesize)){
-    rfModel <- randomForest(as.factor(P) ~ . - P,
-                            data=trainData,
-                            importance=TRUE,
-                            #Parameter-Tuning
-                            ntree=numTrees,
-                            mtry = pMtry)
+  if(is.null(pCutoff)){
+    if(is.null(pMtry) && is.null(pNodesize)){
+      rfModel <- randomForest(as.factor(P) ~ . - P,
+                              data=trainData,
+                              importance=TRUE,
+                              #Parameter-Tuning
+                              ntree=numTrees)
+    }else if(!is.null(pMtry) && !is.null(pNodesize)){
+      rfModel <- randomForest(as.factor(P) ~ . - P,
+                              data=trainData,
+                              importance=TRUE,
+                              #Parameter-Tuning
+                              ntree=numTrees,
+                              mtry = pMtry,
+                              nodesize = pNodesize)
+    }else if(is.null(pNodesize)){
+      rfModel <- randomForest(as.factor(P) ~ . - P,
+                              data=trainData,
+                              importance=TRUE,
+                              #Parameter-Tuning
+                              ntree=numTrees,
+                              mtry = pMtry)
+    }else{
+      rfModel <- randomForest(as.factor(P) ~ . - P,
+                              data=trainData,
+                              importance=TRUE,
+                              #Parameter-Tuning
+                              ntree=numTrees,
+                              nodesize = pNodesize)
+    }
   }else{
-    rfModel <- randomForest(as.factor(P) ~ . - P,
-                            data=trainData,
-                            importance=TRUE,
-                            #Parameter-Tuning
-                            ntree=numTrees,
-                            nodesize = pNodesize)
+    if(is.null(pMtry) && is.null(pNodesize)){
+      rfModel <- randomForest(as.factor(P) ~ . - P,
+                              data=trainData,
+                              importance=TRUE,
+                              #Parameter-Tuning
+                              ntree=numTrees,
+                              cutoff = pCutoff)
+    }else if(!is.null(pMtry) && !is.null(pNodesize)){
+      rfModel <- randomForest(as.factor(P) ~ . - P,
+                              data=trainData,
+                              importance=TRUE,
+                              #Parameter-Tuning
+                              ntree=numTrees,
+                              mtry = pMtry,
+                              nodesize = pNodesize,
+                              cutoff = pCutoff)
+    }else if(is.null(pNodesize)){
+      rfModel <- randomForest(as.factor(P) ~ . - P,
+                              data=trainData,
+                              importance=TRUE,
+                              #Parameter-Tuning
+                              ntree=numTrees,
+                              mtry = pMtry,
+                              cutoff = pCutoff)
+    }else{
+      rfModel <- randomForest(as.factor(P) ~ . - P,
+                              data=trainData,
+                              importance=TRUE,
+                              #Parameter-Tuning
+                              ntree=numTrees,
+                              nodesize = pNodesize,
+                              cutoff = pCutoff)
+    }
   }
 
-  #Plot the variable importance of the trained model
-  # variableImportance <- varImp(parallelRfModel)
-  #TODO (Vit): VarImpPlot sch?ner/farbig machen (ggplot?)
-  # plot(variableImportance)
-  # varImpPlot(rfModel)
   return(rfModel)
 }
 
@@ -273,25 +202,16 @@ d.b.step1 <- function(trainData, numTrees, pMtry = NULL, pNodesize = NULL){
 #' @title Classifier 1 - Step 2
 #' @description To get (back) to the overview of all steps and functions use this link:
 #' \code{\link{a.a.main}}
-#'
-#' ...
-#'
 #' @author Vitali Friesen, Colin Juers, Tassilo Tobollik
+#' @param testData A dataframe with number of images as rowsize and number of features as columnsize that holds the feature data which should be predicted
+#' @param rfModel A randomForest classification model
+#' @return A vector that holds the prediction for \code{testData} with length equal to the number of images in the dataset
+#' @examples \code{pred <- d.c.step2(testData, rfModel)}
 d.c.step2 <- function(testData, rfModel){
-  #Compare prediction of the Test-Data with the real characterVisible column
 
-
-  #Predict the test data on the trained model parallalized
-  #beginCluster()
-  #preds_rf <- clusterR(parallelRfModel, predict,#testData[,-(ncol(testData))]
-                       #args = list(newdata = testData))
-  #endCluster()
-  #TODO (Tac): Research possible parallelization possibilities
-  #TODO:  Einmal ganze Klasse ?ber alle Bilder laufen lassen und auswerten
   pred <- predict(rfModel, testData)
   
   return(pred)
-  #TODO (Vit): Research how to evaluate the overall accuracy of all test-trees together
 }
 
 #' @title Classifier 1 - Evaluation
